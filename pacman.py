@@ -154,7 +154,7 @@ class GameView(arcade.View):
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     self.player.change_x = PLAYER_MOVEMENT_SPEED
                 self.overwrite == [None, None]
-                
+
         elif key == arcade.key.DOWN :
             self.down_pressed = False
             if self.on_grid:
