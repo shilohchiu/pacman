@@ -1,5 +1,5 @@
 import arcade, time
-
+import character as ghost
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
@@ -8,10 +8,12 @@ MAGIC_NUMBER = 10
 class GameView(arcade.View):
 
     def __init__(self):
+        
         super().__init__()
         self.coordinate = [0,0]
         self.sprites = arcade.SpriteList()
-
+        ghost.init_ghost(self)
+        self.ghost.position = (600,300)
         # The texture will only be loaded during the first sprite creation
         tex_name = "pacman/images/emoji.png"
         print(self.center)
@@ -38,6 +40,11 @@ class GameView(arcade.View):
         self.sprites.draw()
     
     def on_update(self, delta_time):
+
+
+
+
+        
         # Grid positioning adjustment
         if self.movement_queue == "RIGHT" and not self.right_pressed:
             if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
@@ -81,7 +88,6 @@ class GameView(arcade.View):
 
     def on_key_press(self, key, modifiers):
 
-
         if key == arcade.key.UP and not self.down_pressed:
             if self.right_pressed:
                 self.player.change_x = 0
@@ -116,6 +122,7 @@ class GameView(arcade.View):
             self.left_pressed = True
             self.player.change_x = -PLAYER_MOVEMENT_SPEED
             self.movement_queue = "LEFT"
+
         elif key == arcade.key.RIGHT and not self.left_pressed:
             if self.up_pressed:
                 self.player.change_y = 0
@@ -130,7 +137,6 @@ class GameView(arcade.View):
             self.movement_queue = "RIGHT"
 
     def on_key_release(self, key, modifiers):
-
 
         if key == arcade.key.UP:
             self.up_pressed = False
@@ -184,7 +190,6 @@ def main():
 
     # Create and setup the GameView
     game = GameView()
-
     # Show GameView on screen
     window.show_view(game)
 
