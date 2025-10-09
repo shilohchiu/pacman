@@ -1,16 +1,8 @@
 import arcade, time
 
-"""
-Minimal Sprite Example
-
-Draws a single sprite in the middle screen.
-
-If Python and Arcade are installed, this example can be run from the command line with:
-python -m arcade.examples.sprite_minimal
-"""
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
-# allows for proper % calculations to stay on grid
+# allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
 
 class GameView(arcade.View):
@@ -24,7 +16,7 @@ class GameView(arcade.View):
         tex_name = "pacman/images/emoji.png"
         print(self.center)
         self.player = arcade.Sprite(tex_name)
-        # Starting position at 640, 360
+        # Starting position at (640, 360)
         self.player.position = self.center
         self.player.size = (50,50)
         self.sprites.append(self.player)
@@ -34,7 +26,6 @@ class GameView(arcade.View):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
-        self.any_pressed = False
         self.movement_queue = ""
         self.on_grid = False
         self.overwrite = [None, None]
@@ -47,43 +38,48 @@ class GameView(arcade.View):
         self.sprites.draw()
     
     def on_update(self, delta_time):
-        """ Move the player """
         # Move player.
-        # Remove these lines if physics engine is moving player.
-        if not (self.up_pressed or self.down_pressed or self.right_pressed or self.left_pressed):
-            if self.movement_queue == "RIGHT":
-                if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
-                    self.player.change_x = PLAYER_MOVEMENT_SPEED
-                    self.on_grid = False
-                else:
-                    self.player.change_x = 0
-                    self.on_grid = True
-                    self.movement_queue = ""
+        # TODO: Move functionality to on release to attempt to fix overlapping input???? idk
+        # On release -> test for grid alignment on most recently pressed direction
+        #   - Adjust before returning to overwritten piece?
+        # Wouldn't work because this needs to be done every frame? Activator bool after release?
+        # - **** ACTIVATOR BOOL ?????? ****
+        # Also try creating seperate function with direction input? too complicated?
+        # Try breaking up if statements to instead only make adjustments when each individual key is released
+        # e.g. if self.movement_queue == "RIGHT" and not self.up_pressed
+        if self.movement_queue == "RIGHT" and not self.right_pressed:
+            if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
+                self.player.change_x = PLAYER_MOVEMENT_SPEED
+                self.on_grid = False
+            else:
+                self.player.change_x = 0
+                self.on_grid = True
+                self.movement_queue = ""
 
-            if self.movement_queue == "LEFT":
-                if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
-                    self.player.change_x = -PLAYER_MOVEMENT_SPEED
-                    self.on_grid = False
-                else:
-                    self.player.change_x = 0
-                    self.on_grid = True
-                    self.movement_queue = ""
-            if self.movement_queue == "UP":
-                if (self.player.center_y - MAGIC_NUMBER) % 50 != 0:
-                    self.player.change_y = PLAYER_MOVEMENT_SPEED
-                    self.on_grid = False
-                else:
-                    self.player.change_y = 0
-                    self.on_grid = True
-                    self.movement_queue = ""
-            if self.movement_queue == "DOWN":
-                if (self.player.center_y - MAGIC_NUMBER) % 50 != 0:
-                    self.player.change_y = -PLAYER_MOVEMENT_SPEED
-                    self.on_grid = False
-                else:
-                    self.player.change_y = 0
-                    self.on_grid = True
-                    self.movement_queue = ""
+        if self.movement_queue == "LEFT" and not self.left_pressed:
+            if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
+                self.player.change_x = -PLAYER_MOVEMENT_SPEED
+                self.on_grid = False
+            else:
+                self.player.change_x = 0
+                self.on_grid = True
+                self.movement_queue = ""
+        if self.movement_queue == "UP" and not self.up_pressed:
+            if (self.player.center_y - MAGIC_NUMBER) % 50 != 0:
+                self.player.change_y = PLAYER_MOVEMENT_SPEED
+                self.on_grid = False
+            else:
+                self.player.change_y = 0
+                self.on_grid = True
+                self.movement_queue = ""
+        if self.movement_queue == "DOWN" and not self.down_pressed:
+            if (self.player.center_y - MAGIC_NUMBER) % 50 != 0:
+                self.player.change_y = -PLAYER_MOVEMENT_SPEED
+                self.on_grid = False
+            else:
+                self.player.change_y = 0
+                self.on_grid = True
+                self.movement_queue = ""
             
         print(f"position: {self.player.center_x}, {self.player.center_y}")
         print(f"queue: {self.movement_queue}")
