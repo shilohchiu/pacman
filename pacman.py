@@ -38,15 +38,7 @@ class GameView(arcade.View):
         self.sprites.draw()
     
     def on_update(self, delta_time):
-        # Move player.
-        # TODO: Move functionality to on release to attempt to fix overlapping input???? idk
-        # On release -> test for grid alignment on most recently pressed direction
-        #   - Adjust before returning to overwritten piece?
-        # Wouldn't work because this needs to be done every frame? Activator bool after release?
-        # - **** ACTIVATOR BOOL ?????? ****
-        # Also try creating seperate function with direction input? too complicated?
-        # Try breaking up if statements to instead only make adjustments when each individual key is released
-        # e.g. if self.movement_queue == "RIGHT" and not self.up_pressed
+        # Grid positioning adjustment
         if self.movement_queue == "RIGHT" and not self.right_pressed:
             if (self.player.center_x + MAGIC_NUMBER) % 50 != 0:
                 self.player.change_x = PLAYER_MOVEMENT_SPEED
