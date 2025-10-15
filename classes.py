@@ -1,28 +1,49 @@
 import arcade
-
-"""
-player
-"""
-
-"""
-gameview
-"""
-
-"""
-mainmenuview
-"""
-
-"""
-board
-"""
-
-# import arcade, time
+import time
 
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
 
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+
+"""
+player
+"""
+
+"""
+MenuView class
+"""
+class MenuView(arcade.View):
+    """ Class that manages the 'menu' view. """
+
+    def on_show_view(self):
+        """ Called when switching to this view"""
+        self.window.background_color = arcade.color.WHITE
+
+    def on_draw(self):
+        """ Draw the menu """
+        self.clear()
+        arcade.draw_text("Menu Screen - click to advance", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=30, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ Use a mouse press to advance to the 'game' view. """
+        self.clear()
+        game_view = GameView()
+        game_view.init()
+        self.window.show_view(game_view)
+
+
+"""
+board
+"""
+
+"""
+GameView class
+"""
 class GameView(arcade.View):
 
     def __init__(self):
@@ -98,8 +119,6 @@ class GameView(arcade.View):
         self.physics_engine.update()
 
     def on_key_press(self, key, modifiers):
-
-
         if key == arcade.key.UP and not self.down_pressed:
             if self.right_pressed:
                 self.player.change_x = 0
@@ -148,8 +167,6 @@ class GameView(arcade.View):
             self.movement_queue = "RIGHT"
 
     def on_key_release(self, key, modifiers):
-
-
         if key == arcade.key.UP:
             self.up_pressed = False
             if self.on_grid:
