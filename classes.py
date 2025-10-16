@@ -18,16 +18,32 @@ MenuView class
 """
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
+    def __init__(self):
+        super().__init__()
+        self.background = None
 
     def on_show_view(self):
         """ Called when switching to this view"""
-        self.window.background_color = arcade.color.WHITE
+        self.background = arcade.load_texture("Vintage Wahoo Game.jpg")
 
     def on_draw(self):
         """ Draw the menu """
         self.clear()
-        arcade.draw_text("Menu Screen - click to advance", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+
+        ## Draw the background image stretched to fill the screen
+        arcade.draw_texture_rect(
+                self.background,
+                arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+            )
+
+        # Overlay title text
+        arcade.draw_text("PACMAN MENU",
+                         WINDOW_WIDTH / 2, WINDOW_HEIGHT - 100,
+                         arcade.color.YELLOW, font_size=50, anchor_x="center", bold=True)
+
+        arcade.draw_text("Click anywhere to start",
+                         WINDOW_WIDTH / 2, 100,
+                         arcade.color.WHITE, font_size=24, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ Use a mouse press to advance to the 'game' view. """
