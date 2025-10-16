@@ -1,5 +1,6 @@
 # Main screen switch to game screen
 import arcade
+from pathlib import Path
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -25,55 +26,66 @@ python -m arcade.examples.view_screens_minimal
 
 
 class MenuView(arcade.View):
-    """ Class that manages the 'menu' view. """
+    """Main menu view with background image."""
+
+    def __init__(self):
+        super().__init__()
+        self.background = None
 
     def on_show_view(self):
-        """ Called when switching to this view"""
-        self.window.background_color = arcade.color.WHITE
+        self.background = arcade.load_texture("Vintage Wahoo Game.jpg")
 
     def on_draw(self):
-        """ Draw the menu """
         self.clear()
-        arcade.draw_text("Menu Screen - click to advance", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+
+        ## Draw the background image stretched to fill the screen
+        arcade.draw_texture_rect(
+                self.background,
+                arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+            )
+
+        # Overlay title text
+        arcade.draw_text("PACMAN MENU",
+                         WINDOW_WIDTH / 2, WINDOW_HEIGHT - 100,
+                         arcade.color.YELLOW, font_size=50, anchor_x="center", bold=True)
+
+        arcade.draw_text("Click anywhere to start",
+                         WINDOW_WIDTH / 2, 100,
+                         arcade.color.WHITE, font_size=24, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ Use a mouse press to advance to the 'game' view. """
+        """Switch to the game view when clicked."""
         game_view = GameView()
         game_view.setup()
         self.window.show_view(game_view)
 
 
 class GameView(arcade.View):
-    """ Manage the 'game' view for our program. """
-
-    def __init__(self):
-        super().__init__()
-        # Create variables here
+    """Game screen view."""
 
     def setup(self):
-        """ This should set up your game and get it ready to play """
-        # Replace 'pass' with the code to set up your game
         pass
 
     def on_show_view(self):
-        """ Called when switching to this view"""
-        self.background_color = arcade.color.ORANGE_PEEL
+        arcade.set_background_color(arcade.color.ORANGE_PEEL)
 
     def on_draw(self):
-        """ Draw everything for the game. """
         self.clear()
-        arcade.draw_text("Game - press SPACE to advance", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+        arcade.draw_text(
+            "Game Screen",
+            WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2,
+            arcade.color.BLACK,
+            font_size=30,
+            anchor_x="center"
+        )
 
 
 def main():
-   """ Main function """
-    # Create a window class. This is what actually shows up on scree
-   window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Different Views Minimal Example")
-   menu_view = MenuView()
-   window.show_view(menu_view)
-   arcade.run()
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+    menu_view = MenuView()
+    window.show_view(menu_view)
+    arcade.run()
+
 
 if __name__ == "__main__":
-     main()
+    main()
