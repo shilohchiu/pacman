@@ -1,6 +1,5 @@
 # Main screen switch to game screen
 import arcade
-from pathlib import Path
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
