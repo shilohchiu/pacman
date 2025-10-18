@@ -52,7 +52,7 @@ class MenuView(arcade.View):
 
 
 """
-board
+
 """
 
 """
