@@ -1,4 +1,4 @@
-import arcade, time
+import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 
 PLAYER_MOVEMENT_SPEED = 10
@@ -24,7 +24,7 @@ class MenuView(arcade.View):
 
     def on_show_view(self):
         """ Called when switching to this view"""
-        self.background = arcade.load_texture("Vintage Wahoo Game.jpg")
+        self.background = arcade.load_texture("images/background.jpg")
 
     def on_draw(self):
         """ Draw the menu """
@@ -48,6 +48,7 @@ class MenuView(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ Use a mouse press to advance to the 'game' view. """
         game_view = GameView()
+        game_view.set_up()
         self.window.show_view(game_view)
 
 
@@ -56,18 +57,22 @@ board
 """
 
 """
+SCORE DISPLAY
+"""
+
+"""
 GameView class
 """
 class GameView(arcade.View):
 
     def __init__(self):
-        #allows usage of View from arcade
+        # allows usage of View from arcade
         super().__init__()
         
-        #sprite list for characters
+        # sprite list for characters
         self.sprites = arcade.SpriteList()
 
-         #create characters
+        # create characters
         self.pacman = Pacman()
         self.blinky = Blinky()
         self.pinky = Pinky()
@@ -99,12 +104,33 @@ class GameView(arcade.View):
         self.on_grid = False
         self.overwrite = [None, None]
 
+    def set_up(self):
+        """Set up the walls"""
+        self.walls = arcade.SpriteList()
+        # Create a row of boxes
+        for x in range(173, 650, 50):
+            wall = arcade.Sprite("images/cell.png",
+                                 scale=1)
+            wall.center_x = x
+            wall.center_y = 200
+            self.walls.append(wall)
+
+
+        # Create a column of boxes
+        for y in range(273, 500, 50):
+            wall = arcade.Sprite("images/cell.png",
+                                 scale=1)
+            wall.center_x = 465
+            wall.center_y = y
+            self.walls.append(wall)
+
     def on_draw(self):
         # 3. Clear the screen
         self.clear()
 
         # 4. Call draw() on the SpriteList inside an on_draw() method
         self.sprites.draw()
+        self.walls.draw()
     
     def on_update(self, delta_time):
         # Grid positioning adjustment

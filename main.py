@@ -10,8 +10,8 @@ main function
 """
 def main():
     """ Main function """
-    # Create a window class. This is what actually shows up on scree
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Different Views Minimal Example")
+    # Create a window class. This is what actually shows up on screen
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
     menu_view = classes.MenuView()
     window.show_view(menu_view)
     arcade.run()

@@ -1,5 +1,6 @@
-#hello does this work??
 import arcade
+
+CHARACTER_SCALE = 1
 
 class Character(arcade.Sprite):
     def __init__(self, image, scale = 1, start_pos= (0,0)):
@@ -10,27 +11,37 @@ class Character(arcade.Sprite):
 
 class Pacman(Character):
     def __init__(self, start_pos=(640,360)):
-        super().__init__("images/pac-man.png",scale = 0.5, start_pos=start_pos)
+        super().__init__("images/pac-man.png",
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 10
 
 class Blinky(Character):
     def __init__(self, start_pos=(300, 300)):
-        super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/blinky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 class Pinky(Character):
     def __init__(self, start_pos=(310, 310)):
-        super().__init__("images/pinky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/pinky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 class Inky(Character):
     def __init__(self, start_pos=(290, 290)):
-        super().__init__("images/inky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/inky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 class Clyde(Character):
     def __init__(self, start_pos=(320, 300)):
-        super().__init__("images/clyde.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/clyde.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 """
 # define ghost 
