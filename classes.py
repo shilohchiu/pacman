@@ -232,7 +232,7 @@ class GameView(arcade.View):
                     self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
 
         elif key == arcade.key.DOWN :
             self.down_pressed = False
@@ -243,7 +243,7 @@ class GameView(arcade.View):
                     self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
 
         elif key == arcade.key.LEFT :
             self.left_pressed = False
@@ -254,7 +254,7 @@ class GameView(arcade.View):
                     self.pacman.change_y = PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
             
         elif key == arcade.key.RIGHT :
             self.right_pressed = False
@@ -265,4 +265,4 @@ class GameView(arcade.View):
                     self.pacman.change_y = PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
