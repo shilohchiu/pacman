@@ -1,4 +1,4 @@
-import arcade, time
+import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 
 PLAYER_MOVEMENT_SPEED = 10
@@ -9,13 +9,6 @@ MAGIC_NUMBER = 10
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-"""
-player
-"""
-
-"""
-MenuView class
-"""
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self):
@@ -51,15 +44,10 @@ class MenuView(arcade.View):
         self.window.show_view(game_view)
 
 
-"""
-
-"""
-
-"""
-GameView class
-"""
 class GameView(arcade.View):
-
+    """
+    GameView class, shows playable game
+    """
     def __init__(self):
         #allows usage of View from arcade
         super().__init__()
@@ -67,7 +55,7 @@ class GameView(arcade.View):
         #sprite list for characters
         self.sprites = arcade.SpriteList()
 
-         #create characters
+        #create characters
         self.pacman = Pacman()
         self.blinky = Blinky()
         self.pinky = Pinky()
@@ -206,7 +194,7 @@ class GameView(arcade.View):
                     self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
 
         elif key == arcade.key.DOWN :
             self.down_pressed = False
@@ -217,7 +205,7 @@ class GameView(arcade.View):
                     self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
 
         elif key == arcade.key.LEFT :
             self.left_pressed = False
@@ -228,7 +216,7 @@ class GameView(arcade.View):
                     self.pacman.change_y = PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]
             
         elif key == arcade.key.RIGHT :
             self.right_pressed = False
@@ -239,4 +227,4 @@ class GameView(arcade.View):
                     self.pacman.change_y = PLAYER_MOVEMENT_SPEED
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite == [None, None]
+                self.overwrite = [None, None]

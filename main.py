@@ -1,5 +1,9 @@
-import classes
+"""
+Main executable function where 
+game runs.
+"""
 import arcade
+import classes
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
