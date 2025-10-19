@@ -9,13 +9,6 @@ MAGIC_NUMBER = 10
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-"""
-player
-"""
-
-"""
-MenuView class
-"""
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self):
@@ -52,6 +45,7 @@ class MenuView(arcade.View):
         self.window.show_view(game_view)
 
 
+<<<<<<< HEAD
 """
 board
 """
@@ -63,8 +57,12 @@ SCORE DISPLAY
 """
 GameView class
 """
+=======
+>>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
 class GameView(arcade.View):
-
+    """
+    GameView class, shows playable game
+    """
     def __init__(self):
         # allows usage of View from arcade
         super().__init__()
@@ -72,7 +70,11 @@ class GameView(arcade.View):
         # sprite list for characters
         self.sprites = arcade.SpriteList()
 
+<<<<<<< HEAD
         # create characters
+=======
+        #create characters
+>>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
         self.pacman = Pacman()
         self.blinky = Blinky()
         self.pinky = Pinky()

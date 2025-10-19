@@ -1,15 +1,30 @@
+<<<<<<< HEAD
+=======
+"""
+Character contains class definitions for the 
+different characters/sprites. (the three 
+enemies and pacman; things that move)
+"""
+>>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
 import arcade
 
 CHARACTER_SCALE = 1
 
 class Character(arcade.Sprite):
+    """
+    Character superclass
+    """
     def __init__(self, image, scale = 1, start_pos= (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
         self.position = start_pos
         self.speed = 1
 
+
 class Pacman(Character):
+    """
+    Pacman subclass
+    """
     def __init__(self, start_pos=(640,360)):
         super().__init__("images/pac-man.png",
                          scale = CHARACTER_SCALE, 
@@ -17,6 +32,9 @@ class Pacman(Character):
         self.speed = 10
 
 class Blinky(Character):
+    """
+    Blinky subclass
+    """
     def __init__(self, start_pos=(300, 300)):
         super().__init__("images/blinky.png", 
                          scale = CHARACTER_SCALE, 
@@ -24,6 +42,9 @@ class Blinky(Character):
         self.speed = 3
 
 class Pinky(Character):
+    """
+    Pinky subclass
+    """
     def __init__(self, start_pos=(310, 310)):
         super().__init__("images/pinky.png", 
                          scale = CHARACTER_SCALE, 
@@ -31,6 +52,9 @@ class Pinky(Character):
         self.speed = 3
 
 class Inky(Character):
+    """
+    Inky subclass
+    """
     def __init__(self, start_pos=(290, 290)):
         super().__init__("images/inky.png", 
                          scale = CHARACTER_SCALE, 
@@ -38,6 +62,9 @@ class Inky(Character):
         self.speed = 3
 
 class Clyde(Character):
+    """
+    Clyde subclass
+    """
     def __init__(self, start_pos=(320, 300)):
         super().__init__("images/clyde.png", 
                          scale = CHARACTER_SCALE, 

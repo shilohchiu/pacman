@@ -1,5 +1,9 @@
 .vscode/
 __pycache__/
+<<<<<<< HEAD
 .DS_Store
 pacman.mdp
 references/
+=======
+.DS_Store
+>>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
