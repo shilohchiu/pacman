@@ -5,7 +5,7 @@ enemies and pacman; things that move)
 """
 import arcade
 
-CHARACTER_SCALE = 1
+CHARACTER_SCALE = 1.0
 
 class Character(arcade.Sprite):
     """

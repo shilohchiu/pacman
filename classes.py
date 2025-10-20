@@ -9,6 +9,8 @@ MAGIC_NUMBER = 10
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 720
 
+WALLS_SCALE = 0.10
+
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self):
@@ -44,18 +46,6 @@ class MenuView(arcade.View):
         # game_view.set_up()
         self.window.show_view(game_view)
 
-
-"""
-board
-"""
-
-"""
-SCORE DISPLAY
-"""
-
-"""
-GameView class
-"""
 class GameView(arcade.View):
     """
     GameView class, shows playable game
@@ -67,26 +57,31 @@ class GameView(arcade.View):
         # sprite list for characters
         self.sprites = arcade.SpriteList()
 
-        # def set_up(self):
-        """Set up the walls"""
+        # sprite list for walls
         self.walls = arcade.SpriteList()
 
         # Create a row of boxes
-        for x in range(0, 50, 50):
-            wall = arcade.Sprite("images/cell.png",
-                                 scale=1)
-            wall.center_x = x
-            wall.center_y = 200
-            self.walls.append(wall)
+        # for x in range(0, 50, 50):
+        #     wall = arcade.Sprite("images/cell.png",
+        #                          scale=1)
+        #     wall.center_x = x
+        #     wall.center_y = 200
+        #     self.walls.append(wall)
 
 
-        # Create a column of boxes
-        for y in range(273, 500, 50):
-            wall = arcade.Sprite("images/cell.png",
+        # # Create a column of boxes
+        # for y in range(273, 500, 50):
+        #     wall = arcade.Sprite("images/cell.png",
+        #                          scale=1)
+        #     wall.center_x = 465
+        #     wall.center_y = y
+        #     self.walls.append(wall)
+
+        wall = arcade.Sprite("images/walls.png",
                                  scale=1)
-            wall.center_x = 465
-            wall.center_y = y
-            self.walls.append(wall)
+        wall.center_x = WINDOW_WIDTH / 2
+        wall.center_y = WINDOW_HEIGHT / 2
+        self.walls.append(wall)
 
         # create characters
         self.pacman = Pacman()
@@ -119,9 +114,6 @@ class GameView(arcade.View):
         self.movement_queue = ""
         self.on_grid = False
         self.overwrite = [None, None]
-
-    
-        
 
     def on_draw(self):
         # 3. Clear the screen
