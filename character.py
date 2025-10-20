@@ -2,6 +2,8 @@
 Character contains class definitions for the 
 different characters/sprites. (the three 
 enemies and pacman; things that move)
+
+Character is imported by classes
 """
 import arcade
 
