@@ -6,7 +6,7 @@ GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
 
-WINDOW_WIDTH = 1280
+WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 720
 
 class MenuView(arcade.View):
@@ -41,11 +41,10 @@ class MenuView(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ Use a mouse press to advance to the 'game' view. """
         game_view = GameView()
-        game_view.set_up()
+        # game_view.set_up()
         self.window.show_view(game_view)
 
 
-<<<<<<< HEAD
 """
 board
 """
@@ -57,8 +56,6 @@ SCORE DISPLAY
 """
 GameView class
 """
-=======
->>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
 class GameView(arcade.View):
     """
     GameView class, shows playable game
@@ -70,11 +67,28 @@ class GameView(arcade.View):
         # sprite list for characters
         self.sprites = arcade.SpriteList()
 
-<<<<<<< HEAD
+        # def set_up(self):
+        """Set up the walls"""
+        self.walls = arcade.SpriteList()
+
+        # Create a row of boxes
+        for x in range(0, 50, 50):
+            wall = arcade.Sprite("images/cell.png",
+                                 scale=1)
+            wall.center_x = x
+            wall.center_y = 200
+            self.walls.append(wall)
+
+
+        # Create a column of boxes
+        for y in range(273, 500, 50):
+            wall = arcade.Sprite("images/cell.png",
+                                 scale=1)
+            wall.center_x = 465
+            wall.center_y = y
+            self.walls.append(wall)
+
         # create characters
-=======
-        #create characters
->>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
         self.pacman = Pacman()
         self.blinky = Blinky()
         self.pinky = Pinky()
@@ -96,7 +110,7 @@ class GameView(arcade.View):
         self.pacman.size = (50,50)
         self.sprites.append(self.pacman)
         """
-        self.physics_engine = arcade.PhysicsEngineSimple(self.pacman)
+        self.physics_engine = arcade.PhysicsEngineSimple(self.pacman, self.walls)
 
         self.left_pressed = False
         self.right_pressed = False
@@ -106,25 +120,8 @@ class GameView(arcade.View):
         self.on_grid = False
         self.overwrite = [None, None]
 
-    def set_up(self):
-        """Set up the walls"""
-        self.walls = arcade.SpriteList()
-        # Create a row of boxes
-        for x in range(173, 650, 50):
-            wall = arcade.Sprite("images/cell.png",
-                                 scale=1)
-            wall.center_x = x
-            wall.center_y = 200
-            self.walls.append(wall)
-
-
-        # Create a column of boxes
-        for y in range(273, 500, 50):
-            wall = arcade.Sprite("images/cell.png",
-                                 scale=1)
-            wall.center_x = 465
-            wall.center_y = y
-            self.walls.append(wall)
+    
+        
 
     def on_draw(self):
         # 3. Clear the screen

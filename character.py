@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-=======
 """
 Character contains class definitions for the 
 different characters/sprites. (the three 
 enemies and pacman; things that move)
 """
->>>>>>> 7cb681a9bc475b9b16c89dbd30b76f58d7f776b9
 import arcade
 
 CHARACTER_SCALE = 1
