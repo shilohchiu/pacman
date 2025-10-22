@@ -15,10 +15,15 @@ OUTER_RL_X_OFFSET = 620
 OUTER_RL_Y_OFFSET = 450
 ADDITIONAL_OUTER_RL_Y_OFFSET = 97
 
-OUTER_TB_X_OFFSET = 360
-OUTER_TB_Y_OFFSET = 25
+OUTER_TB_Y_OFFSET = 70
+
+INNER_HORIZONTAL_X_OFFSET = 150
+INNER_HORIZONTAL_Y_OFFSET = 278
+ADDITIONAL_INNER_HORIZONTAL_Y_OFFSET = 60
 
 WALLS_SCALE = 0.10
+
+# 514 x 572
 
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
@@ -85,7 +90,7 @@ class GameView(arcade.View):
         #         self.walls.append(wall)
         #     except:
         #         pass
-        wall_positions = misc.generate_edge_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
+        wall_positions = misc.generate_rl_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
                                                       OUTER_RL_X_OFFSET, OUTER_RL_Y_OFFSET,
                                                       ADDITIONAL_OUTER_RL_Y_OFFSET)
         for xy_position in wall_positions:
@@ -95,11 +100,26 @@ class GameView(arcade.View):
             wall.center_y = xy_position[1]
             self.walls.append(wall)
 
-        wall = arcade.Sprite("images/walls2/outer_tb.png",
-                                    scale=1)
-        wall.center_x = 360
-        wall.center_y = 25
-        self.walls.append(wall)
+        wall_positions = misc.generate_tb_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                                      OUTER_TB_Y_OFFSET)
+
+        for xy_position in wall_positions:
+            wall = arcade.Sprite("images/walls2/outer_tb.png",
+                                        scale=1)
+            wall.center_x = xy_position[0]
+            wall.center_y = xy_position[1]
+            self.walls.append(wall)
+
+        wall_positions = misc.generate_inner_horizontal_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                                      INNER_HORIZONTAL_X_OFFSET, INNER_HORIZONTAL_Y_OFFSET,
+                                                      ADDITIONAL_INNER_HORIZONTAL_Y_OFFSET)
+
+        for xy_position in wall_positions:
+            wall = arcade.Sprite("images/walls2/inner_horizontal.png",
+                                        scale=1)
+            wall.center_x = xy_position[0]
+            wall.center_y = xy_position[1]
+            self.walls.append(wall)
 
         # create characters
         self.pacman = Pacman()
