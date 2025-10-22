@@ -67,23 +67,13 @@ class GameView(arcade.View):
         self.sprites.append(self.pinky)
         self.sprites.append(self.inky)
         self.sprites.append(Clyde())
-        """
-        # The texture will only be loaded during the first sprite creation
-        tex_name = "assets/emoji.png"
-        print(self.center)
-        self.pacman = arcade.Sprite(tex_name)
-        # Starting position at (640, 360)
-        self.pacman.position = self.center
-        self.pacman.size = (50,50)
-        self.sprites.append(self.pacman)
-        """
+
         self.physics_engine = arcade.PhysicsEngineSimple(self.pacman)
 
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
-        self.movement_queue = ""
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.on_grid = False
@@ -104,7 +94,6 @@ class GameView(arcade.View):
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.horizontal_direction}")
         print(f"vertical factor: {self.vertical_direction}")
-        print(f"queue: {self.movement_queue}")
         print(f"on grid: {self.on_grid}")
         print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
         self.physics_engine.update()
@@ -120,7 +109,6 @@ class GameView(arcade.View):
             self.vertical_direction = 1
 
             self.up_pressed = True
-            self.movement_queue = "UP"
 
         elif key == arcade.key.DOWN:
             if self.right_pressed:
@@ -131,7 +119,6 @@ class GameView(arcade.View):
             self.horizontal_direction = 0
             self.vertical_direction = -1
             self.down_pressed = True
-            self.movement_queue = "DOWN"
 
         elif key == arcade.key.LEFT:
             if self.up_pressed:
@@ -145,7 +132,6 @@ class GameView(arcade.View):
             
             self.left_pressed = True
             
-            self.movement_queue = "LEFT"
         elif key == arcade.key.RIGHT:
             if self.up_pressed:
                 self.overwrite = ["UP", "RIGHT"]
@@ -157,8 +143,6 @@ class GameView(arcade.View):
             self.vertical_direction = 0
             self.horizontal_direction = 1
             
-            
-            self.movement_queue = "RIGHT"
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP:
