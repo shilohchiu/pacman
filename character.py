@@ -14,6 +14,9 @@ class Character(arcade.Sprite):
         super().__init__(image,scale)
         self.position = start_pos
         self.speed = 1
+        self.horizontal_direction = 0
+        self.vertical_direction = 0
+        self.on_grid = False
 
 
 class Pacman(Character):
@@ -23,6 +26,8 @@ class Pacman(Character):
     def __init__(self, start_pos=(640,360)):
         super().__init__("images/pac-man.png",scale = 0.5, start_pos=start_pos)
         self.speed = 10
+   
+    
 
 class Blinky(Character):
     """
