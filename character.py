@@ -7,7 +7,7 @@ Character is imported by classes
 """
 import arcade
 
-CHARACTER_SCALE = 1.0
+CHARACTER_SCALE = 0.5
 
 class Character(arcade.Sprite):
     """

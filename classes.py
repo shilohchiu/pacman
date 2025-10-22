@@ -1,6 +1,8 @@
 import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 
+import misc
+
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
@@ -8,6 +10,13 @@ MAGIC_NUMBER = 10
 
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 720
+
+OUTER_RL_X_OFFSET = 620
+OUTER_RL_Y_OFFSET = 450
+ADDITIONAL_OUTER_RL_Y_OFFSET = 97
+
+OUTER_TB_X_OFFSET = 360
+OUTER_TB_Y_OFFSET = 25
 
 WALLS_SCALE = 0.10
 
@@ -60,27 +69,36 @@ class GameView(arcade.View):
         # sprite list for walls
         self.walls = arcade.SpriteList()
 
-        # Create a row of boxes
-        # for x in range(0, 50, 50):
-        #     wall = arcade.Sprite("images/cell.png",
-        #                          scale=1)
-        #     wall.center_x = x
-        #     wall.center_y = 200
-        #     self.walls.append(wall)
+        # for img_id in range(4, 57):
+        #     image_path = f"{img_id}"
 
+        #     if len(image_path) == 1:
+        #         image_path = f"images/walls2/00{image_path}.png"
+        #     else:
+        #         image_path = f"images/walls2/0{image_path}.png"
 
-        # # Create a column of boxes
-        # for y in range(273, 500, 50):
-        #     wall = arcade.Sprite("images/cell.png",
-        #                          scale=1)
-        #     wall.center_x = 465
-        #     wall.center_y = y
-        #     self.walls.append(wall)
+        #     try: 
+        #         wall = arcade.Sprite(image_path,
+        #                             scale=1)
+        #         wall.center_x = 620
+        #         wall.center_y = 490
+        #         self.walls.append(wall)
+        #     except:
+        #         pass
+        wall_positions = misc.generate_edge_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                                      OUTER_RL_X_OFFSET, OUTER_RL_Y_OFFSET,
+                                                      ADDITIONAL_OUTER_RL_Y_OFFSET)
+        for xy_position in wall_positions:
+            wall = arcade.Sprite("images/walls2/outer_rl.png",
+                                        scale=1)
+            wall.center_x = xy_position[0]
+            wall.center_y = xy_position[1]
+            self.walls.append(wall)
 
-        wall = arcade.Sprite("images/walls.png",
-                                 scale=1)
-        wall.center_x = WINDOW_WIDTH / 2
-        wall.center_y = WINDOW_HEIGHT / 2
+        wall = arcade.Sprite("images/walls2/outer_tb.png",
+                                    scale=1)
+        wall.center_x = 360
+        wall.center_y = 25
         self.walls.append(wall)
 
         # create characters
@@ -159,10 +177,10 @@ class GameView(arcade.View):
                 self.on_grid = True
                 self.movement_queue = ""
             
-        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
-        print(f"queue: {self.movement_queue}")
-        print(f"on grid: {self.on_grid}")
-        print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
+        # print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        # print(f"queue: {self.movement_queue}")
+        # print(f"on grid: {self.on_grid}")
+        # print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
         self.physics_engine.update()
 
     def on_key_press(self, key, modifiers):
