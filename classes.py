@@ -197,8 +197,9 @@ class GameView(arcade.View):
             # self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
             # self.pacman.change_y = 0
             
-            self.horizontal_direction = -1
             self.vertical_direction = 0
+            self.horizontal_direction = -1
+            
             
             self.left_pressed = True
             
@@ -215,9 +216,9 @@ class GameView(arcade.View):
             # self.pacman.change_y = 0
             self.right_pressed = True
             
-
-            self.horizontal_direction = 1
             self.vertical_direction = 0
+            self.horizontal_direction = 1
+            
             
             self.movement_queue = "RIGHT"
 
@@ -228,12 +229,14 @@ class GameView(arcade.View):
             #     self.pacman.change_y = 0
             if self.overwrite[1] == "UP":
                 # self.pacman.change_y = 0
-                self.vertical_direction = 0
+                
                 if self.overwrite[0] == "LEFT" and self.left_pressed:
                     # self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
+                    self.vertical_direction = 0
                     self.horizontal_direction = -1
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     # self.pacman.change_x = PLAYER_MOVEMENT_SPEED
+                    self.vertical_direction = 0
                     self.horizontal_direction = 1
                 self.overwrite = [None, None]
 
@@ -243,12 +246,14 @@ class GameView(arcade.View):
             #     self.pacman.change_y = 0
             if self.overwrite[1] == "DOWN":
                 # self.pacman.change_y = 0
-                self.vertical_direction = 0
+                
                 if self.overwrite[0] == "LEFT" and self.left_pressed:
                     # self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
+                    self.vertical_direction = 0
                     self.horizontal_direction = -1
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
                     # self.pacman.change_x = PLAYER_MOVEMENT_SPEED
+                    self.vertical_direction = 0
                     self.horizontal_direction = 1
                 self.overwrite = [None, None]
 
@@ -258,11 +263,14 @@ class GameView(arcade.View):
             #     self.pacman.change_x = 0
             if self.overwrite[1] == "LEFT":
                 # self.pacman.change_x = 0
-                self.horizontal_direction = 0
+                
                 if self.overwrite[0] == "UP" and self.up_pressed:
                     # self.pacman.change_y = PLAYER_MOVEMENT_SPEED
+                    self.horizontal_direction = 0
                     self.vertical_direction = 1
+                    
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
+                    self.horizontal_direction = 0
                     self.vertical_direction = -1
                     # self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
                 self.overwrite = [None, None]
@@ -273,11 +281,13 @@ class GameView(arcade.View):
             #     self.pacman.change_x = 0
             if self.overwrite[1] == "RIGHT":
                 # self.pacman.change_x = 0
-                self.horizontal_direction = 0
+                
                 if self.overwrite[0] == "UP" and self.up_pressed:
                     # self.pacman.change_y = PLAYER_MOVEMENT_SPEED
+                    self.horizontal_direction = 0
                     self.vertical_direction = 1
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
+                    self.horizontal_direction = 0
                     self.vertical_direction = -1
                 self.overwrite = [None, None]
