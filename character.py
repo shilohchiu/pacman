@@ -29,6 +29,11 @@ class Character(arcade.Sprite):
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.on_grid = False
+        self.texture_open = []
+        self.texture_close = []
+        self.animation_timer = 0.0
+        self.animation_speed = 0.15
+        self.current_texture_index = 0.0
         self.physics_engine = arcade.PhysicsEngineSimple(self)
 
 
@@ -50,7 +55,7 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
+        #self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
@@ -61,12 +66,6 @@ class Character(arcade.Sprite):
         print(f"location check: {(self.center_y - MAGIC_NUMBER)}")
         self.physics_engine.update()
 
-    
-        self.texture_open = []
-        self.texture_close = []
-        self.animation_timer = 0.0
-        self.animation_speed = 0.15
-        self.current_texture_index = 0
 
     def update_animation(self, delta_time: float = 1/60):
         """Animate between open and closed mouth."""
