@@ -84,10 +84,13 @@ class GameView(arcade.View):
         self.sprites.draw()
     
     def on_update(self, delta_time):
+        self.blinky.find_movement(self)
+        self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
+        self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
+
+        self.blinky.center_y += self.blinky.horizontal_direction * self.blinky.speed
         
-        self.pacman.change_x = self.pacman.horizontal_direction * PLAYER_MOVEMENT_SPEED
-        self.pacman.change_y = self.pacman.vertical_direction * PLAYER_MOVEMENT_SPEED
-        
+        self.blinky.change_x = self.blinky.horizontal_direction * self.blinky.speed
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
@@ -141,7 +144,7 @@ class GameView(arcade.View):
             self.pacman.horizontal_direction = 1
             
 
-    def on_key_release(self, key, modifiers):
+    def on_key_release(self, key):
         if key == arcade.key.UP:
             self.up_pressed = False
             if self.overwrite[1] == "UP":

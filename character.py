@@ -33,9 +33,14 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, start_pos=(300, 300)):
+    def __init__(self, start_pos=(400, 300)):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
+
+    def find_movement(self, target=None):
+        print("testing")
+        self.horizontal_direction = -1
+
 
 class Pinky(Character):
     """
