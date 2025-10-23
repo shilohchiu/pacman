@@ -1,5 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet
 
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
@@ -52,8 +52,12 @@ class GameView(arcade.View):
         #allows usage of View from arcade
         super().__init__()
         
-        #sprite list for characters
+        #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
+        self.pellet_list = arcade.SpriteList()
+
+        #create Score 
+        self.score = 0
 
         #create characters
         self.pacman = Pacman()
@@ -61,20 +65,28 @@ class GameView(arcade.View):
         self.pinky = Pinky()
         self.inky = Inky()
         self.clyde = Clyde()
-
+        
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
         self.sprites.append(self.pinky)
         self.sprites.append(self.inky)
         self.sprites.append(self.clyde)
 
-        #self.physics_engine = arcade.PhysicsEngineSimple(self.pacman)
-        
-        #self.left_pressed = False
-        #self.up_pressed = False
-        #self.down_pressed = False
-        #self.overwrite = [None, None]
+       
+        #create pellets
+        pellet_x, pellet_y = 0,0
+        for i in range(10):
+            pellet_y = 0
+            for i in range(5):
+                pellet = Pellet('images/pellet.jpg', 1,start_pos=(pellet_x,pellet_y))
 
+                #add pellet to list
+                self.sprites.append(pellet)
+                self.pellet_list.append(pellet)
+
+                pellet_y += 150
+            pellet_x += 150
+            
     def on_draw(self):
         # 3. Clear the screen
         self.clear()
@@ -82,9 +94,21 @@ class GameView(arcade.View):
         # 4. Call draw() on the SpriteList inside an on_draw() method
         self.sprites.draw()
 
+        #add score text temp
+        output = f'Score: {self.score}'
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+
+
     def on_update(self,delta_time):
         for sprite in self.sprites:
-            sprite.on_update(delta_time)
+            if (not isinstance(sprite, Pellet)):
+                sprite.on_update(delta_time)
+        
+        hit_list = arcade.check_for_collision_with_list(self.pacman,self.pellet_list)
+
+        for pellet in hit_list:
+            pellet.remove_from_sprite_lists()
+            self.score += pellet.return_point()
     
     def on_key_press(self, key, modifiers):
         self.pacman.on_key_press(key, modifiers)

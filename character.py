@@ -50,7 +50,6 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
@@ -211,14 +210,25 @@ class Clyde(Character):
 
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, scale = 1, start_pos = (0,0)):
+    def __init__(self, image, point, scale = .5, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale)
         self.position = start_pos
-
-    def pellet_collision(pacman, pellet_list):
-        pellet_collision = arcade.check_for_collision_with_list(self.pacman, self.coin_list)
+        self.point = point
+    
+    def return_point(self):
+        return self.point
+    ##???
+    def pellet_collision(self, pacman, pellet_list):
+        pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
         for pellet in pellet_collision:
             pellet.remove_from_sprite_lists()
             self.score += 1
 
+class BigPellet(Pellet):
+    def __init__(self, image = '', start_pos = (0,0)):
+        super().__init__(image,10, scale = 5,start_pos=start_pos)
+
+class Fruit(Pellet):
+    def __init__(self, image = '', start_pos = (0,0)):
+        super().__init__(image, scale = 5,start_pos=start_pos)
