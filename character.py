@@ -45,7 +45,12 @@ class Character(arcade.Sprite):
             print("Invalid state name")
 
     def on_update(self, delta_time):
-        
+        #Edits 
+        #self.blinky.find_movement(self)
+        #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
+        #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
+
+        self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
