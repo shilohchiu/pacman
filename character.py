@@ -12,11 +12,15 @@ class Character(arcade.Sprite):
     def __init__(self, image, scale = 1, start_pos= (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
+        self.physics_engine = arcade.PhysicsEngineSimple(self)
         self.position = start_pos
         self.speed = 1
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.on_grid = False
+    
+    def update(self):
+        self.physics_engine.update()
 
 
 class Pacman(Character):
@@ -39,7 +43,7 @@ class Blinky(Character):
 
     def find_movement(self, target=None):
         print("testing")
-        self.horizontal_direction = -1
+        self.horizontal_direction = 1
 
 
 class Pinky(Character):

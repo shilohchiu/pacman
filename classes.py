@@ -68,7 +68,7 @@ class GameView(arcade.View):
         self.sprites.append(self.inky)
         self.sprites.append(Clyde())
 
-        self.physics_engine = arcade.PhysicsEngineSimple(self.pacman)
+        
 
         self.left_pressed = False
         self.right_pressed = False
@@ -88,15 +88,17 @@ class GameView(arcade.View):
         self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        self.blinky.center_y += self.blinky.horizontal_direction * self.blinky.speed
-        
-        self.blinky.change_x = self.blinky.horizontal_direction * self.blinky.speed
+        self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
+
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
         print(f"on grid: {self.pacman.on_grid}")
         print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
-        self.physics_engine.update()
+        
+        
+        self.pacman.physics_engine.update()
+        self.blinky.physics_engine.update()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
