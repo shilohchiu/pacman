@@ -23,6 +23,7 @@ class Character(arcade.Sprite):
     def __init__(self, image, scale = 1, start_pos= (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
+        self.physics_engine = arcade.PhysicsEngineSimple(self)
         self.position = start_pos
         self.speed = 1
         self.horizontal_direction = 0
@@ -170,9 +171,14 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, start_pos=(300, 300)):
+    def __init__(self, start_pos=(400, 300)):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
+
+    def find_movement(self, target=None):
+        print("testing")
+        self.horizontal_direction = 1
+
 
 class Pinky(Character):
     """
