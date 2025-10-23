@@ -18,9 +18,23 @@ class Character(arcade.Sprite):
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.on_grid = False
-    
-    def update(self):
-        self.physics_engine.update()
+        self.texture_open = []
+        self.texture_close = []
+        self.animation_timer = 0.0
+        self.animation_speed = 0.15
+        self.current_texture_index = 0
+
+    def update_animation(self, delta_time: float = 1/60):
+        """Animate between open and closed mouth."""
+        self.animation_timer += delta_time
+        if self.animation_timer > self.animation_speed:
+            self.animation_timer = 0
+            self.current_texture_index = (self.current_texture_index + 1) % 2
+            # Alternate between open and closed
+            if self.current_texture_index == 0 and self.texture_open:
+                self.texture = self.texture_open
+            elif self.current_texture_index == 1 and self.texture_close:
+                self.texture = self.texture_close
 
 
 class Pacman(Character):
@@ -29,7 +43,12 @@ class Pacman(Character):
     """
     def __init__(self, start_pos=(640,360)):
         super().__init__("images/pac-man.png",scale = 0.5, start_pos=start_pos)
-        self.speed = 10
+        self.speed = 5
+
+        self.texture_open = arcade.load_texture("images/pac-man.png")
+        self.texture_close = arcade.load_texture("images/pac-man close.png")
+
+        self.texture = self.texture_open
    
     
 

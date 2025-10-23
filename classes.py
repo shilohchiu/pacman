@@ -1,7 +1,7 @@
 import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 
-PLAYER_MOVEMENT_SPEED = 10
+PLAYER_MOVEMENT_SPEED = 5
 GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
@@ -95,10 +95,9 @@ class GameView(arcade.View):
         print(f"vertical factor: {self.pacman.vertical_direction}")
         print(f"on grid: {self.pacman.on_grid}")
         print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
-        
-        
-        self.pacman.physics_engine.update()
-        self.blinky.physics_engine.update()
+        self.sprites.update()
+        self.pacman.update_animation(delta_time)
+        self.physics_engine.update()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
@@ -109,6 +108,7 @@ class GameView(arcade.View):
 
             self.pacman.horizontal_direction = 0
             self.pacman.vertical_direction = 1
+            self.pacman.angle = -90
 
             self.up_pressed = True
 
@@ -120,6 +120,7 @@ class GameView(arcade.View):
 
             self.pacman.horizontal_direction = 0
             self.pacman.vertical_direction = -1
+            self.pacman.angle = 90
             self.down_pressed = True
 
         elif key == arcade.key.LEFT:
@@ -130,6 +131,7 @@ class GameView(arcade.View):
             
             self.pacman.vertical_direction = 0
             self.pacman.horizontal_direction = -1
+            self.pacman.angle = 180
             
             
             self.left_pressed = True
@@ -144,6 +146,7 @@ class GameView(arcade.View):
             
             self.pacman.vertical_direction = 0
             self.pacman.horizontal_direction = 1
+            self.pacman.angle = 0
             
 
     def on_key_release(self, key):
