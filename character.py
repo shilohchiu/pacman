@@ -9,6 +9,16 @@ class Character(arcade.Sprite):
     """
     Character superclass
     """
+
+    """
+    Define character states 
+    """
+    wandering = False
+    scattering = False
+    attack = False
+    death = False
+    standby = True
+
     def __init__(self, image, scale = 1, start_pos= (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
@@ -18,6 +28,19 @@ class Character(arcade.Sprite):
         self.vertical_direction = 0
         self.on_grid = False
 
+
+    def change_state(state):
+        #set all states to false
+        wandering, scattering, attack, death, standby = False, False, False, False, False
+        #change state to indicated state
+        try:
+            if 'wandering' == state: wandering = True
+            elif 'scattering' == state: scattering = True
+            elif 'attack' == state: attack = True
+            elif 'death' == state: death = True
+            elif 'standby' == state: standby = True
+        except ValueError:
+            print("Invalid input. Expects state, wandering, scattering, attack, death, standby")
 
 class Pacman(Character):
     """
@@ -60,21 +83,28 @@ class Clyde(Character):
     def __init__(self, start_pos=(320, 300)):
         super().__init__("images/clyde.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
-"""
-# define ghost 
-def init_ghost(self):
-        # The texture will only be loaded during the first sprite creation
-        tex_name = "pacman/images/blinky.png"
-        print(self.center)
-        self.ghost = arcade.Sprite(tex_name)
-        # Starting position at (640, 360)
-        self.ghost.position = (300,300)
-        self.ghost.size = (50,50)
-        self.sprites.append(self.ghost)
 
 
-#define pacman
+class Pellet(arcade.Sprite):
+    def __init__(self, image, scale = 1, start_pos = (0,0)):
+        #this refers to the sprite class and allows arcade commands to be used
+        super().__init__(image, scale)
+        self.position = start_pos
 
+    def pellet_collision(pacman, pellet_list):
+        pellet_collision = arcade.check_for_collision_with_list(self.pacman, self.coin_list)
+        for pellet in pellet_collision:
+            pellet.remove_from_sprite_lists()
+            self.score += 1
 
-#define lumps
-"""
+class Big_Pellet(Pellet):
+    @override
+    def pellet_collision(pacman, pellet_list):
+        pellet_collision = arcade.check_for_collision_with_list(self.pacman, self.coin_list)
+        for pellet in pellet_collision:
+            pellet.remove_from_sprite_lists()
+            self.score += 1 
+
+    
+class Fruit(Pellet):
+    x = False
