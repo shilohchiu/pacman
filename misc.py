@@ -77,3 +77,18 @@ def generate_leftmost_rightmost_top_positions(view_width,
         (view_width - x_offset, y_offset - y_distance_between), # right small
         (view_width - x_offset - x_distance_between, y_offset), # right middle
     )
+
+def generate_leftmid_rightmid_positions(view_width,
+                                        view_height,
+                                        x_offset_from_leftmost,
+                                        y_offset,
+                                        y_distance_between,
+                                        x_distance_between):
+    return (
+        (x_offset, y_offset), # left big
+        (x_offset, y_offset - y_distance_between), # left small
+        (x_offset + x_distance_between, y_offset), # left middle
+        (view_width - x_offset, y_offset), # right big
+        (view_width - x_offset, y_offset - y_distance_between), # right small
+        (view_width - x_offset - x_distance_between, y_offset), # right middle
+    )
