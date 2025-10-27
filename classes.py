@@ -1,8 +1,6 @@
 import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde
-
 from misc import *
-
 from constants import *
 
 # 514 x 572
@@ -56,22 +54,6 @@ class GameView(arcade.View):
         # sprite list for walls
         self.walls = arcade.SpriteList()
 
-        # for img_id in range(4, 57):
-        #     image_path = f"{img_id}"
-
-        #     if len(image_path) == 1:
-        #         image_path = f"images/walls2/00{image_path}.png"
-        #     else:
-        #         image_path = f"images/walls2/0{image_path}.png"
-
-        #     try: 
-        #         wall = arcade.Sprite(image_path,
-        #                             scale=1)
-        #         wall.center_x = 620
-        #         wall.center_y = 490
-        #         self.walls.append(wall)
-        #     except:
-        #         pass
         wall_positions = generate_rl_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
                                                       OUTER_RL_X_OFFSET, OUTER_RL_Y_OFFSET,
                                                       ADDITIONAL_OUTER_RL_Y_OFFSET)
@@ -116,176 +98,37 @@ class GameView(arcade.View):
 
 
         # create characters
-        self.pacman = Pacman()
-        self.blinky = Blinky()
-        self.pinky = Pinky()
-        self.inky = Inky()
-        self.clyde = Clyde()
+        self.pacman = Pacman(self.walls)
+        self.blinky = Blinky(self.walls)
+        self.pinky = Pinky(self.walls)
+        self.inky = Inky(self.walls)
+        self.clyde = Clyde(self.walls)
 
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
         self.sprites.append(self.pinky)
         self.sprites.append(self.inky)
-        self.sprites.append(Clyde())
-        """
-        # The texture will only be loaded during the first sprite creation
-        tex_name = "assets/emoji.png"
-        print(self.center)
-        self.pacman = arcade.Sprite(tex_name)
-        # Starting position at (640, 360)
-        self.pacman.position = self.center
-        self.pacman.size = (50,50)
-        self.sprites.append(self.pacman)
-        """
-        self.physics_engine = arcade.PhysicsEngineSimple(self.pacman, self.walls)
+        self.sprites.append(self.clyde)
 
-        self.left_pressed = False
-        self.right_pressed = False
-        self.up_pressed = False
-        self.down_pressed = False
-        self.movement_queue = ""
-        self.on_grid = False
-        self.overwrite = [None, None]
+        # self.physics_engine = arcade.PhysicsEngineSimple(self.pacman, self.walls)
 
     def on_draw(self):
-        # 3. Clear the screen
         self.clear()
 
-        # 4. Call draw() on the SpriteList inside an on_draw() method
         self.sprites.draw()
         self.walls.draw()
-    
-    def on_update(self, delta_time):
-        # Grid positioning adjustment
-        if self.movement_queue == "RIGHT" and not self.right_pressed:
-            if (self.pacman.center_x + MAGIC_NUMBER) % 50 != 0:
-                self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.on_grid = False
-            else:
-                self.pacman.change_x = 0
-                self.on_grid = True
-                self.movement_queue = ""
 
-        if self.movement_queue == "LEFT" and not self.left_pressed:
-            if (self.pacman.center_x + MAGIC_NUMBER) % 50 != 0:
-                self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
-                self.on_grid = False
-            else:
-                self.pacman.change_x = 0
-                self.on_grid = True
-                self.movement_queue = ""
-        if self.movement_queue == "UP" and not self.up_pressed:
-            if (self.pacman.center_y - MAGIC_NUMBER) % 50 != 0:
-                self.pacman.change_y = PLAYER_MOVEMENT_SPEED
-                self.on_grid = False
-            else:
-                self.pacman.change_y = 0
-                self.on_grid = True
-                self.movement_queue = ""
-        if self.movement_queue == "DOWN" and not self.down_pressed:
-            if (self.pacman.center_y - MAGIC_NUMBER) % 50 != 0:
-                self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.on_grid = False
-            else:
-                self.pacman.change_y = 0
-                self.on_grid = True
-                self.movement_queue = ""
-            
-        # print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
-        # print(f"queue: {self.movement_queue}")
-        # print(f"on grid: {self.on_grid}")
-        # print(f"location check: {(self.pacman.center_y - MAGIC_NUMBER)}")
-        self.physics_engine.update()
+    def on_update(self,delta_time):
+        for sprite in self.sprites:
+            sprite.on_update(delta_time)
+        self.sprites.update()
+        self.pacman.update_animation(delta_time)
+  
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP and not self.down_pressed:
-            if self.right_pressed:
-                self.pacman.change_x = 0
-                self.overwrite = ["RIGHT", "UP"]
-            if self.left_pressed:
-                self.pacman.change_x = 0
-                self.overwrite = ["LEFT", "UP"]
-
-            self.pacman.change_y = PLAYER_MOVEMENT_SPEED
-            self.up_pressed = True
-            self.movement_queue = "UP"
-        elif key == arcade.key.DOWN and not self.up_pressed:
-            if self.right_pressed:
-                self.pacman.change_x = 0
-                self.overwrite = ["RIGHT", "DOWN"]
-            if self.left_pressed:
-                self.pacman.change_x = 0
-                self.overwrite = ["LEFT", "DOWN"]
-                
-            self.down_pressed = True
-            self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-            self.movement_queue = "DOWN"
-
-        elif key == arcade.key.LEFT and not self.right_pressed:
-            if self.up_pressed:
-                self.pacman.change_y = 0
-                self.overwrite = ["UP", "LEFT"]
-            if self.down_pressed:
-                self.pacman.change_y = 0
-                self.overwrite = ["DOWN", "LEFT"]
-
-            self.left_pressed = True
-            self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
-            self.movement_queue = "LEFT"
-        elif key == arcade.key.RIGHT and not self.left_pressed:
-            if self.up_pressed:
-                self.pacman.change_y = 0
-                self.overwrite = ["UP", "RIGHT"]
-            if self.down_pressed:
-                self.pacman.change_y = 0
-                self.overwrite = ["DOWN", "RIGHT"]
-                
-
-            self.right_pressed = True
-            self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-            self.movement_queue = "RIGHT"
+        self.pacman.on_key_press(key, modifiers)
 
     def on_key_release(self, key, modifiers):
-        if key == arcade.key.UP:
-            self.up_pressed = False
-            if self.on_grid:
-                self.pacman.change_y = 0
-            if self.overwrite[1] == "UP":
-                if self.overwrite[0] == "LEFT" and self.left_pressed:
-                    self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
-                if self.overwrite[0] == "RIGHT" and self.right_pressed:
-                    self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite = [None, None]
-
-        elif key == arcade.key.DOWN :
-            self.down_pressed = False
-            if self.on_grid:
-                self.pacman.change_y = 0
-            if self.overwrite[1] == "DOWN":
-                if self.overwrite[0] == "LEFT" and self.left_pressed:
-                    self.pacman.change_x = -PLAYER_MOVEMENT_SPEED
-                if self.overwrite[0] == "RIGHT" and self.right_pressed:
-                    self.pacman.change_x = PLAYER_MOVEMENT_SPEED
-                self.overwrite = [None, None]
-
-        elif key == arcade.key.LEFT :
-            self.left_pressed = False
-            if self.on_grid:
-                self.pacman.change_x = 0
-            if self.overwrite[1] == "LEFT":
-                if self.overwrite[0] == "UP" and self.up_pressed:
-                    self.pacman.change_y = PLAYER_MOVEMENT_SPEED
-                if self.overwrite[0] == "DOWN" and self.down_pressed:
-                    self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite = [None, None]
-            
-        elif key == arcade.key.RIGHT :
-            self.right_pressed = False
-            if self.on_grid:
-                self.pacman.change_x = 0
-            if self.overwrite[1] == "RIGHT":
-                if self.overwrite[0] == "UP" and self.up_pressed:
-                    self.pacman.change_y = PLAYER_MOVEMENT_SPEED
-                if self.overwrite[0] == "DOWN" and self.down_pressed:
-                    self.pacman.change_y = -PLAYER_MOVEMENT_SPEED
-                self.overwrite = [None, None]
+        self.pacman.on_key_release(key, modifiers)
+    
+    

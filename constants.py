@@ -5,6 +5,11 @@ GRID_INCREMENT = 50
 # allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
 
+PLAYER_MOVEMENT_SPEED = 10
+GRID_INCREMENT = 50
+
+CHARACTER_SCALE = 0.5
+
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 720
 
