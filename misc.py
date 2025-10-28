@@ -79,7 +79,6 @@ def create_walls(walls):
                     OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2) - PATH_WIDTH,
                     OUTER_HORIZONTAL_MINI)
     
-
 def create_horizontal(walls, 
                       start_x_pos, 
                       constant_y_pos,
