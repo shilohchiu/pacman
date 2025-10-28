@@ -78,7 +78,7 @@ class GameView(arcade.View):
         for i in range(10):
             pellet_y = 0
             for i in range(5):
-                pellet = Pellet('images/pellet.jpg', 1,start_pos=(pellet_x,pellet_y))
+                pellet = Pellet('images/pellet.png', 1,start_pos=(pellet_x,pellet_y))
 
                 #add pellet to list
                 self.sprites.append(pellet)
