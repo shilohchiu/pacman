@@ -58,6 +58,7 @@ class Character(arcade.Sprite):
         #self.blinky.center_x += self.blinky.horizontal_direction * self.blinky.speed
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
+
         
         print(f"position: {self.center_x}, {self.center_y}")
         print(f"horizontal factor: {self.horizontal_direction}")
@@ -78,6 +79,17 @@ class Character(arcade.Sprite):
                 self.texture = self.texture_open
             elif self.current_texture_index == 1 and self.texture_close:
                 self.texture = self.texture_close
+    
+    def update_rotation(self):
+        """Rotate Pac-Man to face his current movement direction."""
+        if self.horizontal_direction > 0:
+            self.angle = 0        # right
+        elif self.horizontal_direction < 0:
+            self.angle = 180      # left
+        elif self.vertical_direction > 0:
+            self.angle = -90       # up
+        elif self.vertical_direction < 0:
+            self.angle = 90      # down
 
 
 class Pacman(Character):
@@ -131,7 +143,6 @@ class Pacman(Character):
             
             self.vertical_direction = 0
             self.horizontal_direction = -1
-            
             
             self.left_pressed = True
             
@@ -194,6 +205,7 @@ class Pacman(Character):
                     self.horizontal_direction = 0
                     self.vertical_direction = -1
                 self.overwrite = [None, None]
+
     
 
 class Blinky(Character):
@@ -201,8 +213,10 @@ class Blinky(Character):
     Blinky subclass
     """
     def __init__(self, start_pos=(400, 300)):
-        super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/blinky right 0.gif", scale=3, start_pos=start_pos)
         self.speed = 3
+        self.texture_open = arcade.load_texture("images/blinky right 0.gif")
+        self.texture_close = arcade.load_texture("images/blinky right 1.gif")
 
     def find_movement(self, target=None):
         print("testing")
@@ -214,24 +228,30 @@ class Pinky(Character):
     Pinky subclass
     """
     def __init__(self, start_pos=(310, 310)):
-        super().__init__("images/pinky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/pinky.png", scale=3, start_pos=start_pos)
         self.speed = 3
+        self.texture_open = arcade.load_texture("images/pinky right 0.gif")
+        self.texture_close = arcade.load_texture("images/pinky right 1.gif")
 
 class Inky(Character):
     """
     Inky subclass
     """
     def __init__(self, start_pos=(290, 290)):
-        super().__init__("images/inky.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/inky.png", scale=3, start_pos=start_pos)
         self.speed = 3
+        self.texture_open = arcade.load_texture("images/inky right 0.gif")
+        self.texture_close = arcade.load_texture("images/inky right 1.gif")
 
 class Clyde(Character):
     """
     Clyde subclass
     """
     def __init__(self, start_pos=(320, 300)):
-        super().__init__("images/clyde.png", scale=0.5, start_pos=start_pos)
+        super().__init__("images/clyde.png", scale=3, start_pos=start_pos)
         self.speed = 3
+        self.texture_open = arcade.load_texture("images/clyde right 0.gif")
+        self.texture_close = arcade.load_texture("images/clyde right 1.gif")
 
 
 class Pellet(arcade.Sprite):
@@ -240,7 +260,7 @@ class Pellet(arcade.Sprite):
         super().__init__(image, scale)
         self.position = start_pos
 
-    def pellet_collision(pacman, pellet_list):
+    def pellet_collision(pacman, pellet_list,self):
         pellet_collision = arcade.check_for_collision_with_list(self.pacman, self.coin_list)
         for pellet in pellet_collision:
             pellet.remove_from_sprite_lists()

@@ -87,6 +87,11 @@ class GameView(arcade.View):
             sprite.on_update(delta_time)
         self.sprites.update()
         self.pacman.update_animation(delta_time)
+        self.pacman.update_rotation()
+        self.blinky.update_animation()
+        self.clyde.update_animation()
+        self.inky.update_animation()
+        self.pinky.update_animation()
   
 
     def on_key_press(self, key, modifiers):
