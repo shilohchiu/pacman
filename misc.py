@@ -76,7 +76,7 @@ def create_walls(walls):
     # create horizontal mini component
     create_horizontal(walls,
                     int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
-                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2) - 50,
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2) - PATH_WIDTH,
                     OUTER_HORIZONTAL_MINI)
     
 

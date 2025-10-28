@@ -189,7 +189,6 @@ class Pacman(Character):
                     self.vertical_direction = -1
                 self.overwrite = [None, None]
     
-
 class Blinky(Character):
     """
     Blinky subclass
