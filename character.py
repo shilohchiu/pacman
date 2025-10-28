@@ -31,7 +31,6 @@ class Character(arcade.Sprite):
         self.current_texture_index = 0.0
         # self.physics_engine = arcade.PhysicsEngineSimple(self)
 
-
     def change_state(self, state):
         self.wandering = False
         self.scattering = False
@@ -81,14 +80,14 @@ class Pacman(Character):
     """
     def __init__(self, walls, start_pos=(640,360)):
         super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=start_pos)
-        self.speed = 5
+        self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
         self.texture_close = arcade.load_texture("images/pac-man close.png")
 
         self.texture = self.texture_open
    
-        self.speed = 10
+        self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
         self.down_pressed = False
         self.left_pressed = False

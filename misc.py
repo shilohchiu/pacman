@@ -3,92 +3,105 @@ Miscellaneous helper functions that don't belong
 to a class but help with calculations
 """
 
-def generate_rl_positions(view_width, 
-                          view_height, 
-                          x_offset, 
-                          y_offset, 
-                          additional_y_offset):
-    """Additional y offset represents the inner portion
-    returns a tuple in the form ((top right edge x y position),
-    (top left edge x y position),(bottom right edge x y position),
-    (bottom right edge x y position))"""
+from constants import *
+import arcade
 
-    """each position is a tuple: (x, y)"""
-    return ((x_offset, y_offset + additional_y_offset), # top right
-            (view_width - x_offset, y_offset + additional_y_offset), # top left
-            (x_offset, view_height - y_offset - additional_y_offset), # bottom right
-            (view_width - x_offset, view_height - y_offset - additional_y_offset) # bottom left
-    )
+def create_walls(walls):
 
-def generate_tb_positions(view_width, 
-                          view_height, 
-                          y_offset):
-    """returns a tuple in the form ((top x y position),
-    (bottom x y position))"""
-    return ((view_width / 2, view_height - y_offset), # top
-            (view_width / 2, y_offset) # bottom
-    )
+    """outer pieces"""
+    # create the bottom outer edge
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    MAZE_WIDTH)
+    # create the left bottom edge
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT)
+    # create the right bottom edge
+    create_vertical(walls,
+                    WINDOW_WIDTH - int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT)
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_HORIZONTAL_MINI)
+    # create vertical mini component
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI)
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI)
+    
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI + TILE_WIDTH)
+    
+    """Inner block"""
 
-def generate_inner_horizontal_positions(view_width, 
-                                        view_height, 
-                                        x_offset, 
-                                        y_offset, 
-                                        additional_y_offset):
-    """Generate inner horizontal positions"""
-    """each position is a tuple: (x, y)"""
-    return ((x_offset, y_offset), # left 1
-            (x_offset, y_offset + additional_y_offset), # left 2
-            (x_offset, view_height - y_offset - additional_y_offset), # left 3
-            (x_offset, view_height - y_offset), # left 4
-            (view_width - x_offset, y_offset), # right 1
-            (view_width - x_offset, y_offset + additional_y_offset), # right 2
-            (view_width - x_offset, view_height - y_offset - additional_y_offset), # right 3
-            (view_width - x_offset, view_height - y_offset) # right 4
-    )
+    # create inner vertical mini component
+    create_vertical(walls,
+                    PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI)
+    
+    # create inner horizontal connector component
+    create_horizontal(walls,
+                    TILE_WIDTH + PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    TILE_WIDTH)
+    
+    # create inner horizontal connector component
+    create_horizontal(walls,
+                    TILE_WIDTH + PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    TILE_WIDTH)
+    
+    # create inner vertical mini component
+    create_vertical(walls,
+                    TILE_WIDTH + MAGIC_NUMBER + PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI)
+    
+    """L shape"""
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2) - 50,
+                    OUTER_HORIZONTAL_MINI)
+    
 
-def generate_inner_vertical_positions(view_width, 
-                                        view_height, 
-                                        x_offset, 
-                                        y_offset, 
-                                        additional_y_offset):
-    """Generate inner horizontal positions"""
-    """each position is a tuple: (x, y)"""
-    return ((x_offset, y_offset), # left 1
-            (x_offset, y_offset + additional_y_offset), # left 2
-            (x_offset, view_height - y_offset - additional_y_offset), # left 3
-            (x_offset, view_height - y_offset), # left 4
-            (view_width - x_offset, y_offset), # right 1
-            (view_width - x_offset, y_offset + additional_y_offset), # right 2
-            (view_width - x_offset, view_height - y_offset - additional_y_offset), # right 3
-            (view_width - x_offset, view_height - y_offset) # right 4
-    )
+def create_horizontal(walls, 
+                      start_x_pos, 
+                      constant_y_pos,
+                      width
+                      ):
+    """draws walls from left to right"""
+    for x_position in range(start_x_pos, start_x_pos + width, TILE_WIDTH):
+            wall = arcade.Sprite("images/tile_test_horizontal.png",
+                                        scale=1)
+            wall.center_x = x_position + (TILE_WIDTH / 2)
+            wall.center_y = constant_y_pos + (TILE_WIDTH / 2)
+            walls.append(wall)
 
-def generate_leftmost_rightmost_top_positions(view_width,
-                                              view_height,
-                                              x_offset,
-                                              y_offset,
-                                              y_distance_between,
-                                              x_distance_between):
-    return (
-        (x_offset, y_offset), # left big
-        (x_offset, y_offset - y_distance_between), # left small
-        (x_offset + x_distance_between, y_offset), # left middle
-        (view_width - x_offset, y_offset), # right big
-        (view_width - x_offset, y_offset - y_distance_between), # right small
-        (view_width - x_offset - x_distance_between, y_offset), # right middle
-    )
-
-def generate_leftmid_rightmid_positions(view_width,
-                                        view_height,
-                                        x_offset_from_leftmost,
-                                        y_offset,
-                                        y_distance_between,
-                                        x_distance_between):
-    return (
-        (x_offset, y_offset), # left big
-        (x_offset, y_offset - y_distance_between), # left small
-        (x_offset + x_distance_between, y_offset), # left middle
-        (view_width - x_offset, y_offset), # right big
-        (view_width - x_offset, y_offset - y_distance_between), # right small
-        (view_width - x_offset - x_distance_between, y_offset), # right middle
-    )
+def create_vertical(walls, 
+                    constant_x_pos, 
+                    start_y_pos,
+                    height
+                    ):
+    """draws walls from bottom to top"""
+    for y_position in range(start_y_pos, start_y_pos + height, TILE_WIDTH):
+            wall = arcade.Sprite("images/tile_test_vertical.png",
+                                        scale=1)
+            wall.center_x = constant_x_pos + (TILE_WIDTH / 2)
+            wall.center_y = y_position + (TILE_WIDTH / 2)
+            walls.append(wall)

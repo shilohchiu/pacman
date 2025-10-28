@@ -3,8 +3,6 @@ from character import Pacman, Blinky, Pinky, Inky, Clyde
 from misc import *
 from constants import *
 
-# 514 x 572
-
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self):
@@ -54,48 +52,7 @@ class GameView(arcade.View):
         # sprite list for walls
         self.walls = arcade.SpriteList()
 
-        wall_positions = generate_rl_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
-                                                      OUTER_RL_X_OFFSET, OUTER_RL_Y_OFFSET,
-                                                      ADDITIONAL_OUTER_RL_Y_OFFSET)
-        for xy_position in wall_positions:
-            wall = arcade.Sprite("images/walls2/outer_rl.png",
-                                        scale=1)
-            wall.center_x = xy_position[0]
-            wall.center_y = xy_position[1]
-            self.walls.append(wall)
-
-        wall_positions = generate_tb_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
-                                                      OUTER_TB_Y_OFFSET)
-
-        for xy_position in wall_positions:
-            wall = arcade.Sprite("images/walls2/outer_tb.png",
-                                        scale=1)
-            wall.center_x = xy_position[0]
-            wall.center_y = xy_position[1]
-            self.walls.append(wall)
-
-        wall_positions = generate_inner_horizontal_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
-                                                      INNER_HORIZONTAL_X_OFFSET, INNER_HORIZONTAL_Y_OFFSET,
-                                                      ADDITIONAL_INNER_HORIZONTAL_Y_OFFSET)
-
-        for xy_position in wall_positions:
-            wall = arcade.Sprite("images/walls2/inner_horizontal.png",
-                                        scale=1)
-            wall.center_x = xy_position[0]
-            wall.center_y = xy_position[1]
-            self.walls.append(wall)
-
-        wall_positions = generate_leftmost_rightmost_top_positions(WINDOW_WIDTH, WINDOW_HEIGHT,
-                                                                   LEFTMOST_X_OFFSET, LEFTMOST_Y_OFFSET,
-                                                                   LEFTMOST_DISTANCE_BETWEEN_Y,
-                                                                   LEFTMOST_DISTANCE_BETWEEN_X)
-        for i, xy_position in enumerate(wall_positions):
-            wall = arcade.Sprite(f"images/walls2/leftmost_top{i % 3}.png",
-                                        scale=1)
-            wall.center_x = xy_position[0]
-            wall.center_y = xy_position[1]
-            self.walls.append(wall)
-
+        create_walls(self.walls)
 
         # create characters
         self.pacman = Pacman(self.walls)
@@ -123,7 +80,6 @@ class GameView(arcade.View):
             sprite.on_update(delta_time)
         self.sprites.update()
         self.pacman.update_animation(delta_time)
-  
 
     def on_key_press(self, key, modifiers):
         self.pacman.on_key_press(key, modifiers)
