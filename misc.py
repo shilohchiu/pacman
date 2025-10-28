@@ -7,6 +7,14 @@ from constants import *
 import arcade
 
 def create_walls(walls):
+    create_horizontal(walls,
+                    90,
+                    630,
+                    MAZE_WIDTH)
+    create_vertical(walls,
+                    90,
+                    410,
+                    OUTER_VERTICAL_HEIGHT)
 
     """outer pieces"""
     # create the bottom outer edge
