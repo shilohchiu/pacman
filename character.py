@@ -30,12 +30,29 @@ class Character(arcade.Sprite):
         self.vertical_direction = 0
         self.on_grid = False
         self.physics_engine = arcade.PhysicsEngineSimple(self)
+        self.path = []
+        self.target = (0,0)
+    
+    def set_movement(self, wtf):
+        print("FINDING MOVEMENT")
+        self.horizontal_direction = 1
+        # path = self.generate_path(self, self.target)
+        # self.pathfind(self, path)
+    
+    def generate_path(self, target, idk):
+        barrier = arcade.AStarBarrierList(self, Walls.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
+        return arcade.astar_calculate_path((self.center_x,self.center_y), target, barrier, False)
 
+    def pathfind(self, path):
+        print("FINDING MOVEMENT")
+        next_point = path[0]
+        self.horizontal_direction = 1
+        self.vertical_direction = 0
 
     def change_state(self, state):
         self.wandering = False
         self.scattering = False
-        self.attack = False
+        self.attack = True
         self.death = False
         self.standby = False
         
@@ -50,6 +67,8 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
+ 
+        self.set_movement(self)
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
@@ -73,18 +92,25 @@ class Pacman(Character):
         self.down_pressed = False
         self.left_pressed = False
         self.right_pressed = False
+        self.directions = (0,0)
 
         self.overwrite = [None, None]
 
+    def set_movement(self, wtf):
+        self.horizontal_direction = self.directions[0]
+        self.vertical_direction = self.directions[1]
+    
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
             if self.right_pressed:
                 self.overwrite = ["RIGHT", "UP"]
             if self.left_pressed:
                 self.overwrite = ["LEFT", "UP"]
-
-            self.horizontal_direction = 0
-            self.vertical_direction = 1
+            
+            # self.horizontal_direction = 0
+            # self.vertical_direction = 1
+            self.directions = (0,1)
+            self.set_movement(self)
 
             self.up_pressed = True
 
@@ -94,8 +120,10 @@ class Pacman(Character):
             if self.left_pressed:
                 self.overwrite = ["LEFT", "DOWN"]
 
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
+            # self.horizontal_direction = 0
+            # self.vertical_direction = -1
+            self.directions = (0,-1)
+            
             self.down_pressed = True
 
         elif key == arcade.key.LEFT:
@@ -104,8 +132,9 @@ class Pacman(Character):
             if self.down_pressed:
                 self.overwrite = ["DOWN", "LEFT"]
             
-            self.vertical_direction = 0
-            self.horizontal_direction = -1
+            # self.vertical_direction = 0
+            # self.horizontal_direction = -1
+            self.directions = (-1, 0)
             
             
             self.left_pressed = True
@@ -118,8 +147,12 @@ class Pacman(Character):
 
             self.right_pressed = True
             
-            self.vertical_direction = 0
-            self.horizontal_direction = 1
+            # self.vertical_direction = 0
+            # self.horizontal_direction = 1
+
+            self.directions = (1,0)
+    
+        self.set_movement(self)
             
 
     def on_key_release(self, key, modifiers):
@@ -127,22 +160,26 @@ class Pacman(Character):
             self.up_pressed = False
             if self.overwrite[1] == "UP":
                 if self.overwrite[0] == "LEFT" and self.left_pressed:
-                    self.vertical_direction = 0
-                    self.horizontal_direction = -1
+                    # self.vertical_direction = 0
+                    # self.horizontal_direction = -1
+                    self.directions = (-1, 0)
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
-                    self.vertical_direction = 0
-                    self.horizontal_direction = 1
+                    # self.vertical_direction = 0
+                    # self.horizontal_direction = 1
+                    self.directions = (1, 0)
                 self.overwrite = [None, None]
 
         elif key == arcade.key.DOWN :
             self.down_pressed = False
             if self.overwrite[1] == "DOWN":
                 if self.overwrite[0] == "LEFT" and self.left_pressed:
-                    self.vertical_direction = 0
-                    self.horizontal_direction = -1
+                    # self.vertical_direction = 0
+                    # self.horizontal_direction = -1
+                    self.directions = (-1, 0)
                 if self.overwrite[0] == "RIGHT" and self.right_pressed:
-                    self.vertical_direction = 0
-                    self.horizontal_direction = 1
+                    # self.vertical_direction = 0
+                    # self.horizontal_direction = 1
+                    self.directions = (1, 0)
                 self.overwrite = [None, None]
 
         elif key == arcade.key.LEFT :
@@ -150,26 +187,31 @@ class Pacman(Character):
             if self.overwrite[1] == "LEFT":
                 
                 if self.overwrite[0] == "UP" and self.up_pressed:
-                    self.horizontal_direction = 0
-                    self.vertical_direction = 1
+                    # self.horizontal_direction = 0
+                    # self.vertical_direction = 1
+                    self.directions = (0, 1)
                     
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
-                    self.horizontal_direction = 0
-                    self.vertical_direction = -1
+                    # self.horizontal_direction = 0
+                    # self.vertical_direction = -1
+                    self.directions = (0, -1)
                 self.overwrite = [None, None]
             
         elif key == arcade.key.RIGHT :
             self.right_pressed = False
             if self.overwrite[1] == "RIGHT":
                 if self.overwrite[0] == "UP" and self.up_pressed:
-                    self.horizontal_direction = 0
-                    self.vertical_direction = 1
+                    # self.horizontal_direction = 0
+                    # self.vertical_direction = 1
+                    self.directions = (0, 1)
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.change_y = -PLAYER_MOVEMENT_SPEED
-                    self.horizontal_direction = 0
-                    self.vertical_direction = -1
+                    # self.horizontal_direction = 0
+                    # self.vertical_direction = -1
+                    self.directions = (0, -1)
                 self.overwrite = [None, None]
-    
+
+        self.set_movement(self)
 
 class Blinky(Character):
     """
@@ -179,9 +221,8 @@ class Blinky(Character):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
 
-    def find_movement(self, target=None):
-        print("testing")
-        self.horizontal_direction = 1
+
+
 
 
 class Pinky(Character):
@@ -232,3 +273,10 @@ class BigPellet(Pellet):
 class Fruit(Pellet):
     def __init__(self, image = '', start_pos = (0,0)):
         super().__init__(image, scale = 5,start_pos=start_pos)
+
+# class Walls(arcade.Sprite):
+#     def __init__ (self, image, point, scale = 0.5, start_pos = (0,0)):
+#         super().__init__(image, scale)
+#         self.position = start_pos
+#         self.point = point
+#         self.walls = IDONTKNOWMAN
