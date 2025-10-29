@@ -2,28 +2,23 @@
 Character contains class definitions for the 
 different characters/sprites. (the three 
 enemies and pacman; things that move)
+
+Character is imported by classes
 """
 import arcade
-PLAYER_MOVEMENT_SPEED = 10
-GRID_INCREMENT = 50
-# allows for proper modulus calculations to stay on grid
-MAGIC_NUMBER = 10
-
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
-
+from constants import *
+from misc import *
 
 class Character(arcade.Sprite):
     """
     Character superclass
     """
     
-   
+    def __init__(self, walls, image, scale = 1, start_pos= (0,0)):
 
-    def __init__(self, image, scale = 1, start_pos= (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
-        self.physics_engine = arcade.PhysicsEngineSimple(self)
+        self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
         self.speed = 1
         self.horizontal_direction = 0
@@ -34,8 +29,7 @@ class Character(arcade.Sprite):
         self.animation_timer = 0.0
         self.animation_speed = 0.15
         self.current_texture_index = 0.0
-        self.physics_engine = arcade.PhysicsEngineSimple(self)
-
+        # self.physics_engine = arcade.PhysicsEngineSimple(self)
 
     def change_state(self, state):
         self.wandering = False
@@ -84,16 +78,16 @@ class Pacman(Character):
     """
     Pacman subclass
     """
-    def __init__(self, start_pos=(640,360)):
-        super().__init__("images/pac-man.png",scale = 0.5, start_pos=start_pos)
-        self.speed = 5
+    def __init__(self, walls, start_pos=(640,360)):
+        super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=start_pos)
+        self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
         self.texture_close = arcade.load_texture("images/pac-man close.png")
 
         self.texture = self.texture_open
    
-        self.speed = 10
+        self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
         self.down_pressed = False
         self.left_pressed = False
@@ -195,13 +189,15 @@ class Pacman(Character):
                     self.vertical_direction = -1
                 self.overwrite = [None, None]
     
-
 class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, start_pos=(400, 300)):
-        super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
+    def __init__(self, walls, start_pos=(300, 300)):
+        super().__init__(walls,
+                         "images/blinky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
     def find_movement(self, target=None):
@@ -213,24 +209,33 @@ class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, start_pos=(310, 310)):
-        super().__init__("images/pinky.png", scale=0.5, start_pos=start_pos)
+    def __init__(self, walls, start_pos=(310, 310)):
+        super().__init__(walls, 
+                         "images/pinky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 class Inky(Character):
     """
     Inky subclass
     """
-    def __init__(self, start_pos=(290, 290)):
-        super().__init__("images/inky.png", scale=0.5, start_pos=start_pos)
+    def __init__(self, walls, start_pos=(290, 290)):
+        super().__init__(walls,
+                         "images/inky.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 class Clyde(Character):
     """
     Clyde subclass
     """
-    def __init__(self, start_pos=(320, 300)):
-        super().__init__("images/clyde.png", scale=0.5, start_pos=start_pos)
+    def __init__(self, walls, start_pos=(320, 300)):
+        super().__init__(walls,
+                         "images/clyde.png", 
+                         scale = CHARACTER_SCALE, 
+                         start_pos=start_pos)
         self.speed = 3
 
 
@@ -240,7 +245,7 @@ class Pellet(arcade.Sprite):
         super().__init__(image, scale)
         self.position = start_pos
 
-    def pellet_collision(pacman, pellet_list):
+    def pellet_collision(self, pacman, pellet_list):
         pellet_collision = arcade.check_for_collision_with_list(self.pacman, self.coin_list)
         for pellet in pellet_collision:
             pellet.remove_from_sprite_lists()

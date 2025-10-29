@@ -1,0 +1,187 @@
+"""
+Miscellaneous helper functions that don't belong 
+to a class but help with calculations
+"""
+
+from constants import *
+import arcade
+
+def create_walls(walls):
+    """Inner block"""
+    create_outer_pieces(walls)
+    
+    """mini boxes at the top left"""
+    create_box(walls,
+               90 + PATH_WIDTH,
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               MINI_WIDTH,
+               int(2 * MINI_HEIGHT))
+    
+    create_box(walls,
+               90 + PATH_WIDTH,
+               495 + PATH_WIDTH,
+               MINI_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
+    create_box(walls,
+               90 + 2 * PATH_WIDTH + MINI_WIDTH - TILE_WIDTH,
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               MINIER_WIDTH,
+               int(2 * MINI_HEIGHT))
+    
+    create_box(walls,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - PATH_WIDTH - MINI_WIDTH,
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               MINI_WIDTH,
+               int(2 * MINI_HEIGHT))
+
+    create_box(walls,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - 2 * PATH_WIDTH - MINI_WIDTH - MINIER_WIDTH,
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               MINIER_WIDTH,
+               int(2 * MINI_HEIGHT))
+    
+    create_box(walls,
+               PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+               OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+               3 * TILE_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
+    create_box(walls,
+               H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int (MAZE_WIDTH / 2) - (TILE_WIDTH * 2),
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               2 * TILE_WIDTH,
+               PATH_WIDTH + 2 * MINI_HEIGHT)
+    
+def create_box(walls,
+               x_position,
+               y_position,
+               width,
+               height):
+    create_vertical(walls,
+                    x_position,
+                    y_position,
+                    height)
+    
+    create_vertical(walls,
+                    x_position + width - TILE_WIDTH,
+                    y_position,
+                    height)
+    
+    create_horizontal(walls,
+                      x_position,
+                      y_position,
+                      width)
+    
+    create_horizontal(walls,
+                      x_position,
+                      y_position + height - TILE_WIDTH,
+                      width)
+    
+def create_vertical(walls, 
+                    constant_x_pos, 
+                    start_y_pos,
+                    height
+                    ):
+    """draws walls from bottom to top"""
+    for y_position in range(start_y_pos, start_y_pos + height, TILE_WIDTH):
+            wall = arcade.Sprite("images/tile_test_vertical.png",
+                                        scale=1)
+            wall.center_x = constant_x_pos + (TILE_WIDTH / 2)
+            wall.center_y = y_position + (TILE_WIDTH / 2)
+            walls.append(wall)
+
+def create_horizontal(walls, 
+                      start_x_pos, 
+                      constant_y_pos,
+                      width
+                      ):
+    """draws walls from left to right"""
+    for x_position in range(start_x_pos, start_x_pos + width, TILE_WIDTH):
+            wall = arcade.Sprite("images/tile_test_horizontal.png",
+                                        scale=1)
+            wall.center_x = x_position + (TILE_WIDTH / 2)
+            wall.center_y = constant_y_pos + (TILE_WIDTH / 2)
+            walls.append(wall)
+
+def create_outer_pieces(walls):
+    """outer pieces"""
+    
+    
+    create_horizontal(walls,
+                    90,
+                    665,
+                    MAZE_WIDTH)
+    
+    create_vertical(walls,
+                    90,
+                    495,
+                    170)
+    # create the bottom outer edge
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    MAZE_WIDTH)
+    # create the left bottom edge
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT)
+    # create the right bottom edge
+    create_vertical(walls,
+                    WINDOW_WIDTH - int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + TILE_WIDTH / 2),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT)
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_HORIZONTAL_MINI)
+    # create vertical mini component
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI)
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI)
+    
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI + TILE_WIDTH)
+    
+    # create vertical mini component
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_VERTICAL_MINI)
+    
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI+PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI + TILE_WIDTH)
+
+
+
+"""
+Main executable function where 
+game runs.
+"""
+import arcade
+import classes
+
+def main():
+    """ Main function """
+    # Create a window class. This is what actually shows up on screen
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
+    menu_view = classes.MenuView()
+    window.show_view(menu_view)
+    arcade.run()
+
+if __name__ == "__main__":
+    main()
