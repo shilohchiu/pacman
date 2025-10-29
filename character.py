@@ -37,12 +37,16 @@ class Character(arcade.Sprite):
     def set_movement(self, wtf):
         print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
-        path = self.generate_path(self, self.target)
+        path = self.generate_path(self)
         self.pathfind(self, path)
     
-    def generate_path(self, target, idk):
+    def set_target(self, idk):
+        #placeholder to be overwritten
+        self.target = (0,0)
+    
+    def generate_path(self, idk):
         barrier = arcade.AStarBarrierList(self, self.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
-        return arcade.astar_calculate_path((self.center_x,self.center_y), target, barrier, False)
+        return arcade.astar_calculate_path((self.center_x,self.center_y), self.target, barrier, False)
 
     def pathfind(self, path):
         print("FINDING MOVEMENT")
@@ -68,7 +72,7 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
- 
+        self.set_target(self)
         self.set_movement(self)
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
@@ -202,10 +206,12 @@ class Blinky(Character):
     def __init__(self, start_pos=(400, 300)):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
-
-
-
-
+        self.target = (Pacman.center_x, Pacman.center_y)
+    
+    def set_target(self, idk):
+        super().set_target(self)
+        self.target = (Pacman.center_x, Pacman.center_y)
+    
 
 class Pinky(Character):
     """
