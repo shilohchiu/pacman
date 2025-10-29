@@ -9,12 +9,13 @@ import arcade
 def create_walls(walls):
     create_horizontal(walls,
                     90,
-                    630,
+                    670,
                     MAZE_WIDTH)
+    
     create_vertical(walls,
                     90,
-                    410,
-                    OUTER_VERTICAL_HEIGHT)
+                    490,
+                    140)
 
     """outer pieces"""
     # create the bottom outer edge
@@ -54,6 +55,18 @@ def create_walls(walls):
                     PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
     
+    # create vertical mini component
+    create_vertical(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_VERTICAL_MINI)
+    
+    # create horizontal mini component
+    create_horizontal(walls,
+                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
+                    OUTER_VERTICAL_MINI+PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    OUTER_HORIZONTAL_MINI + TILE_WIDTH)
+    
     """Inner block"""
 
     # create inner vertical mini component
@@ -81,11 +94,6 @@ def create_walls(walls):
                     OUTER_VERTICAL_MINI)
     
     """L shape"""
-    # create horizontal mini component
-    create_horizontal(walls,
-                    int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
-                    OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2) - PATH_WIDTH,
-                    OUTER_HORIZONTAL_MINI)
     
 def create_horizontal(walls, 
                       start_x_pos, 
