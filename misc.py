@@ -94,16 +94,46 @@ def create_walls(walls):
                     OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
                     OUTER_VERTICAL_MINI)
     
-    """L shape"""
+    """mini boxes at the top left"""
     create_vertical(walls,
                     90 + PATH_WIDTH,
-                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH - TILE_WIDTH,
-                    int(2.5 * MINI_HEIGHT))
+                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+                    int(2 * MINI_HEIGHT))
+    
+    create_vertical(walls,
+                    90 + PATH_WIDTH + MINI_WIDTH - TILE_WIDTH,
+                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+                    int(2 * MINI_HEIGHT))
+    
+    create_horizontal(walls,
+                      90 + PATH_WIDTH,
+                      495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+                      MINI_WIDTH)
+    
+    create_horizontal(walls,
+                      90 + PATH_WIDTH,
+                      495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH + int(2 * MINI_HEIGHT) - TILE_WIDTH,
+                      MINI_WIDTH)
     
     create_vertical(walls,
                     90 + PATH_WIDTH,
                     495 + (PATH_WIDTH),
                     MINI_HEIGHT)
+    
+    create_vertical(walls,
+                    90 + PATH_WIDTH + MINI_WIDTH - TILE_WIDTH,
+                    495 + (PATH_WIDTH),
+                    MINI_HEIGHT)
+    
+    create_horizontal(walls,
+                      90 + PATH_WIDTH,
+                      495 + (PATH_WIDTH),
+                      MINI_WIDTH)
+    
+    create_horizontal(walls,
+                      90 + PATH_WIDTH,
+                      495 + (PATH_WIDTH) + MINI_HEIGHT,
+                      MINI_WIDTH)
     
 def create_horizontal(walls, 
                       start_x_pos, 
