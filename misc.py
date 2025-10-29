@@ -7,17 +7,18 @@ from constants import *
 import arcade
 
 def create_walls(walls):
+    
+
+    """outer pieces"""
     create_horizontal(walls,
                     90,
-                    670,
+                    665,
                     MAZE_WIDTH)
     
     create_vertical(walls,
                     90,
-                    490,
-                    140)
-
-    """outer pieces"""
+                    495,
+                    170)
     # create the bottom outer edge
     create_horizontal(walls,
                     int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
@@ -94,6 +95,15 @@ def create_walls(walls):
                     OUTER_VERTICAL_MINI)
     
     """L shape"""
+    create_vertical(walls,
+                    90 + PATH_WIDTH,
+                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH - TILE_WIDTH,
+                    int(2.5 * MINI_HEIGHT))
+    
+    create_vertical(walls,
+                    90 + PATH_WIDTH,
+                    495 + (PATH_WIDTH),
+                    MINI_HEIGHT)
     
 def create_horizontal(walls, 
                       start_x_pos, 
@@ -120,3 +130,21 @@ def create_vertical(walls,
             wall.center_x = constant_x_pos + (TILE_WIDTH / 2)
             wall.center_y = y_position + (TILE_WIDTH / 2)
             walls.append(wall)
+
+"""
+Main executable function where 
+game runs.
+"""
+import arcade
+import classes
+
+def main():
+    """ Main function """
+    # Create a window class. This is what actually shows up on screen
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
+    menu_view = classes.MenuView()
+    window.show_view(menu_view)
+    arcade.run()
+
+if __name__ == "__main__":
+    main()
