@@ -1,5 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, Walls
 
 PLAYER_MOVEMENT_SPEED = 10
 GRID_INCREMENT = 50
@@ -56,6 +56,12 @@ class GameView(arcade.View):
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
 
+
+        # Create wall spritelist
+        self.wall_list = arcade.SpriteList()
+        self.walls = Walls()
+        self.wall_list.append(self.walls)
+
         #create Score 
         self.score = 0
 
@@ -65,6 +71,7 @@ class GameView(arcade.View):
         self.pinky = Pinky()
         self.inky = Inky()
         self.clyde = Clyde()
+
         
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
