@@ -92,7 +92,10 @@ class GameView(arcade.View):
         self.clyde.update_animation()
         self.inky.update_animation()
         self.pinky.update_animation()
-  
+        self.blinky.update_eyes()
+        self.clyde.update_eyes()
+        self.inky.update_eyes()
+        self.pinky.update_eyes()
 
     def on_key_press(self, key, modifiers):
         self.pacman.on_key_press(key, modifiers)
