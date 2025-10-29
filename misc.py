@@ -7,8 +7,6 @@ from constants import *
 import arcade
 
 def create_walls(walls):
-    
-
     """outer pieces"""
     create_horizontal(walls,
                     90,
@@ -95,45 +93,42 @@ def create_walls(walls):
                     OUTER_VERTICAL_MINI)
     
     """mini boxes at the top left"""
+    create_box(walls,
+               90 + PATH_WIDTH,
+               495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
+               MINI_WIDTH,
+               int(2 * MINI_HEIGHT))
+    
+    create_box(walls,
+               90 + PATH_WIDTH,
+               495 + PATH_WIDTH,
+               MINI_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
+def create_box(walls,
+               x_position,
+               y_position,
+               width,
+               height):
     create_vertical(walls,
-                    90 + PATH_WIDTH,
-                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
-                    int(2 * MINI_HEIGHT))
-    
-    create_vertical(walls,
-                    90 + PATH_WIDTH + MINI_WIDTH - TILE_WIDTH,
-                    495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
-                    int(2 * MINI_HEIGHT))
-    
-    create_horizontal(walls,
-                      90 + PATH_WIDTH,
-                      495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
-                      MINI_WIDTH)
-    
-    create_horizontal(walls,
-                      90 + PATH_WIDTH,
-                      495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH + int(2 * MINI_HEIGHT) - TILE_WIDTH,
-                      MINI_WIDTH)
-    
-    create_vertical(walls,
-                    90 + PATH_WIDTH,
-                    495 + (PATH_WIDTH),
-                    MINI_HEIGHT)
+                    x_position,
+                    y_position,
+                    height)
     
     create_vertical(walls,
-                    90 + PATH_WIDTH + MINI_WIDTH - TILE_WIDTH,
-                    495 + (PATH_WIDTH),
-                    MINI_HEIGHT)
+                    x_position + width - TILE_WIDTH,
+                    y_position,
+                    height)
     
     create_horizontal(walls,
-                      90 + PATH_WIDTH,
-                      495 + (PATH_WIDTH),
-                      MINI_WIDTH)
+                      x_position,
+                      y_position,
+                      width)
     
     create_horizontal(walls,
-                      90 + PATH_WIDTH,
-                      495 + (PATH_WIDTH) + MINI_HEIGHT,
-                      MINI_WIDTH)
+                      x_position,
+                      y_position + height - TILE_WIDTH,
+                      width)
     
 def create_horizontal(walls, 
                       start_x_pos, 
