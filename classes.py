@@ -1,13 +1,6 @@
 import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, Walls
 
-PLAYER_MOVEMENT_SPEED = 10
-GRID_INCREMENT = 50
-# allows for proper modulus calculations to stay on grid
-MAGIC_NUMBER = 10
-
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 from misc import *
 from constants import *
@@ -88,17 +81,18 @@ class GameView(arcade.View):
 
        
         #create pellets
-        pellet_x, pellet_y = 50,50
-        for iy in range(5):
-            for ix in range(4):
+        pellet_x, pellet_y = 112,85
+        for iy in range(29):
+            for ix in range(26):
                 pellet = Pellet('images/pellet.png',
                                 point=1,
-                                start_pos=(pellet_x + ix*100,pellet_y + iy*100))
+                                start_pos=(pellet_x + ix*19.5,pellet_y + iy*20))
 
                 #add pellet to list
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
-            
+        
+        
     def on_draw(self):
         self.clear()
 
@@ -115,7 +109,7 @@ class GameView(arcade.View):
         
         
         for sprite in self.sprites:
-            if (not isinstance(sprite, Pellet)):
+            if not (isinstance(sprite, Pellet)):
                 sprite.on_update(delta_time)
         
         self.sprites.update()

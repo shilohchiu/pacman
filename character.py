@@ -291,7 +291,7 @@ class Clyde(Character):
 
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point=1, scale = .5, start_pos = (0,0)):
+    def __init__(self, image, point=1, scale = .07, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale=scale)
         self.position = start_pos
