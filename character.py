@@ -29,7 +29,7 @@ class Character(arcade.Sprite):
         self.animation_timer = 0.0
         self.animation_speed = 0.15
         self.current_texture_index = 0.0
-        # self.physics_engine = arcade.PhysicsEngineSimple(self)
+
         self.physics_engine = arcade.PhysicsEngineSimple(self)
         self.path = []
         self.target = (0,0)
@@ -239,15 +239,11 @@ class Blinky(Character):
                          scale = CHARACTER_SCALE, 
                          start_pos=start_pos)
         self.speed = 3
+        self.target = (Pacman.center_x, Pacman.center_y)
 
     def find_movement(self, target=None):
         print("testing")
         self.horizontal_direction = 1
-
-    def __init__(self, start_pos=(400, 300)):
-        super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
-        self.speed = 1
-        self.target = (Pacman.center_x, Pacman.center_y)
     
     
 
@@ -303,6 +299,7 @@ class Pellet(arcade.Sprite):
     
     def return_point(self):
         return self.point
+    
     def pellet_collision(pacman, pellet_list):
         pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
         points = 0
@@ -326,5 +323,5 @@ class Fruit(Pellet):
 
 class Walls(arcade.Sprite):
     def __init__ (self, scale = 0.5, start_pos = (0,0)):
-        super().__init__("images/emoji.png")
+        super().__init__("images/tile.png")
         self.position = start_pos
