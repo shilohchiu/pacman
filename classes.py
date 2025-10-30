@@ -97,10 +97,11 @@ class GameView(arcade.View):
         big_pellet_1 = BigPellet(start_pos = (112,-85)) 
         big_pellet_2 = BigPellet(start_pos = (412,85))
         big_pellet_3 = BigPellet(start_pos = (412,-85))  
+        temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in range(4):
-            self.sprites.append(big_pellet_i)
-            self.pellet_list.append(big_pellet_i)
+            self.sprites.append(temp[i])
+            self.pellet_list.append(temp[i])
         
     def on_draw(self):
         self.clear()

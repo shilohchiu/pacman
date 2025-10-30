@@ -98,6 +98,8 @@ class Character(arcade.Sprite):
             
             if x_diff <= 5 and y_diff <= 5:
                 self.path.pop(0)
+                if len(self.path) == 0:
+                    self.path = None
         except TypeError:
             print("NO PATH")
 
