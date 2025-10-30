@@ -277,28 +277,34 @@ class Clyde(Character):
 
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point, scale = .5, start_pos = (0,0)):
+    def __init__(self, image, point=1, scale = .5, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
-        super().__init__(image, scale)
+        super().__init__(image, scale=scale)
         self.position = start_pos
         self.point = point
     
     def return_point(self):
         return self.point
-    ##???
-    def pellet_collision(self, pacman, pellet_list):
+    def pellet_collision(pacman, pellet_list):
         pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
+        points = 0
         for pellet in pellet_collision:
+            points += getattr(pellet, "point",0)
             pellet.remove_from_sprite_lists()
-            self.score += 1
+        return points
 
 class BigPellet(Pellet):
-    def __init__(self, image = '', start_pos = (0,0)):
-        super().__init__(image,10, scale = 5,start_pos=start_pos)
-
+    def __init__(self, image = 'images/beg_pellet.png', start_pos = (0,0)):
+        super().__init__(image,
+                         point=10, 
+                         scale = 5,
+                         start_pos=start_pos)
 class Fruit(Pellet):
-    def __init__(self, image = '', start_pos = (0,0)):
-        super().__init__(image, scale = 5,start_pos=start_pos)
+    def __init__(self, image = 'images/fruit.png', start_pos = (0,0)):
+        super().__init__(image,
+                         point=50,
+                         scale = 5,
+                         start_pos=start_pos)
 
 class Walls(arcade.Sprite):
     def __init__ (self, scale = 0.5, start_pos = (0,0)):

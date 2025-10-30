@@ -81,18 +81,16 @@ class GameView(arcade.View):
 
        
         #create pellets
-        pellet_x, pellet_y = 0,0
-        for i in range(10):
-            pellet_y = 0
-            for i in range(5):
-                pellet = Pellet('images/pellet.png', 1,start_pos=(pellet_x,pellet_y))
+        pellet_x, pellet_y = 50,50
+        for iy in range(5):
+            for ix in range(4):
+                pellet = Pellet('images/pellet.png',
+                                point=1,
+                                start_pos=(pellet_x + ix*100,pellet_y + iy*100))
 
                 #add pellet to list
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
-
-                pellet_y += 150
-            pellet_x += 150
             
     def on_draw(self):
         # 3. Clear the screen
