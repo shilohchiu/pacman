@@ -144,13 +144,24 @@ class Character(arcade.Sprite):
             elif self.current_texture_index == 1 and self.texture_close:
                 self.texture = self.texture_close
 
+    def update_rotation(self):
+        """Rotate Pac-Man to face his current movement direction."""
+        if self.horizontal_direction > 0:
+            self.angle = 0        # right
+        elif self.horizontal_direction < 0:
+            self.angle = 180      # left
+        elif self.vertical_direction > 0:
+            self.angle = -90       # up
+        elif self.vertical_direction < 0:
+            self.angle = 90      # down
+
 
 class Pacman(Character):
     """
     Pacman subclass
     """
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=(600,100))
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -327,7 +338,7 @@ class Clyde(Character):
 
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point=1, scale = .5, start_pos = (0,0)):
+    def __init__(self, image, point=1, scale = .07, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale=scale)
         self.position = start_pos
@@ -345,7 +356,7 @@ class Pellet(arcade.Sprite):
         return points
 
 class BigPellet(Pellet):
-    def __init__(self, image = 'images/beg_pellet.png', start_pos = (0,0)):
+    def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
                          point=10, 
                          scale = 5,
