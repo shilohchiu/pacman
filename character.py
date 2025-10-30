@@ -309,7 +309,7 @@ class Pellet(arcade.Sprite):
         return points
 
 class BigPellet(Pellet):
-    def __init__(self, image = 'images/beg_pellet.png', start_pos = (0,0)):
+    def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
                          point=10, 
                          scale = 5,

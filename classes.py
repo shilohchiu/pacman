@@ -1,7 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, Walls
-
-from character import Pacman, Blinky, Pinky, Inky, Clyde
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
 from misc import *
 from constants import *
 
@@ -92,6 +90,16 @@ class GameView(arcade.View):
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
         
+        #create big pellets
+    
+        big_pellet_0 = BigPellet(start_pos = (112,85))
+        big_pellet_1 = BigPellet(start_pos = (112,-85)) 
+        big_pellet_2 = BigPellet(start_pos = (412,85))
+        big_pellet_3 = BigPellet(start_pos = (412,-85))  
+        #add pellet to list
+        for i in range(4):
+            self.sprites.append(big_pellet_i)
+            self.pellet_list.append(big_pellet_i)
         
     def on_draw(self):
         self.clear()
