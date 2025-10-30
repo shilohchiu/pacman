@@ -18,6 +18,7 @@ class Character(arcade.Sprite):
 
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
+        self.grid_size = 20
         self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
         self.speed = 1
@@ -31,7 +32,7 @@ class Character(arcade.Sprite):
         self.current_texture_index = 0.0
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
-        self.path = []
+        self.path = None
         self.target = (0,0)
         print("TARGET AT INIT: ")
         print(self.target)
@@ -44,7 +45,7 @@ class Character(arcade.Sprite):
     def set_movement(self, wtf):
         print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
-        path = self.generate_path(self)
+        self.generate_path(self)
         print("PATH GENERATED")
         self.pathfind(self)
         print("PATH FOUND (lol)")
@@ -56,14 +57,49 @@ class Character(arcade.Sprite):
         print(self.target)
     
     def generate_path(self, idk):
-        barrier = arcade.AStarBarrierList(self, self.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
-        print("BARRIER CREATED")
-        print(f"TARGET: {self.target}")
-        self.path = arcade.astar_calculate_path((self.center_x,self.center_y), self.target, barrier, False)
+        self_pos = (self.center_x, self.center_y)
+        if self.path == None or self.path[0] == self_pos:
+            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0, WINDOW_WIDTH, 0, WINDOW_HEIGHT)
+            print("BARRIER CREATED")
+            print(f"TARGET: {self.target}")
+            print(f"SELF POS: {self_pos}")
+            self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
 
     def pathfind(self, idk):
         print("PATH: ")
         print(self.path)
+        try:
+            path_x = self.path[0][0]
+            path_y = self.path[0][1]
+        
+
+            print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
+            print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
+            x_diff = abs(path_x - self.center_x)
+            y_diff = abs(path_y - self.center_y)
+
+            print(f"X DIFF: {x_diff} \t Y DIFF: {y_diff}")
+            if self.center_x < path_x and x_diff > 5:
+                self.horizontal_direction = 1
+            elif self.center_x > path_x and x_diff > 5:
+                self.horizontal_direction = -1
+            else:
+                self.horizontal_direction = 0
+                print("HORIZONTALLY ALIGNED")
+            
+            if self.horizontal_direction == 0:
+                if self.center_y < path_y and y_diff > 5:
+                    self.vertical_direction = 1
+                elif self.center_y > path_y and y_diff > 5:
+                    self.vertical_direction = -1
+                else:
+                    self.vertical_direction = 0
+                    print("VERTICALLY ALIGNED")
+            
+            if x_diff <= 5 and y_diff <= 5:
+                self.path.pop(0)
+        except TypeError:
+            print("NO PATH")
 
     def change_state(self, state):
         self.wandering = False
@@ -114,7 +150,7 @@ class Pacman(Character):
     Pacman subclass
     """
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=start_pos)
+        super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=(600,100))
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -233,10 +269,10 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(300, 300)):
+    def __init__(self, walls, start_pos=(300, 450)):
         super().__init__(walls,
                          "images/blinky.png", 
-                         scale = CHARACTER_SCALE, 
+                         scale = 0.25, 
                          start_pos=start_pos)
         self.speed = 3
         self.target = (Pacman.center_x, Pacman.center_y)

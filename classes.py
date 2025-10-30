@@ -62,6 +62,7 @@ class GameView(arcade.View):
 
         # Create wall spritelist
         self.wall_list = arcade.SpriteList()
+        self.wall_list.enable_spatial_hashing()
         self.walls = Walls()
         self.wall_list.append(self.walls)
 
