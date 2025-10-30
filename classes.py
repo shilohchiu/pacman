@@ -107,6 +107,7 @@ class GameView(arcade.View):
 
 
     def on_update(self,delta_time):
+        self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
         for sprite in self.sprites:
             if (not isinstance(sprite, Pellet)):
                 sprite.on_update(delta_time)

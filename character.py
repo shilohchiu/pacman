@@ -32,27 +32,37 @@ class Character(arcade.Sprite):
         self.physics_engine = arcade.PhysicsEngineSimple(self)
         self.path = []
         self.target = (0,0)
+        print("TARGET AT INIT: ")
+        print(self.target)
         self.walls = walls
     
+    def get_position(self):
+        return (self.center_x * 1, self.center_y * 1)
+    
+
     def set_movement(self, wtf):
         print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
         path = self.generate_path(self)
-        self.pathfind(self, path)
+        print("PATH GENERATED")
+        self.pathfind(self)
+        print("PATH FOUND (lol)")
     
-    def set_target(self, idk):
+    def set_target(self, target):
         #placeholder to be overwritten
-        self.target = (0,0)
+        self.target = target
+        print("GOT TARGET: ")
+        print(self.target)
     
     def generate_path(self, idk):
         barrier = arcade.AStarBarrierList(self, self.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
-        return arcade.astar_calculate_path((self.center_x,self.center_y), self.target, barrier, False)
+        print("BARRIER CREATED")
+        print(f"TARGET: {self.target}")
+        self.path = arcade.astar_calculate_path((self.center_x,self.center_y), self.target, barrier, False)
 
-    def pathfind(self, path):
-        print("FINDING MOVEMENT")
-        next_point = path[0]
-        self.horizontal_direction = 1
-        self.vertical_direction = 0
+    def pathfind(self, idk):
+        print("PATH: ")
+        print(self.path)
 
     def change_state(self, state):
         self.wandering = False
@@ -72,7 +82,7 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        self.set_target(self)
+        print("SET TARGET")
         self.set_movement(self)
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
@@ -205,12 +215,9 @@ class Blinky(Character):
     """
     def __init__(self, start_pos=(400, 300)):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
-        self.speed = 3
+        self.speed = 1
         self.target = (Pacman.center_x, Pacman.center_y)
     
-    def set_target(self, idk):
-        super().set_target(self)
-        self.target = (Pacman.center_x, Pacman.center_y)
     
 
 class Pinky(Character):
@@ -220,6 +227,9 @@ class Pinky(Character):
     def __init__(self, start_pos=(310, 310)):
         super().__init__("images/pinky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
+    
+    def on_update(self, delta_time):
+        nothing = ""
 
 class Inky(Character):
     """
@@ -229,6 +239,9 @@ class Inky(Character):
         super().__init__("images/inky.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
 
+    def on_update(self, delta_time):
+        nothing = ""
+
 class Clyde(Character):
     """
     Clyde subclass
@@ -236,6 +249,9 @@ class Clyde(Character):
     def __init__(self, start_pos=(320, 300)):
         super().__init__("images/clyde.png", scale=0.5, start_pos=start_pos)
         self.speed = 3
+    
+    def on_update(self, delta_time):
+        nothing = ""
 
 
 class Pellet(arcade.Sprite):
