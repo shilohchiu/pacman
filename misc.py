@@ -307,6 +307,22 @@ def create_bottom_inner_pieces(walls):
                MINIER_WIDTH,
                SINGLE_UNIT_WIDTH)
     
+    """UPSIDE DOWN T SHAPES"""
+    
+    # upper left vertical box
+    create_box(walls,
+               LEFT_VERTICAL_X_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
+    # upper right vertical box
+    create_box(walls,
+               RIGHT_VERTICAL_X_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
     """MIDDLE UPPER T SHAPE"""
     create_upright_t_shape(walls,
                            LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
