@@ -114,7 +114,7 @@ class Pacman(Character):
     Pacman subclass
     """
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.5, start_pos=start_pos)
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
