@@ -36,6 +36,7 @@ class Character(arcade.Sprite):
         print(self.target)
         self.walls = walls
     
+    # not used?
     def get_position(self):
         return (self.center_x * 1, self.center_y * 1)
     
@@ -43,7 +44,7 @@ class Character(arcade.Sprite):
     def set_movement(self, wtf):
         print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
-        path = self.generate_path(self)
+        self.generate_path(self)
         print("PATH GENERATED")
         self.pathfind(self)
         print("PATH FOUND (lol)")
@@ -55,14 +56,36 @@ class Character(arcade.Sprite):
         print(self.target)
     
     def generate_path(self, idk):
-        barrier = arcade.AStarBarrierList(self, self.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
+        barrier = arcade.AStarBarrierList(self, self.walls, WINDOW_HEIGHT*WINDOW_WIDTH, 0, WINDOW_WIDTH, 0, WINDOW_HEIGHT)
         print("BARRIER CREATED")
         print(f"TARGET: {self.target}")
-        self.path = arcade.astar_calculate_path((self.center_x,self.center_y), self.target, barrier, False)
+        personal_location = (self.center_x,self.center_y)
+        print(f"SELF LOCATION: {personal_location}")
+        self.path = arcade.astar_calculate_path(personal_location, self.target, barrier, False)
 
     def pathfind(self, idk):
         print("PATH: ")
         print(self.path)
+
+        path_x = self.path[0][0]
+        path_y = self.path[0][1]
+
+        if self.center_x < path_x:
+            self.horizontal_direction = 1
+        elif self.center_x > path_x:
+            self.horizontal_direction = -1
+        else:
+            self.horizontal_direction = 0
+            print("HORIZONTALLY ALIGNED")
+        
+        if self.horizontal_direction == 0:
+            if self.center_y < path_y:
+                self.vertical_direction = 1
+            elif self.center_y > path_y:
+                self.vertical_direction = -1
+            else:
+                self.vertical_direction = 0
+                print("VERTICALLY ALIGNED")
 
     def change_state(self, state):
         self.wandering = False
@@ -84,8 +107,8 @@ class Character(arcade.Sprite):
 
         print("SET TARGET")
         self.set_movement(self)
-        self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
-        self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
+        self.change_x = self.horizontal_direction * self.speed
+        self.change_y = self.vertical_direction * self.speed
         
         print(f"position: {self.center_x}, {self.center_y}")
         print(f"horizontal factor: {self.horizontal_direction}")
@@ -215,8 +238,7 @@ class Blinky(Character):
     """
     def __init__(self, start_pos=(400, 300)):
         super().__init__("images/blinky.png", scale=0.5, start_pos=start_pos)
-        self.speed = 1
-        self.target = (Pacman.center_x, Pacman.center_y)
+        self.speed = 3
     
     
 
