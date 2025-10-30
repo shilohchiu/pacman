@@ -30,7 +30,7 @@ class Character(arcade.Sprite):
         self.animation_speed = 0.15
         self.current_texture_index = 0.0
 
-        self.physics_engine = arcade.PhysicsEngineSimple(self)
+        self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = []
         self.target = (0,0)
         print("TARGET AT INIT: ")
