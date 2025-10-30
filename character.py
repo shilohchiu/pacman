@@ -108,6 +108,17 @@ class Character(arcade.Sprite):
             elif self.current_texture_index == 1 and self.texture_close:
                 self.texture = self.texture_close
 
+    def update_rotation(self):
+        """Rotate Pac-Man to face his current movement direction."""
+        if self.horizontal_direction > 0:
+            self.angle = 0        # right
+        elif self.horizontal_direction < 0:
+            self.angle = 180      # left
+        elif self.vertical_direction > 0:
+            self.angle = -90       # up
+        elif self.vertical_direction < 0:
+            self.angle = 90      # down
+
 
 class Pacman(Character):
     """
