@@ -279,24 +279,48 @@ def create_top_inner_pieces(walls):
                            PATH_WIDTH + 2 * MINI_HEIGHT)
 
 def create_bottom_inner_pieces(walls):
-    # one below left
+    # upper left vertical box
     create_box(walls,
                LEFT_VERTICAL_X_POS,
                LOWEST_H_MINI_COMPONENT_Y_POS,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
     
-    # one below right
+    # upper right vertical box
     create_box(walls,
                RIGHT_VERTICAL_X_POS,
                LOWEST_H_MINI_COMPONENT_Y_POS,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
     
-    """MIDDLE T SHAPE"""
+    # lower left horizontal box
+    create_box(walls,
+               LEFT_VERTICAL_X_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
+               MINIER_WIDTH,
+               SINGLE_UNIT_WIDTH)
+    
+    # lower right horizontal box
+    create_box(walls,
+               H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int (MAZE_WIDTH / 2) + PATH_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
+               MINIER_WIDTH,
+               SINGLE_UNIT_WIDTH)
+    
+    """MIDDLE UPPER T SHAPE"""
     create_upright_t_shape(walls,
                            LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
                            LOWEST_H_MINI_COMPONENT_Y_POS,
+                           MIDDLE_T_H_WIDTH,
+                           SINGLE_UNIT_WIDTH,
+                        #    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - int(2 * TILE_WIDTH),
+                           SINGLE_UNIT_WIDTH,
+                           PATH_WIDTH + 2 * MINI_HEIGHT)
+    
+    """MIDDLE LOWER T SHAPE"""
+    create_upright_t_shape(walls,
+                           LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
+                           LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - TILE_WIDTH - SINGLE_UNIT_WIDTH,
                            MIDDLE_T_H_WIDTH,
                            SINGLE_UNIT_WIDTH,
                         #    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - int(2 * TILE_WIDTH),
