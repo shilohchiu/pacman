@@ -17,6 +17,7 @@ def create_walls(walls):
                MINI_WIDTH,
                int(2 * MINI_HEIGHT))
     
+    # skinnier one
     create_box(walls,
                90 + PATH_WIDTH,
                495 + PATH_WIDTH,
@@ -36,21 +37,68 @@ def create_walls(walls):
                int(2 * MINI_HEIGHT))
 
     create_box(walls,
-               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - 2 * PATH_WIDTH - MINI_WIDTH - MINIER_WIDTH,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int(TILE_WIDTH / 2) - 2 * PATH_WIDTH - MINI_WIDTH - MINIER_WIDTH,
                495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
                MINIER_WIDTH,
                int(2 * MINI_HEIGHT))
     
+    # one below
     create_box(walls,
                PATH_WIDTH + int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
                OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH / 2),
-               3 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
     
+    # center thingy at the top
     create_box(walls,
                H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int (MAZE_WIDTH / 2) - (TILE_WIDTH * 2),
                495 + (PATH_WIDTH) + MINI_HEIGHT + PATH_WIDTH,
-               2 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               PATH_WIDTH + 2 * MINI_HEIGHT)
+    
+    """T SHAPE ON ITS SIDE ON THE LEFT"""
+    # vertical component
+    create_box(walls, 
+               LEFT_MINIER_BOX_X_POSITION,
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    SINGLE_UNIT_WIDTH,
+                    OUTER_VERTICAL_MINI + TILE_WIDTH + PATH_WIDTH + MINI_HEIGHT)
+    
+    # horizontal component
+    create_box(walls, 
+               LEFT_MINIER_BOX_X_POSITION,
+                    HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
+                    MINI_WIDTH - TILE_WIDTH,
+                    SINGLE_UNIT_WIDTH)
+    
+    """T SHAPE ON ITS SIDE ON THE RIGHT"""
+    # vertical component
+    create_box(walls, 
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int(TILE_WIDTH / 2) - PATH_WIDTH - MINI_WIDTH - MINIER_WIDTH,
+                    PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    SINGLE_UNIT_WIDTH,
+                    OUTER_VERTICAL_MINI + TILE_WIDTH + PATH_WIDTH + MINI_HEIGHT)
+    
+    # horizontal component
+    create_box(walls, 
+               LEFT_MINIER_BOX_X_POSITION,
+                    HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
+                    MINI_WIDTH - TILE_WIDTH,
+                    SINGLE_UNIT_WIDTH)
+    
+    """MIDDLE T SHAPE"""
+    # horizontal component
+    create_box(walls, 
+               LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
+                    SKINNY_BOX_Y_POSITION,
+                    MIDDLE_T_H_WIDTH,
+                    SINGLE_UNIT_WIDTH)
+    
+    # vertical component
+    create_box(walls,
+               H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int (MAZE_WIDTH / 2) - (TILE_WIDTH * 2),
+               HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
+               SINGLE_UNIT_WIDTH,
                PATH_WIDTH + 2 * MINI_HEIGHT)
     
 def create_box(walls,
@@ -117,6 +165,11 @@ def create_outer_pieces(walls):
                     90,
                     495,
                     170)
+    
+    create_vertical(walls,
+                    WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - TILE_WIDTH,
+                    495,
+                    170)
     # create the bottom outer edge
     create_horizontal(walls,
                     int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
@@ -154,16 +207,16 @@ def create_outer_pieces(walls):
                     PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
     
-    # create vertical mini component
+    # create vertical mini component (higher one)
     create_vertical(walls,
                     int((WINDOW_WIDTH - MAZE_WIDTH) / 2 + OUTER_HORIZONTAL_MINI - TILE_WIDTH / 2),
                     PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
                     OUTER_VERTICAL_MINI)
     
-    # create horizontal mini component
+    # highest horizontal mini component
     create_horizontal(walls,
                     int((WINDOW_WIDTH - MAZE_WIDTH) / 2 - TILE_WIDTH / 2),
-                    OUTER_VERTICAL_MINI+PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    HIGHEST_H_MINI_COMPONENT_Y_POS,
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
 
 
