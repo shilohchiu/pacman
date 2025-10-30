@@ -112,19 +112,18 @@ class GameView(arcade.View):
 
     def on_update(self,delta_time):
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+        
+        
         for sprite in self.sprites:
             if (not isinstance(sprite, Pellet)):
                 sprite.on_update(delta_time)
         
-        hit_list = arcade.check_for_collision_with_list(self.pacman,self.pellet_list)
-
-        for pellet in hit_list:
-            pellet.remove_from_sprite_lists()
-            self.score += pellet.return_point()
-    
-            sprite.on_update(delta_time)
         self.sprites.update()
         self.pacman.update_animation(delta_time)
+
+        #pellet collsions
+        points = Pellet.pellet_collision(self.pacman, self.pellet_list)
+        self.score += points
 
     def on_key_press(self, key, modifiers):
         self.pacman.on_key_press(key, modifiers)
