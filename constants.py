@@ -5,7 +5,7 @@ GRID_INCREMENT = 40
 # allows for proper modulus calculations to stay on grid
 MAGIC_NUMBER = 10
 
-CHARACTER_SCALE = 0.75
+CHARACTER_SCALE = 1.5
 
 WINDOW_WIDTH = 720
 WINDOW_HEIGHT = 720
