@@ -81,17 +81,43 @@ class GameView(arcade.View):
 
        
         #create pellets
-        pellet_x, pellet_y = 112,85
-        for iy in range(29):
-            for ix in range(26):
-                pellet = Pellet('images/pellet.png',
-                                point=1,
-                                start_pos=(pellet_x + ix*19.5,pellet_y + iy*20))
+        pellet_x, pellet_y = 115, 85
+        # for iy in range(29):
+        #     for ix in range(25):
+        #         pellet = Pellet('images/pellet.png',
+        #                         point=1,
+        #                         start_pos=(pellet_x + ix*22,pellet_y + iy*20))
 
-                #add pellet to list
-                self.sprites.append(pellet)
-                self.pellet_list.append(pellet)
+        #         #add pellet to list
+        #         self.sprites.append(pellet)
+        #         self.pellet_list.append(pellet)
         
+        # Valid Column 1
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
+        # Valid Column 2
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(225, 645)))
+        # Valid Column 3
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(325, 645)))
+        # Valid Column 4
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(385, 645)))
+        # Valid Column 5
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(485, 645)))
+        # Valid Column 6
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(595, 645)))
+
+        # Valid Row 1 is same as col 1
+        # self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
+        # Valid Row 2 
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 575)))
+        # Valid Row 3
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 515)))
+        # Valid Row 4
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 385)))
+
+        # Offset Column 1
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(285, 515)))
+
+
         #create big pellets
     
         big_pellet_0 = BigPellet(start_pos = (112,85))

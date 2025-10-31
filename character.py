@@ -198,11 +198,11 @@ class Pacman(Character):
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
 
-        if not self.on_grid_x and self.directions[0] == 0:
+        if not (self.on_grid_x and self.on_grid_x) and self.directions[0] == 0:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
         
-        if not self.on_grid_y and self.directions[1] == 0:
+        if not (self.on_grid_y and self.on_grid_x) and self.directions[1] == 0:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
         
