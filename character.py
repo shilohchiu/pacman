@@ -120,27 +120,32 @@ class Character(arcade.Sprite):
             print("Invalid state name")
 
     def on_update(self, delta_time):
-        
-        
-
+    
         #Edits 
         #self.blinky.find_movement(self)
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
-        # PIVOT_ROW = [645, 575, 515, 385]
+        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # Used for movement queues, and should in theory be applicable to ghost pathfinding
+        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
+        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
+            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
+            # PIVOT_ROW = [645, 575, 515, 385]
+
+        # NOTE: replaces "on_grid" logic, and instead looks at new pivot constants
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
         
-        # checks for valid value in range (some weird alternating position values when hugging wall)
+        # NOTE: checks for valid value in +/- 5 or 7 range (some weird alternating position values when hugging wall)
+        # ranges chosen are magic numbers
         plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
         
         self.in_piv_col = False
         self.in_piv_row = False
         row = 0
-        
+
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
                 self.in_piv_row = True
@@ -149,7 +154,8 @@ class Character(arcade.Sprite):
         for num in range(int(plinus_x[0]), int(plinus_x[1])):
             if num in PIVOT_COL:
                 self.in_piv_col = True
-            # Stops row 1 pathfinding into offset junction
+            # NOTE: Stops row 1 pathfinding into offset junction
+            # Similar fix will be needed for all unique/offset junctions, probably can find cleaner fix
             if row == 645 and (num == 225 or num == 425):
                     self.in_piv_col = False
         
@@ -164,10 +170,7 @@ class Character(arcade.Sprite):
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
-        #print(f"position: {self.center_x}, {self.center_y}")
-        #print(f"horizontal factor: {self.horizontal_direction}")
-        #print(f"vertical factor: {self.vertical_direction}")
-        #print(f"on grid x: {self.on_grid_x} \t y: {self.on_grid_y}")
+
         self.physics_engine.update()
         
         if self.last_pos == (self.center_x, self.center_y):
@@ -229,8 +232,16 @@ class Pacman(Character):
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
 
-        # PIVOT_COL = [115, 225, 325, 385, 425, 485, 595]
-        # PIVOT_ROW = [645, 575, 515, 385]
+        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # Used for movement queues, and should in theory be applicable to ghost pathfinding
+        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
+        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
+            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
+            # PIVOT_ROW = [645, 575, 515, 385]
+
+        # NOTE: lowkey not super sure if i can explain this clearly, let alone in comments lol
+        # basically allows movement if in correct position, queues it until next on_update otherwise
+        # ask henry in person if confused (to probably be confused more)
 
         if self.horizontal_queue == 0 and self.vertical_queue == 0:
             self.horizontal_queue = self.directions[0]

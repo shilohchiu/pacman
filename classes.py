@@ -79,7 +79,7 @@ class GameView(arcade.View):
         self.sprites.append(self.inky)
         self.sprites.append(self.clyde)
 
-       
+        # NOTE: Commented out for clarity
         #create pellets
         pellet_x, pellet_y = 115, 85
         # for iy in range(29):
@@ -93,9 +93,18 @@ class GameView(arcade.View):
         #         self.pellet_list.append(pellet)
 
 
+        
+
+        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # Used for movement queues, and should in theory be applicable to ghost pathfinding
+        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
+        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
+            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
+            # PIVOT_ROW = [645, 575, 515, 385]
+
+        # NOTE: previous pellets only commented out for clarity. These can be removed/readded to point system, but may be worth keeping for clarity
         # Reduced pellet spawn to figure out key coordinates
-        # PIVOT_COL = [115, 225, 325, 385, 485, 595]
-        # PIVOT_ROW = [645, 575, 515, 385]
+
         # Valid Column 1
         self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
         # Valid Column 2
@@ -118,6 +127,8 @@ class GameView(arcade.View):
         # Valid Row 4
         self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 385)))
 
+
+        # NOTE: These are the ones that don't follow a consistent row/column pattern
         # Offset Column 1
         self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(285, 515)))
 
