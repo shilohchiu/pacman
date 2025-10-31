@@ -24,8 +24,8 @@ class Character(arcade.Sprite):
         self.speed = 1
         self.horizontal_direction = 0
         self.vertical_direction = 0
-        self.on_grid_x = False
-        self.on_grid_y = False
+        self.in_piv_col = False
+        self.in_piv_row= False
         self.texture_open = []
         self.texture_close = []
         self.animation_timer = 0.0
@@ -33,6 +33,7 @@ class Character(arcade.Sprite):
         self.current_texture_index = 0.0
         self.horizontal_queue = 0
         self.vertical_queue = 0
+        self.last_pos = start_pos
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -119,20 +120,32 @@ class Character(arcade.Sprite):
             print("Invalid state name")
 
     def on_update(self, delta_time):
+        
+        
+
         #Edits 
         #self.blinky.find_movement(self)
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        if (self.center_x + 10) % 20 == 0:
-            self.on_grid_x = True
-        else:
-            self.on_grid_x = False
+        # PIVOT_COL = [115, 225, 325, 385, 425, 485, 595]
+        # PIVOT_ROW = [645, 575, 515, 385]
+        #self.in_piv_col = can move up or down (dependent on x cord)
+        #self.in_piv_row = can move left or right (dependent on y cord)
         
-        if (self.center_y + 10) % 20 == 0:
-            self.on_grid_y = True
-        else:
-            self.on_grid_y = False
+        # checks for valid value in range (some weird alternating position values when hugging wall)
+        plinus_x = self.center_x - 5, self.center_x + 5
+        plinus_y = self.center_y - 10, self.center_y + 10
+        
+        self.in_piv_col = False
+        self.in_piv_row = False
+        for num in range(int(plinus_x[0]), int(plinus_x[1])):
+            if num in PIVOT_COL:
+                self.in_piv_col = True
+        
+        for num in range(int(plinus_y[0]), int(plinus_y[1])):
+            if num in PIVOT_ROW:
+                self.in_piv_row = True
 
         #print("SET TARGET")
         self.set_movement(self)
@@ -144,6 +157,12 @@ class Character(arcade.Sprite):
         #print(f"vertical factor: {self.vertical_direction}")
         #print(f"on grid x: {self.on_grid_x} \t y: {self.on_grid_y}")
         self.physics_engine.update()
+        
+        if self.last_pos == (self.center_x, self.center_y):
+            self.horizontal_direction = 0
+            self.vertical_direction = 0
+
+        self.last_pos = (self.center_x, self.center_y)
 
 
     def update_animation(self, delta_time: float = 1/60):
@@ -174,8 +193,9 @@ class Pacman(Character):
     """
     Pacman subclass
     """
+
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(390, 390))
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -193,24 +213,60 @@ class Pacman(Character):
         self.overwrite = [None, None]
 
     def set_movement(self, wtf):
-        
-        if self.horizontal_queue == 0 and self.horizontal_queue == 0:
-            self.horizontal_queue = self.directions[0]
-            self.vertical_queue = self.directions[1]
 
-        if not (self.on_grid_x and self.on_grid_x) and self.directions[0] == 0:
+        
+
+        
+
+        # if self.horizontal_queue == 0 and self.horizontal_queue == 0:
+        #     self.horizontal_queue = self.directions[0]
+        #     self.vertical_queue = self.directions[1]
+
+        # if not (self.on_grid_x and self.on_grid_x) and self.directions[0] == 0:
+        #     self.horizontal_queue = self.directions[0]
+        #     self.vertical_queue = self.directions[1]
+        
+        # if not (self.on_grid_y and self.on_grid_x) and self.directions[1] == 0:
+        #     self.horizontal_queue = self.directions[0]
+        #     self.vertical_queue = self.directions[1]
+        
+        # if self.on_grid_x and self.on_grid_y:
+        #     self.horizontal_direction = self.horizontal_queue
+        #     self.vertical_direction = self.vertical_queue
+        #     self.horizontal_queue = 0
+        #     self.vertical_queue = 0
+
+        #self.in_piv_col = can move up or down (dependent on x cord)
+        #self.in_piv_row = can move left or right (dependent on y cord)
+
+        # PIVOT_COL = [115, 225, 325, 385, 425, 485, 595]
+        # PIVOT_ROW = [645, 575, 515, 385]
+
+        if self.horizontal_queue == 0 and self.vertical_queue == 0:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
         
-        if not (self.on_grid_y and self.on_grid_x) and self.directions[1] == 0:
-            self.horizontal_queue = self.directions[0]
-            self.vertical_queue = self.directions[1]
-        
-        if self.on_grid_x and self.on_grid_y:
+        if self.in_piv_col and self.in_piv_row:
             self.horizontal_direction = self.horizontal_queue
             self.vertical_direction = self.vertical_queue
             self.horizontal_queue = 0
             self.vertical_queue = 0
+        
+        elif self.in_piv_col and not self.in_piv_row:
+            self.horizontal_direction = self.horizontal_queue
+            self.horizontal_queue = 0
+            self.vertical_queue = self.vertical_direction
+        
+        elif not self.in_piv_col and self.in_piv_row:
+            self.horizontal_queue = self.horizontal_direction
+            self.vertical_direction = self.vertical_queue
+            self.vertical_queue = 0
+        
+        else:
+            self.horizontal_queue = self.directions[0]
+            self.vertical_queue = self.directions[1]
+
+
 
 
     

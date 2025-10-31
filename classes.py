@@ -71,7 +71,7 @@ class GameView(arcade.View):
         self.pinky = Pinky(self.walls)
         self.inky = Inky(self.walls)
         self.clyde = Clyde(self.walls)
-        self.pacman.size = (32,32)
+        self.pacman.size = (32, 32)
 
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
@@ -91,7 +91,11 @@ class GameView(arcade.View):
         #         #add pellet to list
         #         self.sprites.append(pellet)
         #         self.pellet_list.append(pellet)
-        
+
+
+        # Reduced pellet spawn to figure out key coordinates
+        # PIVOT_COL = [115, 225, 325, 385, 485, 595]
+        # PIVOT_ROW = [645, 575, 515, 385]
         # Valid Column 1
         self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
         # Valid Column 2
@@ -117,6 +121,8 @@ class GameView(arcade.View):
         # Offset Column 1
         self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(285, 515)))
 
+        # Offset Column 2
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(425, 515)))
 
         #create big pellets
     
@@ -147,7 +153,7 @@ class GameView(arcade.View):
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
-        print(f"on grid x: {self.pacman.on_grid_x} \t y: {self.pacman.on_grid_y}")
+        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
         
