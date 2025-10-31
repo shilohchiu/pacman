@@ -71,6 +71,7 @@ class GameView(arcade.View):
         self.pinky = Pinky(self.walls)
         self.inky = Inky(self.walls)
         self.clyde = Clyde(self.walls)
+        self.pacman.size = (32,32)
 
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
@@ -116,6 +117,13 @@ class GameView(arcade.View):
 
     def on_update(self,delta_time):
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+        print(f"PAC SIZE: {self.pacman.size}")
+        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        print(f"horizontal factor: {self.pacman.horizontal_direction}")
+        print(f"vertical factor: {self.pacman.vertical_direction}")
+        print(f"on grid x: {self.pacman.on_grid_x} \t y: {self.pacman.on_grid_y}")
+        print(f"directions: {self.pacman.directions}")
+        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
         
         
         for sprite in self.sprites:

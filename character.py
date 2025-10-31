@@ -24,18 +24,21 @@ class Character(arcade.Sprite):
         self.speed = 1
         self.horizontal_direction = 0
         self.vertical_direction = 0
-        self.on_grid = False
+        self.on_grid_x = False
+        self.on_grid_y = False
         self.texture_open = []
         self.texture_close = []
         self.animation_timer = 0.0
         self.animation_speed = 0.15
         self.current_texture_index = 0.0
+        self.horizontal_queue = 0
+        self.vertical_queue = 0
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
         self.target = (0,0)
-        print("TARGET AT INIT: ")
-        print(self.target)
+        #print("TARGET AT INIT: ")
+        #print(self.target)
         self.walls = walls
     
     def get_position(self):
@@ -43,26 +46,26 @@ class Character(arcade.Sprite):
     
 
     def set_movement(self, wtf):
-        print("FINDING MOVEMENT")
+        #print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
         self.generate_path(self)
-        print("PATH GENERATED")
+        #print("PATH GENERATED")
         self.pathfind(self)
-        print("PATH FOUND (lol)")
+        #print("PATH FOUND (lol)")
     
     def set_target(self, target):
         #placeholder to be overwritten
         self.target = target
-        print("GOT TARGET: ")
-        print(self.target)
+        #print("GOT TARGET: ")
+        #print(self.target)
     
     def generate_path(self, idk):
         self_pos = (self.center_x, self.center_y)
         if self.path == None or self.path[0] == self_pos:
             barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0, WINDOW_WIDTH, 0, WINDOW_HEIGHT)
-            print("BARRIER CREATED")
-            print(f"TARGET: {self.target}")
-            print(f"SELF POS: {self_pos}")
+            #print("BARRIER CREATED")
+            #print(f"TARGET: {self.target}")
+            #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
 
     def pathfind(self, idk):
@@ -73,19 +76,19 @@ class Character(arcade.Sprite):
             path_y = self.path[0][1]
         
 
-            print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
-            print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
+            #print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
+            #print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
             x_diff = abs(path_x - self.center_x)
             y_diff = abs(path_y - self.center_y)
 
-            print(f"X DIFF: {x_diff} \t Y DIFF: {y_diff}")
+            #print(f"X DIFF: {x_diff} \t Y DIFF: {y_diff}")
             if self.center_x < path_x and x_diff > 5:
                 self.horizontal_direction = 1
             elif self.center_x > path_x and x_diff > 5:
                 self.horizontal_direction = -1
             else:
                 self.horizontal_direction = 0
-                print("HORIZONTALLY ALIGNED")
+                #print("HORIZONTALLY ALIGNED")
             
             if self.horizontal_direction == 0:
                 if self.center_y < path_y and y_diff > 5:
@@ -94,7 +97,7 @@ class Character(arcade.Sprite):
                     self.vertical_direction = -1
                 else:
                     self.vertical_direction = 0
-                    print("VERTICALLY ALIGNED")
+                    #print("VERTICALLY ALIGNED")
             
             if x_diff <= 5 and y_diff <= 5:
                 self.path.pop(0)
@@ -121,16 +124,25 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        print("SET TARGET")
+        if (self.center_x + 10) % 20 == 0:
+            self.on_grid_x = True
+        else:
+            self.on_grid_x = False
+        
+        if (self.center_y + 10) % 20 == 0:
+            self.on_grid_y = True
+        else:
+            self.on_grid_y = False
+
+        #print("SET TARGET")
         self.set_movement(self)
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
         
-        print(f"position: {self.center_x}, {self.center_y}")
-        print(f"horizontal factor: {self.horizontal_direction}")
-        print(f"vertical factor: {self.vertical_direction}")
-        print(f"on grid: {self.on_grid}")
-        print(f"location check: {(self.center_y - MAGIC_NUMBER)}")
+        #print(f"position: {self.center_x}, {self.center_y}")
+        #print(f"horizontal factor: {self.horizontal_direction}")
+        #print(f"vertical factor: {self.vertical_direction}")
+        #print(f"on grid x: {self.on_grid_x} \t y: {self.on_grid_y}")
         self.physics_engine.update()
 
 
@@ -163,7 +175,7 @@ class Pacman(Character):
     Pacman subclass
     """
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(390, 390))
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -181,8 +193,26 @@ class Pacman(Character):
         self.overwrite = [None, None]
 
     def set_movement(self, wtf):
-        self.horizontal_direction = self.directions[0]
-        self.vertical_direction = self.directions[1]
+        
+        if self.horizontal_queue == 0 and self.horizontal_queue == 0:
+            self.horizontal_queue = self.directions[0]
+            self.vertical_queue = self.directions[1]
+
+        if not self.on_grid_x and self.directions[0] == 0:
+            self.horizontal_queue = self.directions[0]
+            self.vertical_queue = self.directions[1]
+        
+        if not self.on_grid_y and self.directions[1] == 0:
+            self.horizontal_queue = self.directions[0]
+            self.vertical_queue = self.directions[1]
+        
+        if self.on_grid_x and self.on_grid_y:
+            self.horizontal_direction = self.horizontal_queue
+            self.vertical_direction = self.vertical_queue
+            self.horizontal_queue = 0
+            self.vertical_queue = 0
+
+
     
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
@@ -291,9 +321,11 @@ class Blinky(Character):
         self.target = (Pacman.center_x, Pacman.center_y)
 
     def find_movement(self, target=None):
-        print("testing")
         self.horizontal_direction = 1
     
+    # disables ghost behavior
+    def on_update(self, delta_time):
+        nothing = ""
     
 
 class Pinky(Character):
