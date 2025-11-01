@@ -35,8 +35,7 @@ def create_box(walls,
     create_horizontal(walls,
                       x_position,
                       y_position + height - TILE_WIDTH,
-                      width)
-    
+                      width)  
 
 def create_upright_t_shape(walls,
                            horizontal_piece_x_pos,
@@ -307,6 +306,21 @@ def create_bottom_inner_pieces(walls):
                MINIER_WIDTH,
                SINGLE_UNIT_WIDTH)
     
+    """UPSIDE DOWN T SHAPES"""
+    # upper left vertical box
+    create_box(walls,
+               LEFT_VERTICAL_X_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
+    # upper right vertical box
+    create_box(walls,
+               RIGHT_VERTICAL_X_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
     """MIDDLE UPPER T SHAPE"""
     create_upright_t_shape(walls,
                            LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
@@ -326,6 +340,44 @@ def create_bottom_inner_pieces(walls):
                         #    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - int(2 * TILE_WIDTH),
                            SINGLE_UNIT_WIDTH,
                            PATH_WIDTH + 2 * MINI_HEIGHT)
+    
+    """L SHAPES"""
+    # left L-shape horizontal component
+    create_box(walls,
+               90 + PATH_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
+               MINI_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
+    # left L-shape vertical component
+    create_box(walls,
+               90 + MINI_WIDTH + TILE_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - OUTER_VERTICAL_MINI + TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+
+    # right L-shape horizontal component
+    create_box(walls,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - PATH_WIDTH - MINI_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
+               MINI_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
+    # right L-shape vertical component
+    create_box(walls,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - PATH_WIDTH - MINI_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - OUTER_VERTICAL_MINI + TILE_WIDTH,
+               SINGLE_UNIT_WIDTH,
+               OUTER_VERTICAL_MINI)
+    
+    """EDGE BITS"""
+    # right bit
+    create_box(walls,
+               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - MINI_WIDTH,
+               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - TILE_WIDTH - SINGLE_UNIT_WIDTH,
+               MINI_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
 
 """
 Main executable function where 

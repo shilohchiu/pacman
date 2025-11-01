@@ -53,6 +53,7 @@ class GameView(arcade.View):
 
         # Create wall spritelist
         self.wall_list = arcade.SpriteList()
+        self.wall_list.enable_spatial_hashing()
         self.walls = Walls()
         self.wall_list.append(self.walls)
 
@@ -70,6 +71,7 @@ class GameView(arcade.View):
         self.pinky = Pinky(self.walls)
         self.inky = Inky(self.walls)
         self.clyde = Clyde(self.walls)
+        self.pacman.size = (32, 32)
 
         self.sprites.append(self.pacman)
         self.sprites.append(self.blinky)
@@ -77,25 +79,69 @@ class GameView(arcade.View):
         self.sprites.append(self.inky)
         self.sprites.append(self.clyde)
 
-       
+        # NOTE: Commented out for clarity
         #create pellets
-        pellet_x, pellet_y = 112,85
-        for iy in range(29):
-            for ix in range(26):
-                pellet = Pellet('images/pellet.png',
-                                point=1,
-                                start_pos=(pellet_x + ix*19.5,pellet_y + iy*20))
+        pellet_x, pellet_y = 115, 85
+        # for iy in range(29):
+        #     for ix in range(25):
+        #         pellet = Pellet('images/pellet.png',
+        #                         point=1,
+        #                         start_pos=(pellet_x + ix*22,pellet_y + iy*20))
 
-                #add pellet to list
-                self.sprites.append(pellet)
-                self.pellet_list.append(pellet)
+        #         #add pellet to list
+        #         self.sprites.append(pellet)
+        #         self.pellet_list.append(pellet)
+
+
         
+
+        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # Used for movement queues, and should in theory be applicable to ghost pathfinding
+        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
+        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
+            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
+            # PIVOT_ROW = [645, 575, 515, 385]
+
+        # NOTE: previous pellets only commented out for clarity. These can be removed/readded to point system, but may be worth keeping for clarity
+        # Reduced pellet spawn to figure out key coordinates
+
+        # Valid Column 1
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
+        # Valid Column 2
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(225, 645)))
+        # Valid Column 3
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(325, 645)))
+        # Valid Column 4
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(385, 645)))
+        # Valid Column 5
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(485, 645)))
+        # Valid Column 6
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(595, 645)))
+
+        # Valid Row 1 is same as col 1
+        # self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
+        # Valid Row 2 
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 575)))
+        # Valid Row 3
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 515)))
+        # Valid Row 4
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 385)))
+
+
+        # NOTE: These are the ones that don't follow a consistent row/column pattern
+        # Offset Column 1
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(285, 515)))
+
+        # Offset Column 2
+        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(425, 515)))
+
         #create big pellets
     
         big_pellet_0 = BigPellet(start_pos = (112,85))
         big_pellet_1 = BigPellet(start_pos = (112,-85)) 
         big_pellet_2 = BigPellet(start_pos = (412,85))
         big_pellet_3 = BigPellet(start_pos = (412,-85))  
+        temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
@@ -114,6 +160,13 @@ class GameView(arcade.View):
 
     def on_update(self,delta_time):
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+        print(f"PAC SIZE: {self.pacman.size}")
+        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        print(f"horizontal factor: {self.pacman.horizontal_direction}")
+        print(f"vertical factor: {self.pacman.vertical_direction}")
+        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
+        print(f"directions: {self.pacman.directions}")
+        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
         
         
         for sprite in self.sprites:
@@ -122,6 +175,15 @@ class GameView(arcade.View):
         
         self.sprites.update()
         self.pacman.update_animation(delta_time)
+        self.pacman.update_rotation()
+        self.blinky.update_animation()
+        self.clyde.update_animation()
+        self.inky.update_animation()
+        self.pinky.update_animation()
+        self.blinky.update_eyes()
+        self.clyde.update_eyes()
+        self.inky.update_eyes()
+        self.pinky.update_eyes()
 
         #pellet collsions
         points = Pellet.pellet_collision(self.pacman, self.pellet_list)
