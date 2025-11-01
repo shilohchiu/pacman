@@ -358,7 +358,6 @@ class Pacman(Character):
                 if self.overwrite[0] == "UP" and self.up_pressed:
                     self.directions = (0, 1)
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
-                    self.change_y = -PLAYER_MOVEMENT_SPEED
                     self.directions = (0, -1)
 
                 self.overwrite = [None, None]
@@ -497,15 +496,17 @@ class Clyde(Character):
 
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point=1, scale = .07, start_pos = (0,0)):
+    def __init__(self, image, point=1, scale = .05, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale=scale)
         self.position = start_pos
         self.point = point
+        
     
     def return_point(self):
         return self.point
     
+    @staticmethod
     def pellet_collision(pacman, pellet_list):
         pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
         points = 0
@@ -518,7 +519,7 @@ class BigPellet(Pellet):
     def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
                          point=10, 
-                         scale = 5,
+                         scale = .07,
                          start_pos=start_pos)
 class Fruit(Pellet):
     def __init__(self, image = 'images/fruit.png', start_pos = (0,0)):

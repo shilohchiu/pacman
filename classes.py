@@ -51,19 +51,23 @@ class GameView(arcade.View):
         self.pellet_list = arcade.SpriteList()
 
 
-        # Create wall spritelist
-        self.wall_list = arcade.SpriteList()
-        self.wall_list.enable_spatial_hashing()
-        self.walls = Walls()
-        self.wall_list.append(self.walls)
+        # Create wall spritelist 
+        #TODO: OLD CODE
+        #self.wall_list = arcade.SpriteList()
+        #self.wall_list.enable_spatial_hashing()
+        #self.walls = Walls()
+        #self.wall_list.append(self.walls)
+
+        # sprite list for walls
+        #self.walls = arcade.SpriteList()
+        #create_walls(self.walls)
+
+        self.walls = arcade.SpriteList()
+        self.walls.enable_spatial_hashing()
+        create_walls(self.walls)
 
         #create Score 
         self.score = 0
-
-        # sprite list for walls
-        self.walls = arcade.SpriteList()
-
-        create_walls(self.walls)
 
         # create characters
         self.pacman = Pacman(self.walls)
@@ -79,20 +83,39 @@ class GameView(arcade.View):
         self.sprites.append(self.inky)
         self.sprites.append(self.clyde)
 
-        # NOTE: Commented out for clarity
-        #create pellets
-        pellet_x, pellet_y = 115, 85
-        # for iy in range(29):
-        #     for ix in range(25):
-        #         pellet = Pellet('images/pellet.png',
-        #                         point=1,
-        #                         start_pos=(pellet_x + ix*22,pellet_y + iy*20))
+        # create pellets
+        
+        temp_list = arcade.SpriteList()
 
-        #         #add pellet to list
-        #         self.sprites.append(pellet)
-        #         self.pellet_list.append(pellet)
+        for x in float_range (95,610,19.5):
+            for y in float_range (85,670,20):
+                
+                temp = arcade.SpriteCircle(7.5, arcade.color.WHITE)
+                temp.center_x = x
+                temp.center_y = y
+                temp_list.append(temp)
 
 
+                #check if pellet space does not collide with walls
+                if arcade.check_for_collision_with_list(temp,self.walls):
+                    continue
+
+                #locations to skip 
+
+                #ghost house
+                if 250 < x < 470 and 280 < y < 490:
+                    continue
+
+                #alleyway 
+                if (80 < x < 220 or 490 < x < 620) and 280 < y < 490:
+                    continue
+                
+                #if space matches all criteria generate pellet
+                pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
+                self.sprites.append(pellet)
+                self.pellet_list.append(pellet)
+        
+        print(f"Pellet list length = {len(self.pellet_list)} \n Should = 244")
         
 
         # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
@@ -102,45 +125,13 @@ class GameView(arcade.View):
             # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
             # PIVOT_ROW = [645, 575, 515, 385]
 
-        # NOTE: previous pellets only commented out for clarity. These can be removed/readded to point system, but may be worth keeping for clarity
-        # Reduced pellet spawn to figure out key coordinates
-
-        # Valid Column 1
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
-        # Valid Column 2
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(225, 645)))
-        # Valid Column 3
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(325, 645)))
-        # Valid Column 4
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(385, 645)))
-        # Valid Column 5
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(485, 645)))
-        # Valid Column 6
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(595, 645)))
-
-        # Valid Row 1 is same as col 1
-        # self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 645)))
-        # Valid Row 2 
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 575)))
-        # Valid Row 3
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 515)))
-        # Valid Row 4
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(115, 385)))
-
-
-        # NOTE: These are the ones that don't follow a consistent row/column pattern
-        # Offset Column 1
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(285, 515)))
-
-        # Offset Column 2
-        self.sprites.append(Pellet('images/pellet.png', point=1, start_pos=(425, 515)))
-
+        
         #create big pellets
     
-        big_pellet_0 = BigPellet(start_pos = (112,85))
-        big_pellet_1 = BigPellet(start_pos = (112,-85)) 
-        big_pellet_2 = BigPellet(start_pos = (412,85))
-        big_pellet_3 = BigPellet(start_pos = (412,-85))  
+        big_pellet_0 = BigPellet(start_pos = (115,625))
+        big_pellet_1 = BigPellet(start_pos = (595,625)) 
+        big_pellet_2 = BigPellet(start_pos = (115,200))
+        big_pellet_3 = BigPellet(start_pos = (595,200))  
         temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
@@ -149,14 +140,14 @@ class GameView(arcade.View):
         
     def on_draw(self):
         self.clear()
-
+        self.walls.draw()
         self.sprites.draw()
 
         #add score text temp
         output = f'Score: {self.score}'
         arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
 
-        self.walls.draw()
+        
 
     def on_update(self,delta_time):
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))

@@ -378,21 +378,25 @@ def create_bottom_inner_pieces(walls):
                MINI_WIDTH,
                MINI_HEIGHT + TILE_WIDTH)
     
-
+# range helper function for pellets 
+def float_range(start, stop, step):
+     while start < stop:
+          yield start
+          start += step 
 """
 Main executable function where 
 game runs.
 """
-import arcade
-import classes
+# import arcade
+# import classes
 
-def main():
-    """ Main function """
-    # Create a window class. This is what actually shows up on screen
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
-    menu_view = classes.MenuView()
-    window.show_view(menu_view)
-    arcade.run()
+# def main():
+#     """ Main function """
+#     # Create a window class. This is what actually shows up on screen
+#     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
+#     menu_view = classes.MenuView()
+#     window.show_view(menu_view)
+#     arcade.run()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
