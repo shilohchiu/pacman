@@ -1,6 +1,7 @@
 import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
 from misc import *
+from walls import create_walls
 from constants import *
 
 class MenuView(arcade.View):
