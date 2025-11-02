@@ -12,7 +12,7 @@ def create_walls(walls):
     create_outer_pieces(walls)
     create_top_inner_pieces(walls)
     create_bottom_inner_pieces(walls)
-    create_spawn_box(walls)
+    # create_spawn_box(walls)
     
 def create_box(walls,
                x_position,
