@@ -40,10 +40,10 @@ class Character(arcade.Sprite):
         #print("TARGET AT INIT: ")
         #print(self.target)
         self.walls = walls
-     
+
     def get_position(self):
         return (self.center_x * 1, self.center_y * 1)
-    
+
     def set_movement(self, wtf):
         #print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
@@ -51,18 +51,18 @@ class Character(arcade.Sprite):
         #print("PATH GENERATED")
         self.pathfind(self)
         #print("PATH FOUND (lol)")
-    
+
     def set_target(self, target):
         #placeholder to be overwritten
         self.target = target
         #print("GOT TARGET: ")
         #print(self.target)
-    
+
     def generate_path(self, idk):
         self_pos = (self.center_x, self.center_y)
         if self.path == None or self.path[0] == self_pos:
-            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0, 
-                                              WINDOW_WIDTH, 0, WINDOW_HEIGHT)
+            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0,
+                                                WINDOW_WIDTH, 0, WINDOW_HEIGHT)
             #print("BARRIER CREATED")
             #print(f"TARGET: {self.target}")
             #print(f"SELF POS: {self_pos}")
@@ -74,7 +74,7 @@ class Character(arcade.Sprite):
         try:
             path_x = self.path[0][0]
             path_y = self.path[0][1]
-        
+
             #print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
             #print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
             x_diff = abs(path_x - self.center_x)
@@ -88,7 +88,7 @@ class Character(arcade.Sprite):
             else:
                 self.horizontal_direction = 0
                 #print("HORIZONTALLY ALIGNED")
-            
+
             if self.horizontal_direction == 0:
                 if self.center_y < path_y and y_diff > 5:
                     self.vertical_direction = 1
@@ -118,12 +118,13 @@ class Character(arcade.Sprite):
             print("Invalid state name")
 
     def on_update(self, delta_time):
-        #Edits 
+        #Edits
         #self.blinky.find_movement(self)
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # NOTE: these constants may be commented in a few different places,
+        #essentially just places where pacman can make a valid turn
         # Used for movement queues, and should in theory be applicable to ghost pathfinding
         # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
         # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
@@ -133,7 +134,7 @@ class Character(arcade.Sprite):
         # NOTE: replaces "on_grid" logic, and instead looks at new pivot constants
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
-        
+
         # NOTE: checks for valid value in +/- 5 or 7 range (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
         plinus_x = self.center_x - 5, self.center_x + 5
@@ -152,7 +153,8 @@ class Character(arcade.Sprite):
             if num in PIVOT_COL:
                 self.in_piv_col = True
             # NOTE: Stops row 1 pathfinding into offset junction
-            # Similar fix will be needed for all unique/offset junctions, probably can find cleaner fix
+            # Similar fix will be needed for all unique/offset junctions,
+                            # probably can find cleaner fix
             if row == 645 and (num == 225 or num == 425):
                     self.in_piv_col = False
 
@@ -221,7 +223,8 @@ class Pacman(Character):
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
 
-        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # NOTE: these constants may be commented in a few different places,
+        # essentially just places where pacman can make a valid turn
         # Used for movement queues, and should in theory be applicable to ghost pathfinding
         # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
         # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
@@ -355,8 +358,8 @@ class Blinky(Character):
     """
     def __init__(self, walls, start_pos=(300, 450)):
         super().__init__(walls,
-                         "images/blinky.png", 
-                         scale = CHARACTER_SCALE, 
+                         "images/blinky.png",
+                         scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.target = (Pacman.center_x, Pacman.center_y)
@@ -391,8 +394,8 @@ class Pinky(Character):
     """
     def __init__(self, walls, start_pos=(310, 310)):
         super().__init__(walls, 
-                         "images/pinky.png", 
-                         scale = CHARACTER_SCALE, 
+                         "images/pinky.png",
+                         scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.texture_open = arcade.load_texture("images/pinky right 0.gif")
@@ -422,8 +425,8 @@ class Inky(Character):
     """
     def __init__(self, walls, start_pos=(290, 290)):
         super().__init__(walls,
-                         "images/inky.png", 
-                         scale = CHARACTER_SCALE, 
+                         "images/inky.png",
+                         scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.texture_open = arcade.load_texture("images/inky right 0.gif")
@@ -452,8 +455,8 @@ class Clyde(Character):
     """
     def __init__(self, walls, start_pos=(320, 300)):
         super().__init__(walls,
-                         "images/clyde.png", 
-                         scale = CHARACTER_SCALE, 
+                         "images/clyde.png",
+                         scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.texture_open = arcade.load_texture("images/clyde right 0.gif")
@@ -499,7 +502,7 @@ class Pellet(arcade.Sprite):
 class BigPellet(Pellet):
     def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
-                         point=10, 
+                         point=10,
                          scale = .07,
                          start_pos=start_pos)
 class Fruit(Pellet):
