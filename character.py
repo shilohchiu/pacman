@@ -502,7 +502,7 @@ class Pellet(arcade.Sprite):
 class BigPellet(Pellet):
     def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
-                         point=10,
+                         point=50,
                          scale = .07,
                          start_pos=start_pos)
 class Fruit(Pellet):

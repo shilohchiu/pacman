@@ -108,6 +108,11 @@ class GameView(arcade.View):
                 if (80 < x < 220 or 490 < x < 620) and 280 < y < 490:
                     continue
                 
+                #big pellet locations 
+                if (110 < x < 120 or 590 < x < 610) and 620 < y < 630:
+                    continue
+                elif (110 < x < 120 or 590 < x < 610) and 200 < y < 220:
+                    continue
                 #if space matches all criteria generate pellet
                 pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
                 self.sprites.append(pellet)
@@ -126,10 +131,10 @@ class GameView(arcade.View):
         
         #create big pellets
     
-        big_pellet_0 = BigPellet(start_pos = (115,625))
-        big_pellet_1 = BigPellet(start_pos = (595,625)) 
-        big_pellet_2 = BigPellet(start_pos = (115,200))
-        big_pellet_3 = BigPellet(start_pos = (595,200))  
+        big_pellet_0 = BigPellet(start_pos = (115,626))
+        big_pellet_1 = BigPellet(start_pos = (597,626)) 
+        big_pellet_2 = BigPellet(start_pos = (115,210))
+        big_pellet_3 = BigPellet(start_pos = (597,210))  
         temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
