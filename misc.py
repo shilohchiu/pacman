@@ -1,16 +1,18 @@
 """
-Miscellaneous helper functions that don't belong 
-to a class but help with calculations
+contains functions for 
+spawning in maze
 """
 
 from constants import *
 import arcade
 
 def create_walls(walls):
-    """Inner block"""
+    """function that is 
+    actually called"""
     create_outer_pieces(walls)
     create_top_inner_pieces(walls)
     create_bottom_inner_pieces(walls)
+    create_spawn_box(walls)
     
 def create_box(walls,
                x_position,
@@ -273,11 +275,12 @@ def create_top_inner_pieces(walls):
                            SKINNY_BOX_Y_POSITION,
                            MIDDLE_T_H_WIDTH,
                            SINGLE_UNIT_WIDTH,
-                        #    HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
                            SINGLE_UNIT_WIDTH,
                            PATH_WIDTH + 2 * MINI_HEIGHT)
 
 def create_bottom_inner_pieces(walls):
+    """boxes and shapes in the bottom 
+    portion of the maze"""
     # upper left vertical box
     create_box(walls,
                LEFT_VERTICAL_X_POS,
@@ -307,37 +310,51 @@ def create_bottom_inner_pieces(walls):
                SINGLE_UNIT_WIDTH)
     
     """UPSIDE DOWN T SHAPES"""
-    # upper left vertical box
+    # left vertical box
     create_box(walls,
                LEFT_VERTICAL_X_POS,
-               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               LEFT_UPSIDE_DOWN_Y_POS,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
     
-    # upper right vertical box
+    # left horizontal box
+    create_box(walls,
+               LEFT_UPSIDE_DOWN_X_POS,
+               LEFT_UPSIDE_DOWN_Y_POS,
+               UPSIDE_DOWN_H_WIDTH,
+               SINGLE_UNIT_WIDTH
+               )
+    
+    # right vertical box
     create_box(walls,
                RIGHT_VERTICAL_X_POS,
-               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - SINGLE_UNIT_WIDTH - OUTER_VERTICAL_MINI + 2 * TILE_WIDTH,
+               LEFT_UPSIDE_DOWN_Y_POS,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
+    
+    # right horizontal box
+    create_box(walls,
+               RIGHT_UPSIDE_DOWN_X_POS,
+               LEFT_UPSIDE_DOWN_Y_POS,
+               UPSIDE_DOWN_H_WIDTH,
+               SINGLE_UNIT_WIDTH
+               )
     
     """MIDDLE UPPER T SHAPE"""
     create_upright_t_shape(walls,
-                           LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
+                           MIDDLE_T_X_POS,
                            LOWEST_H_MINI_COMPONENT_Y_POS,
                            MIDDLE_T_H_WIDTH,
                            SINGLE_UNIT_WIDTH,
-                        #    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - int(2 * TILE_WIDTH),
                            SINGLE_UNIT_WIDTH,
                            PATH_WIDTH + 2 * MINI_HEIGHT)
     
     """MIDDLE LOWER T SHAPE"""
     create_upright_t_shape(walls,
-                           LEFT_MINIER_BOX_X_POSITION + SINGLE_UNIT_WIDTH + PATH_WIDTH - TILE_WIDTH,
-                           LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - TILE_WIDTH - SINGLE_UNIT_WIDTH,
+                           MIDDLE_T_X_POS,
+                           LOWER_MIDDLE_T_Y_POS,
                            MIDDLE_T_H_WIDTH,
                            SINGLE_UNIT_WIDTH,
-                        #    OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - int(2 * TILE_WIDTH),
                            SINGLE_UNIT_WIDTH,
                            PATH_WIDTH + 2 * MINI_HEIGHT)
     
@@ -373,30 +390,47 @@ def create_bottom_inner_pieces(walls):
     """EDGE BITS"""
     # right bit
     create_box(walls,
-               WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - int(TILE_WIDTH / 2) - MINI_WIDTH,
-               LOWEST_H_MINI_COMPONENT_Y_POS - 2 * PATH_WIDTH - TILE_WIDTH - SINGLE_UNIT_WIDTH,
-               MINI_WIDTH,
+               RIGHT_BOTTOM_BIT_X_POS,
+               BOTTOM_BIT_Y_POS,
+               PATH_WIDTH + TILE_WIDTH,
                MINI_HEIGHT + TILE_WIDTH)
     
+    # left bit
+    create_box(walls,
+               LEFT_BOTTOM_BIT_X_POS,
+               BOTTOM_BIT_Y_POS,
+               PATH_WIDTH + TILE_WIDTH,
+               MINI_HEIGHT + TILE_WIDTH)
+    
+def create_spawn_box(walls):
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS,
+                    MIDDLE_T_H_WIDTH)
+    
+    create_vertical(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS,
+                    SPAWN_BOX_HEIGHT)
+    
+    create_vertical(walls,
+                    MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - TILE_WIDTH,
+                    SPAWN_BOX_Y_POS,
+                    SPAWN_BOX_HEIGHT)
+    
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_MINI_WIDTH)
+    
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - SPAWN_BOX_MINI_WIDTH,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_MINI_WIDTH)
+     
+
 # range helper function for pellets 
 def float_range(start, stop, step):
      while start < stop:
           yield start
           start += step 
-"""
-Main executable function where 
-game runs.
-"""
-# import arcade
-# import classes
-
-# def main():
-#     """ Main function """
-#     # Create a window class. This is what actually shows up on screen
-#     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, "PACMAN")
-#     menu_view = classes.MenuView()
-#     window.show_view(menu_view)
-#     arcade.run()
-
-# if __name__ == "__main__":
-#     main()
