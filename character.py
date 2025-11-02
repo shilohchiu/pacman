@@ -42,6 +42,7 @@ class Character(arcade.Sprite):
         self.walls = walls
 
     def get_position(self):
+        # position of sprite
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
@@ -60,7 +61,7 @@ class Character(arcade.Sprite):
 
     def generate_path(self, idk):
         self_pos = (self.center_x, self.center_y)
-        if self.path == None or self.path[0] == self_pos:
+        if self.path is None or self.path[0] == self_pos:
             barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0,
                                                 WINDOW_WIDTH, 0, WINDOW_HEIGHT)
             #print("BARRIER CREATED")
@@ -135,7 +136,8 @@ class Character(arcade.Sprite):
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
 
-        # NOTE: checks for valid value in +/- 5 or 7 range (some weird alternating position values when hugging wall)
+        # NOTE: checks for valid value in +/- 5 or 7 range
+        # (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
         plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
@@ -155,8 +157,8 @@ class Character(arcade.Sprite):
             # NOTE: Stops row 1 pathfinding into offset junction
             # Similar fix will be needed for all unique/offset junctions,
                             # probably can find cleaner fix
-            if row == 645 and (num == 225 or num == 425):
-                    self.in_piv_col = False
+            if row == 645 and (num in (225,425)):
+                self.in_piv_col = False
 
         #print("SET TARGET")
         self.set_movement(self)
@@ -393,7 +395,7 @@ class Pinky(Character):
     Pinky subclass
     """
     def __init__(self, walls, start_pos=(310, 310)):
-        super().__init__(walls, 
+        super().__init__(walls,
                          "images/pinky.png",
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
