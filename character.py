@@ -13,7 +13,6 @@ class Character(arcade.Sprite):
     """
     Character superclass
     """
-    
     def __init__(self, walls, image, scale = 1, start_pos= (0,0)):
 
         #this refers to the sprite class and allows arcade commands to be used
@@ -41,11 +40,10 @@ class Character(arcade.Sprite):
         #print("TARGET AT INIT: ")
         #print(self.target)
         self.walls = walls
-    
+     
     def get_position(self):
         return (self.center_x * 1, self.center_y * 1)
     
-
     def set_movement(self, wtf):
         #print("FINDING MOVEMENT")
         # self.horizontal_direction = 1
@@ -63,7 +61,8 @@ class Character(arcade.Sprite):
     def generate_path(self, idk):
         self_pos = (self.center_x, self.center_y)
         if self.path == None or self.path[0] == self_pos:
-            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0, WINDOW_WIDTH, 0, WINDOW_HEIGHT)
+            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0, 
+                                              WINDOW_WIDTH, 0, WINDOW_HEIGHT)
             #print("BARRIER CREATED")
             #print(f"TARGET: {self.target}")
             #print(f"SELF POS: {self_pos}")
@@ -76,7 +75,6 @@ class Character(arcade.Sprite):
             path_x = self.path[0][0]
             path_y = self.path[0][1]
         
-
             #print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
             #print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
             x_diff = abs(path_x - self.center_x)
@@ -99,7 +97,7 @@ class Character(arcade.Sprite):
                 else:
                     self.vertical_direction = 0
                     #print("VERTICALLY ALIGNED")
-            
+
             if x_diff <= 5 and y_diff <= 5:
                 self.path.pop(0)
                 if len(self.path) == 0:
@@ -113,14 +111,13 @@ class Character(arcade.Sprite):
         self.attack = True
         self.death = False
         self.standby = False
-        
+
         if state in ["wandering", "scattering", "attack", "death", "standby"]:
             setattr(self, state, True)
         else:
             print("Invalid state name")
 
     def on_update(self, delta_time):
-    
         #Edits 
         #self.blinky.find_movement(self)
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
@@ -141,7 +138,7 @@ class Character(arcade.Sprite):
         # ranges chosen are magic numbers
         plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
-        
+
         self.in_piv_col = False
         self.in_piv_row = False
         row = 0
@@ -158,27 +155,19 @@ class Character(arcade.Sprite):
             # Similar fix will be needed for all unique/offset junctions, probably can find cleaner fix
             if row == 645 and (num == 225 or num == 425):
                     self.in_piv_col = False
-        
-    
-
-                
-        
-
 
         #print("SET TARGET")
         self.set_movement(self)
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
-        
 
         self.physics_engine.update()
-        
+
         if self.last_pos == (self.center_x, self.center_y):
             self.horizontal_direction = 0
             self.vertical_direction = 0
 
         self.last_pos = (self.center_x, self.center_y)
-
 
     def update_animation(self, delta_time: float = 1/60):
         """Animate between open and closed mouth."""
@@ -217,7 +206,7 @@ class Pacman(Character):
         self.texture_close = arcade.load_texture("images/pac-man close.png")
 
         self.texture = self.texture_open
-   
+
         self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
         self.down_pressed = False
@@ -246,38 +235,35 @@ class Pacman(Character):
         if self.horizontal_queue == 0 and self.vertical_queue == 0:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
-        
+
         if self.in_piv_col and self.in_piv_row:
             self.horizontal_direction = self.horizontal_queue
             self.vertical_direction = self.vertical_queue
             self.horizontal_queue = 0
             self.vertical_queue = 0
-        
+
         elif self.in_piv_col and not self.in_piv_row:
             self.horizontal_direction = self.horizontal_queue
             self.horizontal_queue = 0
             self.vertical_queue = self.vertical_direction
-        
+
         elif not self.in_piv_col and self.in_piv_row:
             self.horizontal_queue = self.horizontal_direction
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
-        
+
         else:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
 
 
-
-
-    
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
             if self.right_pressed:
                 self.overwrite = ["RIGHT", "UP"]
             if self.left_pressed:
                 self.overwrite = ["LEFT", "UP"]
-            
+
             self.directions = (0,1)
             self.set_movement(self)
 
@@ -290,7 +276,7 @@ class Pacman(Character):
                 self.overwrite = ["LEFT", "DOWN"]
 
             self.directions = (0,-1)
-            
+
             self.down_pressed = True
 
         elif key == arcade.key.LEFT:
@@ -298,12 +284,11 @@ class Pacman(Character):
                 self.overwrite = ["UP", "LEFT"]
             if self.down_pressed:
                 self.overwrite = ["DOWN", "LEFT"]
-            
+
             self.directions = (-1, 0)
-            
-            
+
             self.left_pressed = True
-            
+
         elif key == arcade.key.RIGHT:
             if self.up_pressed:
                 self.overwrite = ["UP", "RIGHT"]
@@ -313,9 +298,9 @@ class Pacman(Character):
             self.right_pressed = True
 
             self.directions = (1,0)
-    
+
         self.set_movement(self)
-            
+
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP:
@@ -343,15 +328,15 @@ class Pacman(Character):
         elif key == arcade.key.LEFT :
             self.left_pressed = False
             if self.overwrite[1] == "LEFT":
-                
+
                 if self.overwrite[0] == "UP" and self.up_pressed:
                     self.directions = (0, 1)
-                    
+
                 if self.overwrite[0] == "DOWN" and self.down_pressed:
                     self.directions = (0, -1)
 
                 self.overwrite = [None, None]
-            
+
         elif key == arcade.key.RIGHT :
             self.right_pressed = False
             if self.overwrite[1] == "RIGHT":
@@ -395,11 +380,10 @@ class Blinky(Character):
 
     def find_movement(self, target=None):
         self.horizontal_direction = 1
-    
+
     # disables ghost behavior
     def on_update(self, delta_time):
         nothing = ""
-    
 
 class Pinky(Character):
     """
@@ -428,7 +412,7 @@ class Pinky(Character):
         elif self.vertical_direction < 0:
             self.texture_open = arcade.load_texture("images/pinky down 0.gif")
             self.texture_close = arcade.load_texture("images/pinky down 1.gif") # down
-            
+
     def on_update(self, delta_time):
         nothing = ""
 
@@ -475,7 +459,6 @@ class Clyde(Character):
         self.texture_open = arcade.load_texture("images/clyde right 0.gif")
         self.texture_close = arcade.load_texture("images/clyde right 1.gif")
 
-
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
@@ -490,10 +473,9 @@ class Clyde(Character):
         elif self.vertical_direction < 0:
             self.texture_open = arcade.load_texture("images/clyde down 0.gif")
             self.texture_close = arcade.load_texture("images/clyde down 1.gif") # down
-    
+
     def on_update(self, delta_time):
         nothing = ""
-
 
 class Pellet(arcade.Sprite):
     def __init__(self, image, point=1, scale = .05, start_pos = (0,0)):
@@ -501,11 +483,10 @@ class Pellet(arcade.Sprite):
         super().__init__(image, scale=scale)
         self.position = start_pos
         self.point = point
-        
-    
+
     def return_point(self):
         return self.point
-    
+
     @staticmethod
     def pellet_collision(pacman, pellet_list):
         pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
