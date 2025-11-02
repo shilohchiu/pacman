@@ -496,6 +496,9 @@ class Pellet(arcade.Sprite):
         points = 0
         for pellet in pellet_collision:
             points += getattr(pellet, "point",0)
+            if isinstance(pellet,BigPellet):
+                #change ghost state
+                print('change state!!')
             pellet.remove_from_sprite_lists()
         return points
 

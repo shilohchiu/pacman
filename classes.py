@@ -49,6 +49,7 @@ class GameView(arcade.View):
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
+        self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
 
@@ -59,6 +60,7 @@ class GameView(arcade.View):
 
         #create Score 
         self.score = 0
+        self.game_over = False
 
         #create pacmans score images
         for x in range(110,220,40):
@@ -76,10 +78,18 @@ class GameView(arcade.View):
         self.pacman.size = (32, 32)
 
         self.sprites.append(self.pacman)
+
         self.sprites.append(self.blinky)
+        self.ghosts.append(self.blinky)
+
         self.sprites.append(self.pinky)
+        self.ghosts.append(self.pinky)
+
         self.sprites.append(self.inky)
+        self.ghosts.append(self.inky)
+
         self.sprites.append(self.clyde)
+        self.ghosts.append(self.clyde)
 
         # create pellets
         
@@ -164,9 +174,25 @@ class GameView(arcade.View):
                          WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
         
-        
+        #game over screen
+        if self.game_over:
+            arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
+
+            arcade.draw_text("GAME OVER",
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-100,
+                            arcade.color.RED, font_size=48, anchor_x="center", bold=True)
+            arcade.draw_text(f"Score: {self.score:06d}",
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-200,
+                            arcade.color.WHITE, font_size=28, anchor_x="center")
+            arcade.draw_text("Click anywhere or press ESC to close",
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT -400,
+                            arcade.color.LIGHT_GRAY, font_size=18, anchor_x="center")
 
     def on_update(self,delta_time):
+        #close logic when game over
+        if self.game_over:
+            return
+        
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
         print(f"PAC SIZE: {self.pacman.size}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
@@ -197,10 +223,39 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list)
         self.score += points
 
+        #collision handeling for ghost -> pacman 
+        collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
+        if collision:
+            # remove one life icon (last in list)
+            if len(self.pacman_score_list) > 0:
+                # remove sprite from SpriteList
+                self.pacman_score_list.remove((self.pacman_score_list[-1]))
+                # reset pacman to start position
+                x, y = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+                self.pacman.center_x = x
+                self.pacman.center_y = y
+
+            else:
+                # no lives left
+                self.game_over = True
+                print("GAME OVER")
+
+    def on_mouse_press(self):
+        if getattr(self, "game_over", False):
+            if self.window:
+                self.window.close()
+            return
+        
     def on_key_press(self, key, modifiers):
-        self.pacman.on_key_press(key, modifiers)
+        if key == arcade.key.ESCAPE:
+            if self.window:
+                self.window.close()
+            return
+        if not self.game_over:
+            self.pacman.on_key_press(key, modifiers)
 
     def on_key_release(self, key, modifiers):
-        self.pacman.on_key_release(key, modifiers)
+        if not self.game_over:
+            self.pacman.on_key_release(key, modifiers)
     
     
