@@ -119,7 +119,7 @@ class GameView(arcade.View):
                 self.pellet_list.append(pellet)
 
         print(f"Pellet list length = {len(self.pellet_list)} \n Should = 244")
-        
+
         # NOTE: these constants may be commented in a few different places,
         # essentially just places where pacman can make a valid turn
         # Used for movement queues, and should in theory be applicable to ghost pathfinding
@@ -153,7 +153,7 @@ class GameView(arcade.View):
                          WINDOW_WIDTH - 570, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
         # Current Score
-        output = (f"{self.score:06d}")
+        output = f"{self.score:06d}"
         arcade.draw_text(output,
                          WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
@@ -177,7 +177,7 @@ class GameView(arcade.View):
 
 
         for sprite in self.sprites:
-            if not (isinstance(sprite, Pellet)):
+            if not isinstance(sprite, Pellet):
                 sprite.on_update(delta_time)
 
         self.sprites.update()
@@ -201,4 +201,3 @@ class GameView(arcade.View):
 
     def on_key_release(self, key, modifiers):
         self.pacman.on_key_release(key, modifiers)
-
