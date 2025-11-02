@@ -11,7 +11,7 @@ def create_walls(walls):
     create_outer_pieces(walls)
     create_top_inner_pieces(walls)
     create_bottom_inner_pieces(walls)
-   #create_spawn_box(walls)
+    # create_spawn_box(walls)
 
 def create_box(walls,
                x_position,
@@ -381,28 +381,28 @@ def create_bottom_inner_pieces(walls):
                PATH_WIDTH + TILE_WIDTH,
                MINI_HEIGHT + TILE_WIDTH)
 
-# def create_spawn_box(walls):
-#     create_horizontal(walls,
-#                     MIDDLE_T_X_POS,
-#                     SPAWN_BOX_Y_POS,
-#                     MIDDLE_T_H_WIDTH)
+def create_spawn_box(walls):
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS,
+                    MIDDLE_T_H_WIDTH)
 
-#     create_vertical(walls,
-#                     MIDDLE_T_X_POS,
-#                     SPAWN_BOX_Y_POS,
-#                     SPAWN_BOX_HEIGHT)
+    create_vertical(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS,
+                    SPAWN_BOX_HEIGHT)
 
-#     create_vertical(walls,
-#                     MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - TILE_WIDTH,
-#                     SPAWN_BOX_Y_POS,
-#                     SPAWN_BOX_HEIGHT)
+    create_vertical(walls,
+                    MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - TILE_WIDTH,
+                    SPAWN_BOX_Y_POS,
+                    SPAWN_BOX_HEIGHT)
 
-#     create_horizontal(walls,
-#                     MIDDLE_T_X_POS,
-#                     SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
-#                     SPAWN_BOX_MINI_WIDTH)
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_MINI_WIDTH)
 
-#     create_horizontal(walls,
-#                     MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - SPAWN_BOX_MINI_WIDTH,
-#                     SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
-#                     SPAWN_BOX_MINI_WIDTH)
+    create_horizontal(walls,
+                    MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - SPAWN_BOX_MINI_WIDTH,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_MINI_WIDTH)
