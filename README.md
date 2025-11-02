@@ -1,6 +1,7 @@
 # CS 3050 Final Project - Pacman
 
-Lillian Ballantine, Shiloh Chiu, Henry Cussatt, Eddie Hyland
+**Lillian Ballantine, Shiloh Chiu, Henry Cussatt, Eddie Hyland**
+
 Python Arcade recreation of Pacman for UVM's Software Engineering.
 
 # Installation
