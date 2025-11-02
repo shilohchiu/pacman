@@ -39,29 +39,20 @@ class MenuView(arcade.View):
         self.window.show_view(game_view)
 
 class GameView(arcade.View):
+
     """
     GameView class, shows playable game
     """
     def __init__(self):
-        # allows usage of View from arcade
         super().__init__()
         
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
+        self.pacman_score_list = arcade.SpriteList()
 
 
         # Create wall spritelist 
-        #TODO: OLD CODE
-        #self.wall_list = arcade.SpriteList()
-        #self.wall_list.enable_spatial_hashing()
-        #self.walls = Walls()
-        #self.wall_list.append(self.walls)
-
-        # sprite list for walls
-        #self.walls = arcade.SpriteList()
-        #create_walls(self.walls)
-
         self.walls = arcade.SpriteList()
         self.walls.enable_spatial_hashing()
         create_walls(self.walls)
@@ -69,6 +60,13 @@ class GameView(arcade.View):
         #create Score 
         self.score = 0
 
+        #create pacmans score images
+        for x in range(110,220,40):
+            pac_score=arcade.Sprite("images/pac-man.png", scale=.4)
+            pac_score.center_x = x
+            pac_score.center_y = 40
+            self.pacman_score_list.append(pac_score)
+      
         # create characters
         self.pacman = Pacman(self.walls)
         self.blinky = Blinky(self.walls)
@@ -137,16 +135,30 @@ class GameView(arcade.View):
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
+
         
     def on_draw(self):
         self.clear()
         self.walls.draw()
         self.sprites.draw()
+        self.pacman_score_list.draw()
 
-        #add score text temp
-        output = f'Score: {self.score}'
-        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+        #Level Text
+        arcade.draw_text("1UP  ",
+                         WINDOW_WIDTH - 570, WINDOW_HEIGHT - 40,
+                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+        # Current Score
+        output = (f"{self.score:06d}")
+        arcade.draw_text(output,
+                         WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40, 
+                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
+        
+        # Placeholder for high score later
+        arcade.draw_text("HIGH  000000",
+                         WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
+                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+        
         
 
     def on_update(self,delta_time):
