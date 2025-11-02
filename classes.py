@@ -45,19 +45,19 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
-        
+
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
 
-        # Create wall spritelist 
+        # Create wall spritelist
         self.walls = arcade.SpriteList()
         self.walls.enable_spatial_hashing()
         create_walls(self.walls)
 
-        #create Score 
+        #create Score
         self.score = 0
 
         #create pacmans score images
@@ -66,7 +66,7 @@ class GameView(arcade.View):
             pac_score.center_x = x
             pac_score.center_y = 40
             self.pacman_score_list.append(pac_score)
-      
+
         # create characters
         self.pacman = Pacman(self.walls)
         self.blinky = Blinky(self.walls)
@@ -82,12 +82,12 @@ class GameView(arcade.View):
         self.sprites.append(self.clyde)
 
         # create pellets
-        
+
         temp_list = arcade.SpriteList()
 
         for x in float_range (95,610,19.5):
             for y in float_range (85,670,20):
-                
+
                 temp = arcade.SpriteCircle(7.5, arcade.color.WHITE)
                 temp.center_x = x
                 temp.center_y = y
@@ -98,50 +98,50 @@ class GameView(arcade.View):
                 if arcade.check_for_collision_with_list(temp,self.walls):
                     continue
 
-                #locations to skip 
+                #locations to skip
 
                 #ghost house
                 if 250 < x < 470 and 280 < y < 490:
                     continue
 
-                #alleyway 
+                #alleyway
                 if (80 < x < 220 or 490 < x < 620) and 280 < y < 490:
                     continue
-                
-                #big pellet locations 
+
+                #big pellet locations
                 if (110 < x < 120 or 590 < x < 610) and 620 < y < 630:
                     continue
-                elif (110 < x < 120 or 590 < x < 610) and 200 < y < 220:
+                if (110 < x < 120 or 590 < x < 610) and 200 < y < 220:
                     continue
                 #if space matches all criteria generate pellet
                 pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
-        
+
         print(f"Pellet list length = {len(self.pellet_list)} \n Should = 244")
         
-
-        # NOTE: these constants may be commented in a few different places, essentially just places where pacman can make a valid turn
+        # NOTE: these constants may be commented in a few different places,
+        # essentially just places where pacman can make a valid turn
         # Used for movement queues, and should in theory be applicable to ghost pathfinding
         # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
         # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
             # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
             # PIVOT_ROW = [645, 575, 515, 385]
 
-        
+
         #create big pellets
-    
+
         big_pellet_0 = BigPellet(start_pos = (115,626))
-        big_pellet_1 = BigPellet(start_pos = (597,626)) 
+        big_pellet_1 = BigPellet(start_pos = (597,626))
         big_pellet_2 = BigPellet(start_pos = (115,210))
-        big_pellet_3 = BigPellet(start_pos = (597,210))  
+        big_pellet_3 = BigPellet(start_pos = (597,210))
         temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
 
-        
+
     def on_draw(self):
         self.clear()
         self.walls.draw()
@@ -155,16 +155,15 @@ class GameView(arcade.View):
         # Current Score
         output = (f"{self.score:06d}")
         arcade.draw_text(output,
-                         WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40, 
+                         WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
-        
+
         # Placeholder for high score later
         arcade.draw_text("HIGH  000000",
                          WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
-        
-        
+
 
     def on_update(self,delta_time):
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
@@ -175,12 +174,12 @@ class GameView(arcade.View):
         print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
-        
-        
+
+
         for sprite in self.sprites:
             if not (isinstance(sprite, Pellet)):
                 sprite.on_update(delta_time)
-        
+
         self.sprites.update()
         self.pacman.update_animation(delta_time)
         self.pacman.update_rotation()
@@ -202,5 +201,4 @@ class GameView(arcade.View):
 
     def on_key_release(self, key, modifiers):
         self.pacman.on_key_release(key, modifiers)
-    
-    
+
