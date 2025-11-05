@@ -1,5 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
 from misc import *
 from walls import create_walls
 from constants import *
@@ -223,6 +223,15 @@ class GameView(arcade.View):
         #pellet collsions
         points = Pellet.pellet_collision(self.pacman, self.pellet_list)
         self.score += points
+
+        # big pellet collision
+        pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
+        if pellet_collision:
+            Character.change_state(self.pinky,"scattering")
+            Character.change_state(self.inky,"scattering")
+            Character.change_state(self.blinky,"scattering")
+            Character.change_state(self.clyde,"scattering")
+
 
         #collision handeling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
