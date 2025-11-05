@@ -24,7 +24,7 @@ class Character(arcade.Sprite):
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.in_piv_col = False
-        self.in_piv_row= False
+        self.in_piv_row = False
         self.texture_open = []
         self.texture_close = []
         self.animation_timer = 0.0
@@ -68,6 +68,24 @@ class Character(arcade.Sprite):
             #print(f"TARGET: {self.target}")
             #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
+    
+    def fix_position(self, wtf):
+        current_closest_x = 0
+        current_closest_y = 0
+        
+        if (not self.in_piv_col and not self.in_piv_row) and (self.change_x == 0 and self.change_y == 0):
+            for position in PIVOT_COL:
+                if abs(self.center_x - position) < abs(self.center_x - current_closest_x):
+                    current_closest_x = position
+            
+            for position in PIVOT_ROW:
+                if abs(self.center_y - position) < abs(self.center_y - current_closest_y):
+                    current_closest_y = position
+        
+            self.center_x = current_closest_x
+            self.center_y = current_closest_y
+
+
 
     def pathfind(self, idk):
         print("PATH: ")
@@ -186,7 +204,7 @@ class Character(arcade.Sprite):
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
 
         self.physics_engine.update()
-
+        self.fix_position(self)
         if self.last_pos == (self.center_x, self.center_y):
             self.horizontal_direction = 0
             self.vertical_direction = 0
