@@ -3,6 +3,5 @@ __pycache__/
 .DS_Store
 references/
 
-
 #ignore firestore cred
 ps_firestore_cred.json
