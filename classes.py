@@ -200,6 +200,7 @@ class GameView(arcade.View):
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
         print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
+        print(f"recent piv col: {self.pacman.recent_piv_col} \t recent piv row: {self.pacman.recent_piv_row}")
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 

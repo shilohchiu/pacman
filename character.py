@@ -25,6 +25,9 @@ class Character(arcade.Sprite):
         self.vertical_direction = 0
         self.in_piv_col = False
         self.in_piv_row = False
+        self.recent_piv_col = 0
+        self.recent_piv_row = 0
+        self.need_adjustment = False
         self.texture_open = []
         self.texture_close = []
         self.animation_timer = 0.0
@@ -69,6 +72,11 @@ class Character(arcade.Sprite):
             #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
     
+    # TODO: maybe implement tracking most recent pivot position when changing boolean
+        # reset position to center of pivot position when attempting to make a turn
+        # could prevent stuck scenarios?
+        # also need to account for moving vertically freely in rows / horizontally in columns
+        # also disable recognition of columns in incorrect rows
     def fix_position(self, wtf):
         current_closest_x = 0
         current_closest_y = 0
@@ -82,6 +90,12 @@ class Character(arcade.Sprite):
                 if abs(self.center_y - position) < abs(self.center_y - current_closest_y):
                     current_closest_y = position
         
+            
+            print(f"FIXED POS FROM {self.center_x} to {current_closest_x}")
+            
+            
+            print(f"FIXED POS FROM {self.center_y} to {current_closest_y}")
+
             self.center_x = current_closest_x
             self.center_y = current_closest_y
 
@@ -187,11 +201,17 @@ class Character(arcade.Sprite):
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
                 self.in_piv_row = True
+                if self.recent_piv_row != num:
+                    self.need_adjustment = True
+                self.recent_piv_row = num
                 row = num
 
         for num in range(int(plinus_x[0]), int(plinus_x[1])):
             if num in PIVOT_COL:
                 self.in_piv_col = True
+                if self.recent_piv_col != num:
+                    self.need_adjustment = True
+                self.recent_piv_col = num
             # NOTE: Stops row 1 pathfinding into offset junction
             # Similar fix will be needed for all unique/offset junctions,
                             # probably can find cleaner fix
@@ -204,10 +224,10 @@ class Character(arcade.Sprite):
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
 
         self.physics_engine.update()
-        self.fix_position(self)
-        if self.last_pos == (self.center_x, self.center_y):
-            self.horizontal_direction = 0
-            self.vertical_direction = 0
+        #self.fix_position(self)
+        # if self.last_pos == (self.center_x, self.center_y):
+        #     self.horizontal_direction = 0
+        #     self.vertical_direction = 0
 
         self.last_pos = (self.center_x, self.center_y)
 
@@ -241,7 +261,7 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
+        super().__init__(walls, "images/pac-man close.png",scale = 0.25, start_pos=(385,385))
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -255,6 +275,7 @@ class Pacman(Character):
         self.left_pressed = False
         self.right_pressed = False
         self.directions = (0,0)
+        # self.center_x, self.center_y = 545,572
 
         self.overwrite = [None, None]
 
@@ -280,20 +301,35 @@ class Pacman(Character):
             self.vertical_queue = self.directions[1]
 
         if self.in_piv_col and self.in_piv_row:
+            # if self.need_adjustment:
+            #     print(f"ADJUSTED FROM {self.center_x} TO {self.recent_piv_col}")
+            #     print(f"ADJUSTED FROM {self.center_y} TO {self.recent_piv_row}")
+            #     self.center_x = self.recent_piv_col
+            #     self.center_y = self.recent_piv_row
+            #     self.need_adjustment = False
             self.horizontal_direction = self.horizontal_queue
             self.vertical_direction = self.vertical_queue
             self.horizontal_queue = 0
             self.vertical_queue = 0
+            
 
         elif self.in_piv_col and not self.in_piv_row:
+            if self.need_adjustment:
+                self.center_x = self.recent_piv_col
+                self.need_adjustment = False
             self.horizontal_direction = self.horizontal_queue
             self.horizontal_queue = 0
             self.vertical_queue = self.vertical_direction
+            
 
         elif not self.in_piv_col and self.in_piv_row:
+            if self.need_adjustment:
+                self.center_y = self.recent_piv_row
+                self.need_adjustment = False
             self.horizontal_queue = self.horizontal_direction
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
+            
 
         else:
             self.horizontal_queue = self.directions[0]
