@@ -107,16 +107,13 @@ class Character(arcade.Sprite):
             print("NO PATH")
 
     def change_state(self, state):
-        self.wandering = False
-        self.scattering = False
-        self.attack = True
-        self.death = False
-        self.standby = False
+        valid_states = ["wandering", "scattering", "attack", "death", "standby"]
 
-        if state in ["wandering", "scattering", "attack", "death", "standby"]:
-            setattr(self, state, True)
-        else:
-            print("Invalid state name")
+        if state not in valid_states:
+            print(f"Invalid state '{state}'")
+            return
+
+        self.state = state
 
     def on_update(self, delta_time):
         #Edits
@@ -139,6 +136,28 @@ class Character(arcade.Sprite):
         # NOTE: checks for valid value in +/- 5 or 7 range
         # (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
+
+        if self.state == "attack":
+            self.set_target(self.player_pos)  
+
+        elif self.state == "scattering":
+            # self.set_target(self.scatter_corner)  ghost ai needed
+            pass
+
+        elif self.state == "death":
+            self.speed = 4
+            self.set_target(self.start_pos)  # ghost house
+            if (self.center_x, self.center_y) == self.start_pos:
+                self.change_state("standby")
+
+        elif self.state == "standby":
+            return  # do nothing
+
+        elif self.state == "wandering":
+            #self.wander_randomly()  ghost ai needed
+            pass
+
+        super().on_update(delta_time)
         plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
 
@@ -364,6 +383,7 @@ class Blinky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.state = "standby"
         self.target = (Pacman.center_x, Pacman.center_y)
         self.texture_open = arcade.load_texture("images/blinky right 0.gif")
         self.texture_close = arcade.load_texture("images/blinky right 1.gif")
@@ -388,6 +408,9 @@ class Blinky(Character):
 
     # disables ghost behavior
     def on_update(self, delta_time):
+        if self.state == "scattering":
+            self.texture_open = "images/blue 0.gif"
+            self.texture_close = "images/blue 1.gif"
         nothing = ""
 
 class Pinky(Character):
@@ -419,6 +442,9 @@ class Pinky(Character):
             self.texture_close = arcade.load_texture("images/pinky down 1.gif") # down
 
     def on_update(self, delta_time):
+        if self.state == "scattering":
+            self.texture_open = "images/blue 0.gif"
+            self.texture_close = "images/blue 1.gif"
         nothing = ""
 
 class Inky(Character):
@@ -431,6 +457,7 @@ class Inky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.state = "standby"
         self.texture_open = arcade.load_texture("images/inky right 0.gif")
         self.texture_close = arcade.load_texture("images/inky right 1.gif")
     def update_eyes(self):
@@ -449,6 +476,9 @@ class Inky(Character):
             self.texture_close = arcade.load_texture("images/inky down 1.gif") # down
 
     def on_update(self, delta_time):
+        if self.state == "scattering":
+            self.texture_open = "images/blue 0.gif"
+            self.texture_close = "images/blue 1.gif"
         nothing = ""
 
 class Clyde(Character):
@@ -461,6 +491,7 @@ class Clyde(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.state = "standby"
         self.texture_open = arcade.load_texture("images/clyde right 0.gif")
         self.texture_close = arcade.load_texture("images/clyde right 1.gif")
 
@@ -480,6 +511,9 @@ class Clyde(Character):
             self.texture_close = arcade.load_texture("images/clyde down 1.gif") # down
 
     def on_update(self, delta_time):
+        if self.state == "scattering":
+            self.texture_open = "images/blue 0.gif"
+            self.texture_close = "images/blue 1.gif"
         nothing = ""
 
 class Pellet(arcade.Sprite):
