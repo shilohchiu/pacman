@@ -116,48 +116,28 @@ class Character(arcade.Sprite):
         self.state = state
 
     def on_update(self, delta_time):
-        #Edits
-        #self.blinky.find_movement(self)
-        #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
-        #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
-
-        # NOTE: these constants may be commented in a few different places,
-        #essentially just places where pacman can make a valid turn
-        # Used for movement queues, and should in theory be applicable to ghost pathfinding
-        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
-        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
-            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
-            # PIVOT_ROW = [645, 575, 515, 385]
-
-        # NOTE: replaces "on_grid" logic, and instead looks at new pivot constants
-        #self.in_piv_col = can move up or down (dependent on x cord)
-        #self.in_piv_row = can move left or right (dependent on y cord)
-
-        # NOTE: checks for valid value in +/- 5 or 7 range
-        # (some weird alternating position values when hugging wall)
-        # ranges chosen are magic numbers
 
         if self.state == "attack":
             self.set_target(self.player_pos)  
 
-        elif self.state == "scattering":
+        if self.state == "scattering":
             # self.set_target(self.scatter_corner)  ghost ai needed
             pass
 
-        elif self.state == "death":
+        if self.state == "death":
             self.speed = 4
             self.set_target(self.start_pos)  # ghost house
             if (self.center_x, self.center_y) == self.start_pos:
                 self.change_state("standby")
 
-        elif self.state == "standby":
+        if self.state == "standby":
             return  # do nothing
 
-        elif self.state == "wandering":
+        if self.state == "wandering":
             #self.wander_randomly()  ghost ai needed
             pass
 
-        super().on_update(delta_time)
+        super().update(delta_time)
         plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
 
@@ -180,9 +160,11 @@ class Character(arcade.Sprite):
                 self.in_piv_col = False
 
         #print("SET TARGET")
-        self.set_movement(self)
+                
         self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
+        if not isinstance(self, Pacman):   # Ghosts use pathfinding
+            self.set_movement(self)
 
         self.physics_engine.update()
 
@@ -224,6 +206,7 @@ class Pacman(Character):
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
         super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
         self.speed = 2
+        self.state = "avoid"
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
         self.texture_close = arcade.load_texture("images/pac-man close.png")
@@ -238,6 +221,14 @@ class Pacman(Character):
         self.directions = (0,0)
 
         self.overwrite = [None, None]
+
+    def change_state(self, state):
+        valid_states = ["avoid", "attack"]
+        if state not in valid_states:
+            print(f"Invalid state '{state}'")
+            return
+
+        self.state = state
 
     def set_movement(self, wtf):
 
@@ -423,6 +414,7 @@ class Pinky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.state = "standby"
         self.texture_open = arcade.load_texture("images/pinky right 0.gif")
         self.texture_close = arcade.load_texture("images/pinky right 1.gif")
 
