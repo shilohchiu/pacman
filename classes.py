@@ -76,7 +76,7 @@ class GameView(arcade.View):
         self.pinky = Pinky(self.walls)
         self.inky = Inky(self.walls)
         self.clyde = Clyde(self.walls)
-        self.pacman.size = (32, 32)
+        self.pacman.size = (30, 30)
 
         self.sprites.append(self.pacman)
 
@@ -201,6 +201,10 @@ class GameView(arcade.View):
         print(f"vertical factor: {self.pacman.vertical_direction}")
         print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
         print(f"recent piv col: {self.pacman.recent_piv_col} \t recent piv row: {self.pacman.recent_piv_row}")
+        try: 
+            print(f"AVAILABLE DIRECTIONS: {self.pacman.valid_directions}")
+        except:
+            print(f"AVAILABLE DIRECTIONS: ''")
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 

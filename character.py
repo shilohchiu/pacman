@@ -36,6 +36,7 @@ class Character(arcade.Sprite):
         self.horizontal_queue = 0
         self.vertical_queue = 0
         self.last_pos = start_pos
+        self.valid_directions = []
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -191,7 +192,7 @@ class Character(arcade.Sprite):
         # NOTE: checks for valid value in +/- 5 or 7 range
         # (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
-        plinus_x = self.center_x - 5, self.center_x + 5
+        plinus_x = self.center_x - 3, self.center_x + 3
         plinus_y = self.center_y - 7, self.center_y + 7
 
         self.in_piv_col = False
@@ -280,7 +281,7 @@ class Pacman(Character):
         self.overwrite = [None, None]
 
     def set_movement(self, wtf):
-
+        self.valid_directions = []
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
 
@@ -296,39 +297,65 @@ class Pacman(Character):
         # basically allows movement if in correct position, queues it until next on_update otherwise
         # ask henry in person if confused (to probably be confused more)
 
-        if self.horizontal_queue == 0 and self.vertical_queue == 0:
-            self.horizontal_queue = self.directions[0]
-            self.vertical_queue = self.directions[1]
+        self.horizontal_queue = self.directions[0]
+        self.vertical_queue = self.directions[1]
 
         if self.in_piv_col and self.in_piv_row:
-            # if self.need_adjustment:
-            #     print(f"ADJUSTED FROM {self.center_x} TO {self.recent_piv_col}")
-            #     print(f"ADJUSTED FROM {self.center_y} TO {self.recent_piv_row}")
-            #     self.center_x = self.recent_piv_col
-            #     self.center_y = self.recent_piv_row
-            #     self.need_adjustment = False
-            self.horizontal_direction = self.horizontal_queue
-            self.vertical_direction = self.vertical_queue
-            self.horizontal_queue = 0
-            self.vertical_queue = 0
+            if self.need_adjustment:
+                self.center_x = self.recent_piv_col
+                self.center_y = self.recent_piv_row
+                self.need_adjustment = False
+            for item in PIVOT_GRAPH[self.recent_piv_row]:
+                if item[0] == self.recent_piv_col:
+                    self.valid_directions = item[1]
+            if "N" in self.valid_directions and self.vertical_queue == 1:
+                self.vertical_direction = self.vertical_queue    
+                self.horizontal_direction = self.horizontal_queue
+                self.vertical_queue = 0
+                self.horizontal_queue = 0
+
+            elif "S" in self.valid_directions and self.vertical_queue == -1:
+                self.vertical_direction = self.vertical_queue    
+                self.horizontal_direction = self.horizontal_queue
+                self.vertical_queue = 0
+                self.horizontal_queue = 0
+
+            elif "E" in self.valid_directions and self.horizontal_queue == 1:
+                self.vertical_direction = self.vertical_queue    
+                self.horizontal_direction = self.horizontal_queue
+                self.vertical_queue = 0
+                self.horizontal_queue = 0
+
+            elif "W" in self.valid_directions and self.horizontal_queue == -1:
+                self.vertical_direction = self.vertical_queue    
+                self.horizontal_direction = self.horizontal_queue
+                self.vertical_queue = 0
+                self.horizontal_queue = 0
+
+            else:
+                self.horizontal_queue = self.horizontal_direction
+                self.vertical_queue = self.vertical_direction
+            
+            
             
 
         elif self.in_piv_col and not self.in_piv_row:
-            if self.need_adjustment:
-                self.center_x = self.recent_piv_col
-                self.need_adjustment = False
+            # if self.need_adjustment:
+            #     self.center_x = self.recent_piv_col
+            #     self.need_adjustment = False
             self.horizontal_direction = self.horizontal_queue
             self.horizontal_queue = 0
-            self.vertical_queue = self.vertical_direction
+            self.vertical_queue = self.directions[1]
             
 
         elif not self.in_piv_col and self.in_piv_row:
-            if self.need_adjustment:
-                self.center_y = self.recent_piv_row
-                self.need_adjustment = False
-            self.horizontal_queue = self.horizontal_direction
+            # if self.need_adjustment:
+            #     self.center_y = self.recent_piv_row
+            #     self.need_adjustment = False
+            self.horizontal_queue = self.directions[0]
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
+            
             
 
         else:
@@ -378,7 +405,7 @@ class Pacman(Character):
 
             self.directions = (1,0)
 
-        self.set_movement(self)
+        #self.set_movement(self)
 
 
     def on_key_release(self, key, modifiers):
