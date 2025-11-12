@@ -1,5 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
 from misc import *
 from walls import create_walls
 from constants import *
@@ -76,7 +76,7 @@ class GameView(arcade.View):
         self.pinky = Pinky(self.walls)
         self.inky = Inky(self.walls)
         self.clyde = Clyde(self.walls)
-        self.pacman.size = (30, 30)
+        self.pacman.size = (32, 32)
 
         self.sprites.append(self.pacman)
 
@@ -200,11 +200,6 @@ class GameView(arcade.View):
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
         print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
-        print(f"recent piv col: {self.pacman.recent_piv_col} \t recent piv row: {self.pacman.recent_piv_row}")
-        try: 
-            print(f"AVAILABLE DIRECTIONS: {self.pacman.valid_directions}")
-        except:
-            print(f"AVAILABLE DIRECTIONS: ''")
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 
@@ -226,8 +221,17 @@ class GameView(arcade.View):
         self.pinky.update_eyes()
 
         #pellet collsions
-        points = Pellet.pellet_collision(self.pacman, self.pellet_list)
+        points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         self.score += points
+
+        # big pellet collision
+        #pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
+        #if pellet_collision:
+            #Character.change_state(self.pinky,"scattering")
+            #Character.change_state(self.inky,"scattering")
+            #Character.change_state(self.blinky,"scattering")
+            #Character.change_state(self.clyde,"scattering")
+
 
         #collision handeling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
@@ -264,4 +268,18 @@ class GameView(arcade.View):
         if not self.game_over:
             self.pacman.on_key_release(key, modifiers)
     
+    def activate_power_mode(self):
+        """Activate frightened mode for all ghosts."""
+        self.pacman.change_state(PACMAN_ATTACK)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_FLEE)
+
+        # 7 seconds of power-up (adjust as desired)
+        arcade.schedule(self.end_power_mode, 7.0)
     
+    def end_power_mode(self, delta_time):
+        """Revert ghosts and Pac-Man to normal state."""
+        self.pacman.change_state(PACMAN_NORMAL)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_CHASE)
+        arcade.unschedule(self.end_power_mode)
