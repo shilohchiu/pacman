@@ -6,7 +6,7 @@ enemies and pacman; things that move)
 Character is imported by classes
 """
 import arcade
-from constants import *
+from constants.constants import *
 from misc import *
 
 class Character(arcade.Sprite):

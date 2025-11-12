@@ -2,7 +2,7 @@ import arcade
 from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
 from misc import *
 from walls import create_walls
-from constants import *
+from constants.constants import *
 
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
@@ -53,11 +53,29 @@ class GameView(arcade.View):
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
-
         # Create wall spritelist
         self.walls = arcade.SpriteList()
         self.walls.enable_spatial_hashing()
         create_walls(self.walls)
+
+        # Create larger black boxes (draw after Pac Man)
+        self.black_boxes = arcade.SpriteList()
+        # Create smaller black boxes (draw before Pac Man)
+        self.collision_black_boxes = arcade.SpriteList()
+
+        # create the smaller collision black boxes
+        for x_position in COLLISION_BLACK_BOX_X_POSITIONS:
+            collision_black_box = arcade.Sprite("images/black_box.png", scale=1)
+            collision_black_box.center_x = x_position
+            collision_black_box.center_y = BLACK_BOX_Y_POSITION
+            self.collision_black_boxes.append(collision_black_box)
+
+        # create the larger black boxes that will "hide" Pacman
+        for x_position in LARGE_BLACK_BOX_X_POSITIONS:
+            black_box = arcade.Sprite("images/black_box.png", scale=2)
+            black_box.center_x = x_position
+            black_box.center_y = BLACK_BOX_Y_POSITION
+            self.black_boxes.append(black_box)
 
         #create Score
         self.score = 0
@@ -155,9 +173,11 @@ class GameView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        self.walls.draw()
+        self.collision_black_boxes.draw()
         self.sprites.draw()
+        self.black_boxes.draw()
         self.pacman_score_list.draw()
+        self.walls.draw()
 
         #Level Text
         arcade.draw_text("1UP  ",
@@ -224,7 +244,7 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list)
         self.score += points
 
-        #collision handeling for ghost -> pacman 
+        #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision:
             # remove one life icon (last in list)
@@ -240,6 +260,18 @@ class GameView(arcade.View):
                 # no lives left
                 self.game_over = True
                 print("GAME OVER")
+
+        # screen wrap functionality
+        screen_wrap = arcade.check_for_collision_with_list(self.pacman, 
+                                                           self.collision_black_boxes)
+        if screen_wrap:
+            # case that pacman on left side, go to the right
+            if self.pacman.center_x < WINDOW_WIDTH / 2:
+                self.pacman.center_x = SCREENWRAP_RIGHT_SIDE
+            else:
+                # case that pacman on right side, go to the left
+                self.pacman.center_x = SCREENWRAP_LEFT_SIDE
+
 
     def on_mouse_press(self):
         if getattr(self, "game_over", False):
