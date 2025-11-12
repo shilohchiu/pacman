@@ -4,10 +4,23 @@
 
 Python Arcade recreation of Pacman for UVM's Software Engineering.
 
-# Installation
+# Installation/Set-Up
 In terminal: 
-- Run terminal command `git clone https://github.com/shilohchiu/pacman.git` in desired directory.
+-  `cd` into desired directory and run the following: 
+  
+    ```git clone https://github.com/shilohchiu/pacman.git```
+
 # Set Up
 In terminal: 
-- Run `pip install -r requirements.txt`
-- Run main.py in IDE or run `python main.py`. Make sure you are in the `pacman` directory.
+- Install the requirements: 
+  
+    ```pip install -r requirements.txt```
+
+- Run `main.py` in IDE OR run the following in terminal:
+
+    ```cd path/to/directory/pacman```
+    
+    ```python main.py```
+
+# Gameplay
+- PacMan can be moved using arrow keys.
