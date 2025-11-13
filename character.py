@@ -476,7 +476,7 @@ class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, walls, start_pos=(310, 310)):
+    def __init__(self, walls, start_pos=(310, 450)):
         super().__init__(walls,
                          "images/pinky.png",
                          scale = CHARACTER_SCALE,
@@ -516,7 +516,7 @@ class Inky(Character):
     """
     Inky subclass
     """
-    def __init__(self, walls, start_pos=(290, 290)):
+    def __init__(self, walls, start_pos=(290, 450)):
         super().__init__(walls,
                          "images/inky.png",
                          scale = CHARACTER_SCALE,
@@ -555,7 +555,7 @@ class Clyde(Character):
     """
     Clyde subclass
     """
-    def __init__(self, walls, start_pos=(320, 300)):
+    def __init__(self, walls, start_pos=(320, 450)):
         super().__init__(walls,
                          "images/clyde.png",
                          scale = CHARACTER_SCALE,
