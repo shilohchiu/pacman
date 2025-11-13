@@ -28,8 +28,6 @@ class Character(arcade.Sprite):
         self.recent_piv_col = 0
         self.recent_piv_row = 0
         self.need_adjustment = False
-        self.texture_open = []
-        self.texture_close = []
         self.animation_timer = 0.0
         self.animation_speed = 0.15
         self.current_texture_index = 0.0
@@ -143,18 +141,6 @@ class Character(arcade.Sprite):
             self.texture = self.texture_open.get(self.state, self.texture)
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
-
-    def change_state(self, state):
-        self.wandering = False
-        self.scattering = False
-        self.attack = True
-        self.death = False
-        self.standby = False
-
-        if state in ["wandering", "scattering", "attack", "death", "standby"]:
-            setattr(self, state, True)
-        else:
-            print("Invalid state name")
 
     def on_update(self, delta_time):
         #Edits
