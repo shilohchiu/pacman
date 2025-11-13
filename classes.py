@@ -144,7 +144,7 @@ class ViewScoresView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
-        score_board = top_ten_scores()
+        score_board = top_ten_scores(user_ref)
         score_idx = 1
         
         arcade.draw_text("VIEW SCORES",
@@ -202,13 +202,31 @@ class SaveScoreView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
+        score_board = top_ten_scores(user_ref)
+        score_idx = 1
         
-        arcade.draw_text("SAVE SCORE",
+        arcade.draw_text("SCORE SAVED!",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                             arcade.color.RED, font_size=48, anchor_x="center", bold=True)
-        arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
-                            WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
-                            arcade.color.WHITE, font_size=28, anchor_x="center")
+        arcade.draw_text("HIGH SCORES",
+                        WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
+                        arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
+            
+        for user in score_board:
+            arcade.draw_text(f"{score_idx} .",
+                                 WINDOW_WIDTH/4 + 60, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="right")
+                
+            arcade.draw_text(f"{user[:3]}",
+                                 WINDOW_WIDTH/2, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="center")
+            
+            arcade.draw_text(f"{score_board[user]:06d}",
+                                 3*WINDOW_WIDTH/4, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="right")
+        
+            score_idx += 1
+        
     
       
 class HighScoreView(arcade.View):
@@ -243,18 +261,21 @@ class HighScoreView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
+        
         arcade.draw_text("GAME OVER",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-100,
                         arcade.color.RED, font_size=48, anchor_x="center", bold=True)
              #TODO: Make it blink
-        arcade.draw_text("HIGH SCORE",
+        arcade.draw_text("NEW HIGH SCORE!",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                         arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
-            
         arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
-                         WINDOW_WIDTH/2, WINDOW_HEIGHT-200,
-                         arcade.color.WHITE, font_size=28, anchor_x="center")
-
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
+                            arcade.color.WHITE, font_size=28, anchor_x="center")
+        arcade.draw_text("Save score below or start new game.",
+                        WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
+                        arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+        
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
         super().__init__()
@@ -297,6 +318,7 @@ class EnterInitialsView(arcade.View):
         #if user wants to save score
         else:
             print(f"{initials_str} + Save Score")
+            add_score(user_ref, initials_str, global_score.get_curr_score())
             view = SaveScoreView()
             self.window.show_view(view)
 
@@ -390,7 +412,8 @@ class GameView(arcade.View):
         #viewing states
         self.game_over = False
         self.high_score = False
-        
+
+
         self.save_score = False
         if debug:
             self.game_over = True
@@ -475,17 +498,17 @@ class GameView(arcade.View):
             self.pellet_list.append(i)
 
 
-        #ui manager for buttons 
-        self.uimanager = arcade.gui.UIManager()
-        self.uimanager.enable()
+    #     #ui manager for buttons 
+    #     self.uimanager = arcade.gui.UIManager()
+    #     self.uimanager.enable()
 
-        save_score_button = arcade.gui.UIFlatButton(text="Save Score", width=200)
-        save_score_button.on_click = self.on_buttonclick 
-        self.uimanager.add(save_score_button)
+    #     save_score_button = arcade.gui.UIFlatButton(text="Save Score", width=200)
+    #     save_score_button.on_click = self.on_buttonclick 
+    #     self.uimanager.add(save_score_button)
 
-    def on_buttonclick(self, event):
-        print("SAVE Button is clicked")
-        self.save_score = True
+    # def on_buttonclick(self, event):
+    #     print("SAVE Button is clicked")
+    #     self.save_score = True
 
     def on_draw(self):
         self.clear()
@@ -511,11 +534,19 @@ class GameView(arcade.View):
 
             
     def on_update(self,delta_time):
-        #close logic when game over
-        if self.game_over:
+        #close logic when game over and choses correct view 
+        if (self.game_over and self.high_score):
+            view = HighScoreView()
+            self.window.show_view(view)
+            self.game_over, self.high_score = (False, False)
+            return
+        elif(self.game_over and not self.high_score):
             view = GameOverView()
             self.window.show_view(view)
+            self.game_over, self.high_score = (False, False)
             return
+
+                
         
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
         print(f"PAC SIZE: {self.pacman.size}")

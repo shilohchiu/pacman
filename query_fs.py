@@ -41,13 +41,12 @@ def add_score(user_ref, initial, score):
         user_ref.document(initial).set(new_data.to_dict())
 
 def top_ten_scores(user_ref):
-    top_ten = {
-        "ADM" : 109,
-        "SAD" : 290
-    }
-    # top_ten_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(10).get()
-    # for doc in top_ten_doc:
-    #     score = doc.from_dict()
-    #     top_ten[score.get_initial()] = score.get_high_score()
+    top_ten = {}
+    top_ten_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(10).get()
+    for doc in top_ten_doc:
+        
+        score = doc.to_dict()
+        print(score)
+        top_ten[score["initial"]] = score["high_score"]
 
     return top_ten
