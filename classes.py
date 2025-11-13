@@ -2,9 +2,10 @@ import arcade
 import arcade.gui.widgets.layout
 import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton 
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
 from misc import *
 from walls import create_walls
+from constants.constants import *
 from query_fs import * 
 from constants import *
 from score import Score
@@ -402,12 +403,32 @@ class GameView(arcade.View):
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
-
         # Create wall spritelist
         self.walls = arcade.SpriteList()
         self.walls.enable_spatial_hashing()
         create_walls(self.walls)
 
+        # Create larger black boxes (draw after Pac Man)
+        self.black_boxes = arcade.SpriteList()
+        # Create smaller black boxes (draw before Pac Man)
+        self.collision_black_boxes = arcade.SpriteList()
+
+        # create the smaller collision black boxes
+        for x_position in COLLISION_BLACK_BOX_X_POSITIONS:
+            collision_black_box = arcade.Sprite("images/black_box.png", scale=1)
+            collision_black_box.center_x = x_position
+            collision_black_box.center_y = BLACK_BOX_Y_POSITION
+            self.collision_black_boxes.append(collision_black_box)
+
+        # create the larger black boxes that will "hide" Pacman
+        for x_position in LARGE_BLACK_BOX_X_POSITIONS:
+            black_box = arcade.Sprite("images/black_box.png", scale=2)
+            black_box.center_x = x_position
+            black_box.center_y = BLACK_BOX_Y_POSITION
+            self.black_boxes.append(black_box)
+
+        #create Score
+        self.score = 0
         #reset score to 0 
         global_score.reset_curr_score()
 
@@ -495,9 +516,11 @@ class GameView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        self.walls.draw()
+        self.collision_black_boxes.draw()
         self.sprites.draw()
+        self.black_boxes.draw()
         self.pacman_score_list.draw()
+        self.walls.draw()
 
         #Level Text
         arcade.draw_text("1UP  ",
@@ -569,10 +592,19 @@ class GameView(arcade.View):
         self.pinky.update_eyes()
 
         #pellet collsions
-        points = Pellet.pellet_collision(self.pacman, self.pellet_list)
+        points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-        #collision handeling for ghost -> pacman 
+        # big pellet collision
+        #pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
+        #if pellet_collision:
+            #Character.change_state(self.pinky,"scattering")
+            #Character.change_state(self.inky,"scattering")
+            #Character.change_state(self.blinky,"scattering")
+            #Character.change_state(self.clyde,"scattering")
+
+
+        #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision:
             # remove one life icon (last in list)
@@ -588,6 +620,24 @@ class GameView(arcade.View):
                 # no lives left
                 self.game_over = True
                 print("GAME OVER")
+
+        # screen wrap functionality
+        screen_wrap = arcade.check_for_collision_with_list(self.pacman, 
+                                                           self.collision_black_boxes)
+        if screen_wrap:
+            # case that pacman on left side, go to the right
+            if self.pacman.center_x < WINDOW_WIDTH / 2:
+                self.pacman.center_x = SCREENWRAP_RIGHT_SIDE
+            else:
+                # case that pacman on right side, go to the left
+                self.pacman.center_x = SCREENWRAP_LEFT_SIDE
+
+
+    def on_mouse_press(self):
+        if getattr(self, "game_over", False):
+            if self.window:
+                self.window.close()
+            return
         
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
@@ -601,4 +651,18 @@ class GameView(arcade.View):
         if not self.game_over:
             self.pacman.on_key_release(key, modifiers)
     
+    def activate_power_mode(self):
+        """Activate frightened mode for all ghosts."""
+        self.pacman.change_state(PACMAN_ATTACK)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_FLEE)
+
+        # 7 seconds of power-up (adjust as desired)
+        arcade.schedule(self.end_power_mode, 7.0)
     
+    def end_power_mode(self, delta_time):
+        """Revert ghosts and Pac-Man to normal state."""
+        self.pacman.change_state(PACMAN_NORMAL)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_CHASE)
+        arcade.unschedule(self.end_power_mode)

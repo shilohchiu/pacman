@@ -3,7 +3,7 @@ contains functions for
 spawning in maze
 """
 import arcade
-from wall_constants import *
+from constants.wall_constants import *
 
 def create_walls(walls):
     """function that is 
