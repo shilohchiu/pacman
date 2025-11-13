@@ -239,7 +239,7 @@ class Pacman(Character):
         self.left_pressed = False
         self.right_pressed = False
         self.directions = (0,0)
-        # self.center_x, self.center_y = 545,572
+        self.center_x, self.center_y = 485, 270
 
         self.overwrite = [None, None]
 
