@@ -1,5 +1,5 @@
 import arcade
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls
+from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
 from misc import *
 from walls import create_walls
 from constants.constants import *
@@ -241,8 +241,17 @@ class GameView(arcade.View):
         self.pinky.update_eyes()
 
         #pellet collsions
-        points = Pellet.pellet_collision(self.pacman, self.pellet_list)
+        points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         self.score += points
+
+        # big pellet collision
+        #pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
+        #if pellet_collision:
+            #Character.change_state(self.pinky,"scattering")
+            #Character.change_state(self.inky,"scattering")
+            #Character.change_state(self.blinky,"scattering")
+            #Character.change_state(self.clyde,"scattering")
+
 
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
@@ -291,4 +300,18 @@ class GameView(arcade.View):
         if not self.game_over:
             self.pacman.on_key_release(key, modifiers)
     
+    def activate_power_mode(self):
+        """Activate frightened mode for all ghosts."""
+        self.pacman.change_state(PACMAN_ATTACK)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_FLEE)
+
+        # 7 seconds of power-up (adjust as desired)
+        arcade.schedule(self.end_power_mode, 7.0)
     
+    def end_power_mode(self, delta_time):
+        """Revert ghosts and Pac-Man to normal state."""
+        self.pacman.change_state(PACMAN_NORMAL)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_CHASE)
+        arcade.unschedule(self.end_power_mode)
