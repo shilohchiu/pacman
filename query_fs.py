@@ -49,19 +49,16 @@ def view_scores(user_ref, initial):
         return user_scores
     print("user does not exist")
     
-def rt_high_score(user_ref, score):
+def rt_high_score(user_ref):
     top_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(1).get()
     top_score = top_doc[0].to_dict()["high_score"]
-    if top_score > score:
-        return top_score
-    else:
-        return score
+    return top_score
+  
     
-def is_high_score(user_ref, score):
+def is_high_score(user_ref):
     top_ten_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(10).get()
-    lowest_high_score = top_ten_doc[9]
-    if score > lowest_high_score:
-        return True
+    lowest_high_score = top_ten_doc[9].to_dict()["high_score"]
+    return lowest_high_score
 
 def top_ten_scores(user_ref):
     top_ten = {}

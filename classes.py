@@ -392,6 +392,9 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
+        #calls to firebase
+        self.high_score = rt_high_score(user_ref)
+        self.low_high_score = is_high_score(user_ref)
 
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
@@ -410,6 +413,7 @@ class GameView(arcade.View):
 
         #viewing states
         self.game_over = False
+        self.new_high_score = False
 
         #create pacmans score images
         for x in range(110,220,40):
@@ -512,20 +516,25 @@ class GameView(arcade.View):
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
         #high Score
-        high_score = rt_high_score(user_ref, global_score.get_curr_score())
-        output = f"{high_score:06d}"
+        if self.high_score > global_score.get_curr_score():
+            curr_high_score = self.high_score
+        else:
+            curr_high_score = global_score.get_curr_score()
+        output = f"{curr_high_score:06d}"
         arcade.draw_text(output,
                          WINDOW_WIDTH - 120, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
             
     def on_update(self,delta_time):
-        #close logic when game over and choses correct view 
-        if (self.game_over and is_high_score()):
+        #close logic when game over and choses correct view
+        if global_score.get_curr_score() > is_high_score(user_ref):
+            self.new_high_score = True
+        if (self.game_over and self.new_high_score):
             view = HighScoreView()
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
-        elif(self.game_over and not is_high_score()):
+        elif(self.game_over and not self.new_high_score):
             view = GameOverView()
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
