@@ -264,24 +264,28 @@ class Pacman(Character):
                 if item[0] == self.recent_piv_col:
                     self.valid_directions = item[1]
             if "N" in self.valid_directions and self.vertical_queue == 1:
+                self.center_x = self.recent_piv_col
                 self.vertical_direction = self.vertical_queue    
                 self.horizontal_direction = self.horizontal_queue
                 self.vertical_queue = 0
                 self.horizontal_queue = 0
 
             elif "S" in self.valid_directions and self.vertical_queue == -1:
+                self.center_x = self.recent_piv_col
                 self.vertical_direction = self.vertical_queue    
                 self.horizontal_direction = self.horizontal_queue
                 self.vertical_queue = 0
                 self.horizontal_queue = 0
 
             elif "E" in self.valid_directions and self.horizontal_queue == 1:
+                self.center_y = self.recent_piv_row
                 self.vertical_direction = self.vertical_queue    
                 self.horizontal_direction = self.horizontal_queue
                 self.vertical_queue = 0
                 self.horizontal_queue = 0
 
             elif "W" in self.valid_directions and self.horizontal_queue == -1:
+                self.center_y = self.recent_piv_row
                 self.vertical_direction = self.vertical_queue    
                 self.horizontal_direction = self.horizontal_queue
                 self.vertical_queue = 0
