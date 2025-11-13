@@ -38,6 +38,10 @@ class Character(arcade.Sprite):
         self.last_pos = start_pos
         self.valid_directions = []
         self.last_adjustment = ()
+        self.texture_open = {}
+        self.texture_close = {}
+        self.state = None
+        self.frame_open = True
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -133,6 +137,13 @@ class Character(arcade.Sprite):
                 self.vertical_direction = 0
                 print("VERTICALLY ALIGNED")
 
+    def change_state(self, new_state):
+        self.state = new_state
+        if self.frame_open:
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
     def change_state(self, state):
         self.wandering = False
         self.scattering = False
@@ -192,16 +203,15 @@ class Character(arcade.Sprite):
         self.last_pos = (self.center_x, self.center_y)
 
     def update_animation(self, delta_time: float = 1/60):
-        """Animate between open and closed mouth."""
         self.animation_timer += delta_time
         if self.animation_timer > self.animation_speed:
             self.animation_timer = 0
-            self.current_texture_index = (self.current_texture_index + 1) % 2
-            # Alternate between open and closed
-            if self.current_texture_index == 0 and self.texture_open:
-                self.texture = self.texture_open
-            elif self.current_texture_index == 1 and self.texture_close:
-                self.texture = self.texture_close
+            self.frame_open = not self.frame_open
+            # set texture based on frame
+            if self.frame_open:
+                self.texture = self.texture_open.get(self.state, self.texture)
+            else:
+                self.texture = self.texture_close.get(self.state, self.texture)
 
     def update_rotation(self):
         """Rotate Pac-Man to face his current movement direction."""
@@ -221,13 +231,21 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man close.png",scale = 0.25, start_pos=(595, 650))
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
         self.speed = 2
 
-        self.texture_open = arcade.load_texture("images/pac-man.png")
-        self.texture_close = arcade.load_texture("images/pac-man close.png")
+        self.state = PACMAN_NORMAL
 
-        self.texture = self.texture_open
+        self.texture_open = {
+            PACMAN_NORMAL: arcade.load_texture("images/pac-man.png"),
+            PACMAN_ATTACK: arcade.load_texture("images/pac-man.png")
+        }
+        self.texture_close = {
+            PACMAN_NORMAL: arcade.load_texture("images/pac-man close.png"),
+            PACMAN_ATTACK: arcade.load_texture("images/pac-man close.png")
+        }
+
+        self.texture = self.texture_open[self.state]
 
         self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
@@ -433,8 +451,18 @@ class Blinky(Character):
                          start_pos=start_pos)
         self.speed = 3
         self.target = (Pacman.center_x, Pacman.center_y)
-        self.texture_open = arcade.load_texture("images/blinky right 0.gif")
-        self.texture_close = arcade.load_texture("images/blinky right 1.gif")
+        self.state = GHOST_CHASE
+
+        self.texture_open = {
+            GHOST_CHASE: arcade.load_texture("images/blinky right 1.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+        }
+        self.texture_close = {
+            GHOST_CHASE: arcade.load_texture("images/blinky right 0.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+        }
+
+        self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
@@ -468,8 +496,17 @@ class Pinky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
-        self.texture_open = arcade.load_texture("images/pinky right 0.gif")
-        self.texture_close = arcade.load_texture("images/pinky right 1.gif")
+        self.state = GHOST_CHASE
+        self.texture_open = {
+            GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+        }
+        self.texture_close = {
+            GHOST_CHASE: arcade.load_texture("images/pinky right 0.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+        }
+
+        self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
@@ -499,8 +536,17 @@ class Inky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
-        self.texture_open = arcade.load_texture("images/inky right 0.gif")
-        self.texture_close = arcade.load_texture("images/inky right 1.gif")
+        self.state = GHOST_CHASE
+        self.texture_open = {
+            GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+        }
+        self.texture_close = {
+            GHOST_CHASE: arcade.load_texture("images/inky right 0.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+        }
+
+        self.texture = self.texture_open[self.state]
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
@@ -529,8 +575,17 @@ class Clyde(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
-        self.texture_open = arcade.load_texture("images/clyde right 0.gif")
-        self.texture_close = arcade.load_texture("images/clyde right 1.gif")
+        self.state = GHOST_CHASE
+        self.texture_open = {
+            GHOST_CHASE: arcade.load_texture("images/clyde right 1.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+        }
+        self.texture_close = {
+            GHOST_CHASE: arcade.load_texture("images/clyde right 0.gif"),
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+        }
+
+        self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
@@ -561,13 +616,14 @@ class Pellet(arcade.Sprite):
         return self.point
 
     @staticmethod
-    def pellet_collision(pacman, pellet_list):
+    def pellet_collision(pacman, pellet_list, game_view=None):
         pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
         points = 0
         for pellet in pellet_collision:
             points += getattr(pellet, "point",0)
             if isinstance(pellet,BigPellet):
-                #change ghost state
+                if game_view:
+                    game_view.activate_power_mode()
                 print('change state!!')
             pellet.remove_from_sprite_lists()
         return points
