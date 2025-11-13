@@ -37,6 +37,7 @@ class Character(arcade.Sprite):
         self.vertical_queue = 0
         self.last_pos = start_pos
         self.valid_directions = []
+        self.last_adjustment = ()
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -73,33 +74,6 @@ class Character(arcade.Sprite):
             #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
     
-    # TODO: maybe implement tracking most recent pivot position when changing boolean
-        # reset position to center of pivot position when attempting to make a turn
-        # could prevent stuck scenarios?
-        # also need to account for moving vertically freely in rows / horizontally in columns
-        # also disable recognition of columns in incorrect rows
-    def fix_position(self, wtf):
-        current_closest_x = 0
-        current_closest_y = 0
-        
-        if (not self.in_piv_col and not self.in_piv_row) and (self.change_x == 0 and self.change_y == 0):
-            for position in PIVOT_COL:
-                if abs(self.center_x - position) < abs(self.center_x - current_closest_x):
-                    current_closest_x = position
-            
-            for position in PIVOT_ROW:
-                if abs(self.center_y - position) < abs(self.center_y - current_closest_y):
-                    current_closest_y = position
-        
-            
-            print(f"FIXED POS FROM {self.center_x} to {current_closest_x}")
-            
-            
-            print(f"FIXED POS FROM {self.center_y} to {current_closest_y}")
-
-            self.center_x = current_closest_x
-            self.center_y = current_closest_y
-
 
 
     def pathfind(self, idk):
@@ -177,22 +151,12 @@ class Character(arcade.Sprite):
         #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
         #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        # NOTE: these constants may be commented in a few different places,
-        #essentially just places where pacman can make a valid turn
-        # Used for movement queues, and should in theory be applicable to ghost pathfinding
-        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
-        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
-            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
-            # PIVOT_ROW = [645, 575, 515, 385]
-
-        # NOTE: replaces "on_grid" logic, and instead looks at new pivot constants
-        #self.in_piv_col = can move up or down (dependent on x cord)
-        #self.in_piv_row = can move left or right (dependent on y cord)
+        #TODO: blacklist recently passed turn points to avoid teleporting "backwards" in swift movements
 
         # NOTE: checks for valid value in +/- 5 or 7 range
         # (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
-        plinus_x = self.center_x - 3, self.center_x + 3
+        plinus_x = self.center_x - 5, self.center_x + 5
         plinus_y = self.center_y - 7, self.center_y + 7
 
         self.in_piv_col = False
@@ -213,11 +177,6 @@ class Character(arcade.Sprite):
                 if self.recent_piv_col != num:
                     self.need_adjustment = True
                 self.recent_piv_col = num
-            # NOTE: Stops row 1 pathfinding into offset junction
-            # Similar fix will be needed for all unique/offset junctions,
-                            # probably can find cleaner fix
-            if row == 645 and (num in (225,425)):
-                self.in_piv_col = False
 
         #print("SET TARGET")
         self.set_movement(self)
@@ -262,7 +221,7 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man close.png",scale = 0.25, start_pos=(385,385))
+        super().__init__(walls, "images/pac-man close.png",scale = 0.25, start_pos=(595, 650))
         self.speed = 2
 
         self.texture_open = arcade.load_texture("images/pac-man.png")
@@ -285,26 +244,18 @@ class Pacman(Character):
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
 
-        # NOTE: these constants may be commented in a few different places,
-        # essentially just places where pacman can make a valid turn
-        # Used for movement queues, and should in theory be applicable to ghost pathfinding
-        # NOTE: MOVEMENT DOES NOT WORK IF OUTSIDE OF THESE RANGES
-        # ONLY COMPLETED FOR SEGMENTS OF COMPLETED MAZE (AKA TOP HALF)
-            # PIVOT_COL = [115, 225, 285, 325, 385, 425, 485, 595]
-            # PIVOT_ROW = [645, 575, 515, 385]
-
-        # NOTE: lowkey not super sure if i can explain this clearly, let alone in comments lol
-        # basically allows movement if in correct position, queues it until next on_update otherwise
-        # ask henry in person if confused (to probably be confused more)
 
         self.horizontal_queue = self.directions[0]
         self.vertical_queue = self.directions[1]
 
         if self.in_piv_col and self.in_piv_row:
-            if self.need_adjustment:
+            if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
+                self.size = (1,1)
                 self.center_x = self.recent_piv_col
                 self.center_y = self.recent_piv_row
                 self.need_adjustment = False
+                self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
+                self.size = (30,30)
             for item in PIVOT_GRAPH[self.recent_piv_row]:
                 if item[0] == self.recent_piv_col:
                     self.valid_directions = item[1]
@@ -343,6 +294,13 @@ class Pacman(Character):
             # if self.need_adjustment:
             #     self.center_x = self.recent_piv_col
             #     self.need_adjustment = False
+            if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
+                self.size = (1,1)
+                self.center_x = self.recent_piv_col
+                self.center_y = self.recent_piv_row
+                self.need_adjustment = False
+                self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
+                self.size = (30,30)
             self.horizontal_direction = self.horizontal_queue
             self.horizontal_queue = 0
             self.vertical_queue = self.directions[1]
@@ -352,9 +310,18 @@ class Pacman(Character):
             # if self.need_adjustment:
             #     self.center_y = self.recent_piv_row
             #     self.need_adjustment = False
+            if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
+                self.size = (1,1)
+                self.center_x = self.recent_piv_col
+                self.center_y = self.recent_piv_row
+                self.need_adjustment = False
+                self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
+                self.size = (30,30)
             self.horizontal_queue = self.directions[0]
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
+
+            
             
             
 
