@@ -550,7 +550,10 @@ class GameView(arcade.View):
             
     def on_update(self,delta_time):
         #close logic when game over and choses correct view
-        if global_score.get_curr_score() > is_high_score(user_ref):
+        if not self.pellet_list:
+            self.game_over = True
+            
+        if global_score.get_curr_score() > self.low_high_score:
             self.new_high_score = True
         if (self.game_over and self.new_high_score):
             view = HighScoreView()
