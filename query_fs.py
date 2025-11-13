@@ -1,6 +1,5 @@
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from firebase_admin import credentials, firestore
 from score import Score
 from google.cloud.firestore_v1.base_query import FieldFilter, Or
 
@@ -21,16 +20,34 @@ def open_db_collection(db):
     user_ref = db.collection("Users")
     return user_ref     
 
+def add_score(user_ref, initial, score):
+    #query database
+    query = user_ref.where(filter=FieldFilter("initial", "==", initial))
+    doc_exist = query.get()
+    print(doc_exist)
+    #if a document exists just add score to scores and check if updated high score
+    if (doc_exist):
+        #check if score is new overall high score
+        document = doc_exist.from_dict()
 
-#####THINGS TO CONSIDER########
-# def run_query(raw, db):
-#     rows = build_query(raw, db)
-#     vehicle_rows = []
-#     # if build_query returns string do not call to.dict return string
-#     if isinstance(rows, str):
-#         vehicle_rows.append(rows)
-#         return vehicle_rows
-#     # formats returned list of document snaps into a list of Vehicle dictionaries
-#     for r in rows:
-#         vehicle_rows.append(format_vehicle(r.to_dict(), r.id))
-#     return vehicle_rows
+        if (document["high_score"] < score):
+            user_ref.document(initial).update({"high_score":score},{"scores":score})
+
+        user_ref.document(initial).update({"scores":score})
+        
+    #otherwise create a score and add to_dict to database
+    else:
+        new_data = Score(initial, high_score = score, scores = [score], curr_score = score)
+        user_ref.document(initial).set(new_data.to_dict())
+
+def top_ten_scores(user_ref):
+    top_ten = {
+        "ADM" : 109,
+        "SAD" : 290
+    }
+    # top_ten_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(10).get()
+    # for doc in top_ten_doc:
+    #     score = doc.from_dict()
+    #     top_ten[score.get_initial()] = score.get_high_score()
+
+    return top_ten
