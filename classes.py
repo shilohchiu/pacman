@@ -9,7 +9,7 @@ from query_fs import *
 from constants import *
 from score import Score
 
-debug = True
+
 
 #Global Score 
 global_score = Score()
@@ -117,7 +117,7 @@ class ViewScoresView(arcade.View):
     """
     def __init__(self, initials = "adm"):
         super().__init__()
-
+        self.initial = initials
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -144,25 +144,25 @@ class ViewScoresView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
-        score_board = top_ten_scores(user_ref)
+        user_scores = view_scores(user_ref, self.initial)
         score_idx = 1
         
         arcade.draw_text("VIEW SCORES",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                             arcade.color.RED, font_size=48, anchor_x="center", bold=True)
-        arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
+        arcade.draw_text(f"User: {self.initial}",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=28, anchor_x="center")
-        for user in score_board:
+        for score in user_scores:
             arcade.draw_text(f"{score_idx} .",
                                  WINDOW_WIDTH/4 + 60, WINDOW_HEIGHT - (200 + (30*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
                 
-            arcade.draw_text(f"{user[:3]}",
+            arcade.draw_text(f"{self.initial[:3]}",
                                  WINDOW_WIDTH/2, WINDOW_HEIGHT - (200 + (30*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="center")
             
-            arcade.draw_text(f"{score_board[user]:06d}",
+            arcade.draw_text(f"{score:06d}",
                                  3*WINDOW_WIDTH/4, WINDOW_HEIGHT - (200 + (30*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
@@ -206,8 +206,8 @@ class SaveScoreView(arcade.View):
         score_idx = 1
         
         arcade.draw_text("SCORE SAVED!",
-                            WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
-                            arcade.color.RED, font_size=48, anchor_x="center", bold=True)
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-100,
+                            arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
         arcade.draw_text("HIGH SCORES",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                         arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
@@ -311,13 +311,10 @@ class EnterInitialsView(arcade.View):
 
         #if user wants to view scores
         if self.view_score:
-            #debug
-            print(f"{initials_str} + View Scores")
-            view = ViewScoresView()
+            view = ViewScoresView(initials_str)
             self.window.show_view(view)
         #if user wants to save score
         else:
-            print(f"{initials_str} + Save Score")
             add_score(user_ref, initials_str, global_score.get_curr_score())
             view = SaveScoreView()
             self.window.show_view(view)
@@ -346,18 +343,20 @@ class EnterInitialsView(arcade.View):
         
         for i in range(3):
             center_x = WINDOW_WIDTH / 2 + (i - 1) * slot_spacing
+            left_x = center_x - slot_width/2
+            right_x = left_x + slot_width
             initial = self.initials[i]
             
             # Draw the background slot box
-            arcade.draw_lrbt_rectangle_filled(center_x, center_x+slot_width,center_y, center_y+60, arcade.color.DARK_GRAY)
+            arcade.draw_lrbt_rectangle_filled(left_x, right_x,center_y, center_y+60, arcade.color.DARK_BLUE_GRAY)
             
             # Highlight the active slot
             if i == self.active_slot:
-                arcade.draw_lrbt_rectangle_filled(center_x-10, center_x+slot_width +10,center_y-10, center_y+70, arcade.color.YELLOW)
+                arcade.draw_lrbt_rectangle_filled(left_x,right_x,center_y-10, center_y+70, arcade.color.YELLOW)
 
             # Draw the selected initial
             arcade.draw_text(initial,
-                center_x, center_y,
+                center_x, center_y+20,
                 arcade.color.WHITE, font_size=40, anchor_x="center", anchor_y="center", bold=True
             )
     def on_key_press(self, key, modifiers):
@@ -411,13 +410,6 @@ class GameView(arcade.View):
 
         #viewing states
         self.game_over = False
-        self.high_score = False
-
-
-        self.save_score = False
-        if debug:
-            self.game_over = True
-            self.high_score = False
 
         #create pacmans score images
         for x in range(110,220,40):
@@ -497,19 +489,6 @@ class GameView(arcade.View):
             self.sprites.append(i)
             self.pellet_list.append(i)
 
-
-    #     #ui manager for buttons 
-    #     self.uimanager = arcade.gui.UIManager()
-    #     self.uimanager.enable()
-
-    #     save_score_button = arcade.gui.UIFlatButton(text="Save Score", width=200)
-    #     save_score_button.on_click = self.on_buttonclick 
-    #     self.uimanager.add(save_score_button)
-
-    # def on_buttonclick(self, event):
-    #     print("SAVE Button is clicked")
-    #     self.save_score = True
-
     def on_draw(self):
         self.clear()
         self.walls.draw()
@@ -528,19 +507,25 @@ class GameView(arcade.View):
 
 
         # Placeholder for high score later
-        arcade.draw_text("HIGH  000000",
+        arcade.draw_text("HIGH  ",
                          WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
+        #high Score
+        high_score = rt_high_score(user_ref, global_score.get_curr_score())
+        output = f"{high_score:06d}"
+        arcade.draw_text(output,
+                         WINDOW_WIDTH - 120, WINDOW_HEIGHT - 40,
+                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
             
     def on_update(self,delta_time):
         #close logic when game over and choses correct view 
-        if (self.game_over and self.high_score):
+        if (self.game_over and is_high_score()):
             view = HighScoreView()
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
-        elif(self.game_over and not self.high_score):
+        elif(self.game_over and not is_high_score()):
             view = GameOverView()
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
