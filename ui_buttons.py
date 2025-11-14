@@ -1,10 +1,11 @@
+"""
+ui_buttons.py
+Button Classes 
+"""
 import arcade
 import arcade.gui.widgets.buttons
+from classes import EnterInitialsView, GameView
 
-
-"""
-Button Classes
-"""
 class EnterButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
@@ -17,35 +18,27 @@ class ExitButton(arcade.gui.widgets.buttons.UIFlatButton):
         arcade.exit()
 
 class SaveScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
-    
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import EnterInitialsView
         view = EnterInitialsView(view_score = False)
         self.window.show_view(view)
-        self.uimanager.disable()
+        #TODO: "FIGURE OUT WHY UI MANAGER NOT USED" self.uimanager.disable()
 
 class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import GameView
         view = GameView()
         self.window.show_view(view)
-        self.uimanager.disable()
-        
+        #TODO: "FIGURE OUT WHY UI MANAGER NOT USED" self.uimanager.disable()
+
 class ViewScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import EnterInitialsView
         view = EnterInitialsView(view_score = True)
         self.window.show_view(view)
-        
-
-
-
