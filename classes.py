@@ -1,16 +1,19 @@
 import arcade
 import arcade.gui.widgets.layout
 import string
-from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton 
+from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
 from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
 from misc import *
 from walls import create_walls
+
+# Constant imports
 from constants.constants import *
+from constants.button_constants import *
+
+# Firestore imports
 from query_fs import * 
 from constants import *
 from score import Score
-
-
 
 #Global Score 
 global_score = Score()
@@ -23,9 +26,24 @@ class MenuView(arcade.View):
         super().__init__()
         self.background = None
 
+        button_style = BUTTON_STYLE
+
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
+
+        start_game_button =StartGameButton(self.window, text = "START", width=150, style=button_style)
+        self.h_box.add(start_game_button)
+
+        ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+
+        self.manager.add(ui_anchor_layout)
+
     def on_show_view(self):
         """ Called when switching to this view"""
-        self.background = arcade.load_texture("images/background.jpg")
+        self.background = arcade.load_texture("images/background.png")
 
     def on_draw(self):
         """ Draw the menu """
@@ -36,21 +54,8 @@ class MenuView(arcade.View):
                 self.background,
                 arcade.LBWH(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
             )
-
-        # Overlay title text
-        arcade.draw_text("PACMAN MENU",
-                         WINDOW_WIDTH / 2, WINDOW_HEIGHT - 100,
-                         arcade.color.YELLOW, font_size=50, anchor_x="center", bold=True)
-
-        arcade.draw_text("Click anywhere to start",
-                         WINDOW_WIDTH / 2, 100,
-                         arcade.color.WHITE, font_size=24, anchor_x="center")
-
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ Use a mouse press to advance to the 'game' view. """
-        game_view = GameView()
-        # game_view.set_up()
-        self.window.show_view(game_view)
+        
+        self.manager.draw()
 
 
 class GameOverView(arcade.View):
