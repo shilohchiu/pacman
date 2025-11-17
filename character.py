@@ -452,11 +452,15 @@ class Blinky(Character):
 
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/blinky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/blinky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -496,11 +500,15 @@ class Pinky(Character):
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -536,11 +544,15 @@ class Inky(Character):
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/inky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -575,11 +587,15 @@ class Clyde(Character):
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
