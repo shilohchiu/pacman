@@ -387,12 +387,7 @@ class EnterInitialsView(arcade.View):
             # Move active slot left
             self.active_slot = (self.active_slot - 1) % 3
 
-
-        
-
-
 class GameView(arcade.View):
-
     """
     GameView class, shows playable game
     """
@@ -571,17 +566,14 @@ class GameView(arcade.View):
             self.game_over, self.high_score = (False, False)
             return
 
-                
-        
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
-        print(f"PAC SIZE: {self.pacman.size}")
-        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
-        print(f"horizontal factor: {self.pacman.horizontal_direction}")
-        print(f"vertical factor: {self.pacman.vertical_direction}")
-        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
-        print(f"directions: {self.pacman.directions}")
-        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
-
+        # print(f"PAC SIZE: {self.pacman.size}")
+        # print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        # print(f"horizontal factor: {self.pacman.horizontal_direction}")
+        # print(f"vertical factor: {self.pacman.vertical_direction}")
+        # print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
+        # print(f"directions: {self.pacman.directions}")
+        # print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
@@ -611,6 +603,12 @@ class GameView(arcade.View):
             #Character.change_state(self.blinky,"scattering")
             #Character.change_state(self.clyde,"scattering")
 
+        # TODO: check for one up life
+        # if global_score > 10000:
+        #     add_extra_life()
+
+        # TODO: advance to the next level
+
 
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
@@ -636,9 +634,11 @@ class GameView(arcade.View):
             # case that pacman on left side, go to the right
             if self.pacman.center_x < WINDOW_WIDTH / 2:
                 self.pacman.center_x = SCREENWRAP_RIGHT_SIDE
+                self.pacman.center_y = 385
             else:
                 # case that pacman on right side, go to the left
                 self.pacman.center_x = SCREENWRAP_LEFT_SIDE
+                self.pacman.center_y = 385
 
 
     def on_mouse_press(self):
