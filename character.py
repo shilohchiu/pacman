@@ -287,9 +287,9 @@ class Pacman(Character):
                 self.need_adjustment = False
                 self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
                 self.size = (30,30)
-            #for item in PIVOT_GRAPH[self.recent_piv_row]:
-                #if item[0] == self.recent_piv_col:
-                    #self.valid_directions = item[1]
+            for item in PIVOT_GRAPH[self.recent_piv_row]:
+                if item[0] == self.recent_piv_col:
+                    self.valid_directions = item[1]
             if "N" in self.valid_directions and self.vertical_queue == 1:
                 self.center_x = self.recent_piv_col
                 self.vertical_direction = self.vertical_queue    
