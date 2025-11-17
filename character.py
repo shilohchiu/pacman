@@ -221,8 +221,8 @@ class Pacman(Character):
     Pacman subclass
     """
 
-    def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
+    def __init__(self, walls, start_pos=PACMAN_SPAWN_COORD):
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
 
         self.state = PACMAN_NORMAL
@@ -244,7 +244,7 @@ class Pacman(Character):
         self.left_pressed = False
         self.right_pressed = False
         self.directions = (0,0)
-        self.center_x, self.center_y = 485, 270
+        #self.center_x, self.center_y = 485, 270
 
         self.overwrite = [None, None]
 
@@ -334,10 +334,6 @@ class Pacman(Character):
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
 
-            
-            
-            
-
         else:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
@@ -384,9 +380,6 @@ class Pacman(Character):
             self.right_pressed = True
 
             self.directions = (1,0)
-
-        #self.set_movement(self)
-
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP:
@@ -439,10 +432,10 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(300, 450), point = 200):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -486,10 +479,10 @@ class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, walls, start_pos=(400, 450), point = 200):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/pinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -527,10 +520,10 @@ class Inky(Character):
     """
     Inky subclass
     """
-    def __init__(self, walls, start_pos=(300, 400), point = 200):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X-GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/inky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -567,10 +560,10 @@ class Clyde(Character):
     """
     Clyde subclass
     """
-    def __init__(self, walls, start_pos=(400, 400), point = 200):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X+GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/clyde.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point

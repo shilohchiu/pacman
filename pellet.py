@@ -37,8 +37,16 @@ class BigPellet(Pellet):
                          scale = .07,
                          start_pos=start_pos)
 class Fruit(Pellet):
-    def __init__(self, image = 'images/fruit.png', start_pos = (0,0)):
+    def __init__(self, image = 'images/fruit/cherry.png', start_pos = (WINDOW_WIDTH/2,330), point = 100, st_pt = 70, time = 9):
         super().__init__(image,
-                         point=100,
-                         scale = 5,
+                         point=point,
+                         scale = .5,
                          start_pos=start_pos)
+        self.st_pt = st_pt
+        self.time = time 
+        
+        def set_st_pt(self, pt):
+            self.st_pt = pt
+
+
+        

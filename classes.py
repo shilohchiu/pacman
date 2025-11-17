@@ -3,7 +3,7 @@ import arcade.gui.widgets.layout
 import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
 from character import Pacman, Blinky, Pinky, Inky, Clyde
-from pellet import Pellet, BigPellet
+from pellet import Pellet, BigPellet, Fruit
 from misc import *
 from walls import create_walls
 
@@ -116,8 +116,7 @@ class GameOverView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
             score_idx += 1
-      
-      
+     
 class ViewScoresView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -232,6 +231,7 @@ class SaveScoreView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
             score_idx += 1
+
 class HighScoreView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -398,6 +398,7 @@ class GameView(arcade.View):
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
+        self.fruit_list = arcade.SpriteList()
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
@@ -510,6 +511,14 @@ class GameView(arcade.View):
             self.pellet_list.append(i)
 
         #create fruit pellets
+        fruits= []
+        cherry = Fruit()
+        fruits.append(cherry)
+
+        #add fruit to list
+        for f in fruits:
+            self.sprites.append(f)
+            self.fruit_list.append(f)
 
     def on_draw(self):
         self.clear()
@@ -531,7 +540,7 @@ class GameView(arcade.View):
 
         # Placeholder for high score later
         arcade.draw_text("HIGH  ",
-                         WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH-250, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
         #high Score
@@ -541,7 +550,7 @@ class GameView(arcade.View):
             curr_high_score = global_score.get_curr_score()
         output = f"{curr_high_score:06d}"
         arcade.draw_text(output,
-                         WINDOW_WIDTH - 120, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH - 150, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
     def on_update(self,delta_time):
@@ -593,6 +602,10 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
+        #fruit collisions
+        f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)
+        global_score.adj_curr_score(point=f_points)
+
         #collision handling for ghost -> pacman 
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
@@ -602,7 +615,7 @@ class GameView(arcade.View):
                 # remove sprite from SpriteList
                 self.pacman_score_list.remove((self.pacman_score_list[-1]))
                 # reset pacman to start position
-                x, y = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+                x, y = PACMAN_SPAWN_COORD
                 self.pacman.center_x = x
                 self.pacman.center_y = y
 
@@ -610,7 +623,7 @@ class GameView(arcade.View):
                 # no lives left; game over
                 self.game_over = True
         
-        #collision handling fro pacman -> ghost
+        #collision handling for pacman -> ghost
         elif collision and self.pacman.get_state() == PACMAN_ATTACK:
             ghost_num = 1
             for ghost in collision:
