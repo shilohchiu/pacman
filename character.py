@@ -17,7 +17,7 @@ class Character(arcade.Sprite):
 
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
-        self.grid_size = 20
+        self.grid_size = 5
         self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
         self.speed = 1
@@ -53,8 +53,7 @@ class Character(arcade.Sprite):
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
-        #print("FINDING MOVEMENT")
-        # self.horizontal_direction = 1
+
         self.generate_path(self)
         #print("PATH GENERATED")
         self.pathfind(self)
@@ -66,17 +65,37 @@ class Character(arcade.Sprite):
         #print("GOT TARGET: ")
         #print(self.target)
 
-    def generate_path(self, idk):
-        self_pos = (self.center_x, self.center_y)
-        if self.path is None or self.path[0] == self_pos:
-            barrier = arcade.AStarBarrierList(self, self.walls, self.grid_size, 0,
-                                                WINDOW_WIDTH, 0, WINDOW_HEIGHT)
-            #print("BARRIER CREATED")
-            #print(f"TARGET: {self.target}")
-            #print(f"SELF POS: {self_pos}")
-            self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
-    
+    # TODO: need to create own pathfinding algorithm
+    # look at closest pivot point to self and target
+    # find shortest possible path between pivot points using accessible pivot points
+        # Use directional markers to find valid moves
+            # Simulate tree logic and steal something from algo design?
+        # Use recursion and pixel count to find shortest path?
+    # ignore direction options that move farther away from target
+        # if below and to the right, only test pivot point options moving south and east
+    # prioritize axis that is farther away from target
+        # if substantially above/below target, prioritize vertical movement
+        # not necessary for recursive implementation, but necessary for "one try" style (just generate 1 path and go with it)
+    # after reaching closest pivot point move in remaining direction until collision/recalculation
+        # change to wander/reset target once wall is reached with no collision
 
+    def generate_path(self, idk):
+        self.path = []
+        
+    def closest_piv_point(self, idk):
+        self_pos = (self.center_x, self.center_y)
+        if self_pos[0] in PIVOT_COL:
+            for row in PIVOT_ROW:
+                if abs(row - self_pos[1]) < abs(closest_y - self_pos[1]):
+                    closest_y = row
+            closest_x = self_pos[0]
+        elif self_pos[1] in PIVOT_ROW:
+            for col in PIVOT_COL:
+                if abs(col - self_pos[0]) < abs(closest_x - self_pos[0]):
+                    closest_x = col
+            closest_y = self_pos[1]
+        if not ((closest_x,closest_y) in self.path):
+            closest_piv = (closest_x, closest_y)
 
     def pathfind(self, idk):
         print("PATH: ")
@@ -115,42 +134,18 @@ class Character(arcade.Sprite):
         except TypeError:
             print("NO PATH")
 
-        path_x = self.path[0][0]
-        path_y = self.path[0][1]
-
-        if self.center_x < path_x:
-            self.horizontal_direction = 1
-        elif self.center_x > path_x:
-            self.horizontal_direction = -1
-        else:
-            self.horizontal_direction = 0
-            print("HORIZONTALLY ALIGNED")
-        
-        if self.horizontal_direction == 0:
-            if self.center_y < path_y:
-                self.vertical_direction = 1
-            elif self.center_y > path_y:
-                self.vertical_direction = -1
-            else:
-                self.vertical_direction = 0
-                print("VERTICALLY ALIGNED")
 
     def change_state(self, new_state):
         self.state = new_state
-        if self.frame_open:
-            self.texture = self.texture_open.get(self.state, self.texture)
-        else:
-            self.texture = self.texture_close.get(self.state, self.texture)
+        # TODO: Fix crash?
+        # if self.frame_open:
+        #     self.texture = self.texture_open.get(self.state, self.texture)
+        # else:
+        #     self.texture = self.texture_close.get(self.state, self.texture)
 
     def on_update(self, delta_time):
-        #Edits
-        #self.blinky.find_movement(self)
-        #self.pacman.change_x = self.pacman.horizontal_direction * self.pacman.speed
-        #self.pacman.change_y = self.pacman.vertical_direction * self.pacman.speed
 
-        #TODO: blacklist recently passed turn points to avoid teleporting "backwards" in swift movements
-
-        # NOTE: checks for valid value in +/- 5 or 7 range
+        # checks for valid value in +/- 5 or 7 range
         # (some weird alternating position values when hugging wall)
         # ranges chosen are magic numbers
         plinus_x = self.center_x - 5, self.center_x + 5
@@ -158,7 +153,6 @@ class Character(arcade.Sprite):
 
         self.in_piv_col = False
         self.in_piv_row = False
-        row = 0
 
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
@@ -166,7 +160,6 @@ class Character(arcade.Sprite):
                 if self.recent_piv_row != num:
                     self.need_adjustment = True
                 self.recent_piv_row = num
-                row = num
 
         for num in range(int(plinus_x[0]), int(plinus_x[1])):
             if num in PIVOT_COL:
@@ -181,10 +174,6 @@ class Character(arcade.Sprite):
         self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
 
         self.physics_engine.update()
-        #self.fix_position(self)
-        # if self.last_pos == (self.center_x, self.center_y):
-        #     self.horizontal_direction = 0
-        #     self.vertical_direction = 0
 
         self.last_pos = (self.center_x, self.center_y)
 
@@ -217,7 +206,7 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(485, 270))
         self.speed = 2
 
         self.state = PACMAN_NORMAL
@@ -239,7 +228,6 @@ class Pacman(Character):
         self.left_pressed = False
         self.right_pressed = False
         self.directions = (0,0)
-        self.center_x, self.center_y = 485, 270
 
         self.overwrite = [None, None]
 
@@ -434,11 +422,12 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(300, 450)):
+    def __init__(self, walls, start_pos=(115, 650)):
         super().__init__(walls,
                          "images/blinky.png",
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
+        
         self.speed = 3
         self.target = (Pacman.center_x, Pacman.center_y)
         self.state = GHOST_CHASE

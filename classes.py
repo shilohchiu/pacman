@@ -590,7 +590,8 @@ class GameView(arcade.View):
         self.sprites.update()
         self.pacman.update_animation(delta_time)
         self.pacman.update_rotation()
-        self.blinky.update_animation()
+        # TODO: fix crash
+        #self.blinky.update_animation()
         self.clyde.update_animation()
         self.inky.update_animation()
         self.pinky.update_animation()
