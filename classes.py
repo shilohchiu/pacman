@@ -57,7 +57,6 @@ class MenuView(arcade.View):
         
         self.manager.draw()
 
-
 class GameOverView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -116,7 +115,7 @@ class GameOverView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
             score_idx += 1
-        
+      
 class ViewScoresView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -173,7 +172,6 @@ class ViewScoresView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
             score_idx += 1
-        
 
 class SaveScoreView(arcade.View):
     """
@@ -231,10 +229,8 @@ class SaveScoreView(arcade.View):
                                  3*WINDOW_WIDTH/4, WINDOW_HEIGHT - (200 + (30*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
-            score_idx += 1
-        
-    
-      
+            score_idx += 1 
+
 class HighScoreView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -281,7 +277,7 @@ class HighScoreView(arcade.View):
         arcade.draw_text("Save score below or start new game.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
-        
+
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
         super().__init__()
@@ -386,10 +382,6 @@ class EnterInitialsView(arcade.View):
         elif key == arcade.key.LEFT:
             # Move active slot left
             self.active_slot = (self.active_slot - 1) % 3
-
-
-        
-
 
 class GameView(arcade.View):
 
@@ -536,7 +528,6 @@ class GameView(arcade.View):
                          WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
-
         # Placeholder for high score later
         arcade.draw_text("HIGH  ",
                          WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
@@ -551,14 +542,15 @@ class GameView(arcade.View):
         arcade.draw_text(output,
                          WINDOW_WIDTH - 120, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
-            
+
     def on_update(self,delta_time):
         #close logic when game over and choses correct view
         if not self.pellet_list:
             self.game_over = True
-            
+
         if global_score.get_curr_score() > self.low_high_score:
             self.new_high_score = True
+
         if (self.game_over and self.new_high_score):
             view = HighScoreView()
             self.window.show_view(view)
@@ -613,7 +605,7 @@ class GameView(arcade.View):
 
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
-        if collision:
+        if collision and self.pacman.get_state() == PACMAN_NORMAL:
             # remove one life icon (last in list)
             if len(self.pacman_score_list) > 0:
                 # remove sprite from SpriteList
@@ -624,9 +616,19 @@ class GameView(arcade.View):
                 self.pacman.center_y = y
 
             else:
-                # no lives left
+                # no lives left; game over
                 self.game_over = True
-                print("GAME OVER")
+        
+        if collision and self.pacman.get_state() == PACMAN_ATTACK:
+            ghost_num = 1
+            for ghost in collision:
+                base_ghost_point = getattr(ghost, "point", 0)
+                global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
+                #TODO: change state to be accurate 
+                ghost.change_state(GHOST_EATEN)
+                ghost_num += 1
+            if ghost_num == 5:
+                ghost_num = 0
 
         # screen wrap functionality
         screen_wrap = arcade.check_for_collision_with_list(self.pacman, 

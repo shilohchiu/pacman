@@ -75,8 +75,6 @@ class Character(arcade.Sprite):
             #print(f"TARGET: {self.target}")
             #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
-    
-
 
     def pathfind(self, idk):
         print("PATH: ")
@@ -142,6 +140,9 @@ class Character(arcade.Sprite):
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
 
+    def get_state(self):
+        return self.state
+    
     def on_update(self, delta_time):
         #Edits
         #self.blinky.find_movement(self)
@@ -444,6 +445,7 @@ class Blinky(Character):
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.target = (Pacman.center_x, Pacman.center_y)
         self.state = GHOST_CHASE
 
@@ -484,12 +486,13 @@ class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, walls, start_pos=(310, 450)):
+    def __init__(self, walls, start_pos=(400, 450), point = 200):
         super().__init__(walls,
                          "images/pinky.png",
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
@@ -524,12 +527,13 @@ class Inky(Character):
     """
     Inky subclass
     """
-    def __init__(self, walls, start_pos=(290, 450)):
+    def __init__(self, walls, start_pos=(300, 400), point = 200):
         super().__init__(walls,
                          "images/inky.png",
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
@@ -563,12 +567,13 @@ class Clyde(Character):
     """
     Clyde subclass
     """
-    def __init__(self, walls, start_pos=(320, 450)):
+    def __init__(self, walls, start_pos=(400, 400), point = 200):
         super().__init__(walls,
                          "images/clyde.png",
                          scale = CHARACTER_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 1.gif"),
@@ -618,7 +623,6 @@ class Pellet(arcade.Sprite):
             if isinstance(pellet,BigPellet):
                 if game_view:
                     game_view.activate_power_mode()
-                print('change state!!')
             pellet.remove_from_sprite_lists()
         return points
 
