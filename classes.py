@@ -57,6 +57,64 @@ class MenuView(arcade.View):
         
         self.manager.draw()
 
+class LevelUpView(arcade.View):
+    """
+    LevelUpView, show the end of game as well as buttons to switch to other screen 
+    """
+    def __init__(self):
+        super().__init__()
+
+        #UIManager
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+        
+        self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
+        
+        #create buttons
+        view_score_button = ViewScoreButton(self.window, text = "View Scores", width=150)
+        self.h_box.add(view_score_button)
+
+        start_game_button =StartGameButton(self.window, text = "Start Game", width=150)
+        self.h_box.add(start_game_button)
+
+        exit_button = ExitButton(text = "Exit", width=150)
+        self.h_box.add(exit_button)
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+
+        self.manager.add(ui_anchor_layout)
+
+    def on_show_view(self):
+        arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+        score_board = top_ten_scores(user_ref)
+        score_idx = 1
+        
+        arcade.draw_text("GAME OVER",
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
+                            arcade.color.RED, font_size=48, anchor_x="center", bold=True)
+        arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
+                            WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
+                            arcade.color.WHITE, font_size=28, anchor_x="center")
+        for user in score_board:
+            arcade.draw_text(f"{score_idx} .",
+                                 WINDOW_WIDTH/4 + 60, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="right")
+                
+            arcade.draw_text(f"{user[:3]}",
+                                 WINDOW_WIDTH/2, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="center")
+            
+            arcade.draw_text(f"{score_board[user]:06d}",
+                                 3*WINDOW_WIDTH/4, WINDOW_HEIGHT - (200 + (30*score_idx)),
+                                 arcade.color.WHITE, font_size=28, anchor_x="right")
+        
+            score_idx += 1
 
 class GameOverView(arcade.View):
     """
@@ -609,7 +667,6 @@ class GameView(arcade.View):
 
         # TODO: advance to the next level
 
-
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision:
@@ -639,6 +696,9 @@ class GameView(arcade.View):
                 # case that pacman on right side, go to the left
                 self.pacman.center_x = SCREENWRAP_LEFT_SIDE
                 self.pacman.center_y = 385
+
+        # TODO: implement this
+        # if not self.pellet_list():
 
 
     def on_mouse_press(self):
