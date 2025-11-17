@@ -13,7 +13,7 @@ class Character(arcade.Sprite):
     """
     Character superclass
     """
-    def __init__(self, walls, image, scale = 1, start_pos= (0,0)):
+    def __init__(self, walls, image, scale = 1, start_pos= (0,0), point = 0):
 
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
@@ -209,6 +209,10 @@ class Character(arcade.Sprite):
             self.angle = -90       # up
         elif self.vertical_direction < 0:
             self.angle = 90      # down
+    
+    def update_point(self, upd_point):
+        self.point = upd_point
+
 
 
 class Pacman(Character):
@@ -434,7 +438,7 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(300, 450)):
+    def __init__(self, walls, start_pos=(300, 450), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
                          scale = CHARACTER_SCALE,
@@ -596,7 +600,7 @@ class Clyde(Character):
         nothing = ""
 
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point=1, scale = .05, start_pos = (0,0)):
+    def __init__(self, image, point=10, scale = .05, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale=scale)
         self.position = start_pos
@@ -627,7 +631,7 @@ class BigPellet(Pellet):
 class Fruit(Pellet):
     def __init__(self, image = 'images/fruit.png', start_pos = (0,0)):
         super().__init__(image,
-                         point=50,
+                         point=100,
                          scale = 5,
                          start_pos=start_pos)
 

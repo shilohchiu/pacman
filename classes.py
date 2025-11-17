@@ -432,8 +432,7 @@ class GameView(arcade.View):
             black_box.center_y = BLACK_BOX_Y_POSITION
             self.black_boxes.append(black_box)
 
-        #create Score
-        self.score = 0
+
         #reset score to 0 
         global_score.reset_curr_score()
 
