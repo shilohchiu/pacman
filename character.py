@@ -40,6 +40,8 @@ class Character(arcade.Sprite):
         self.texture_close = {}
         self.state = None
         self.frame_open = True
+        self.power_timer = 0
+        self.power_timer_left = 0
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -232,6 +234,23 @@ class Pacman(Character):
         }
 
         self.texture = self.texture_open[self.state]
+        self.death_textures = [
+            arcade.load_texture("images/death0.png"),
+            arcade.load_texture("images/death1.png"),
+            arcade.load_texture("images/death2.png"),
+            arcade.load_texture("images/death3.png"),
+            arcade.load_texture("images/death4.png"),
+            arcade.load_texture("images/death5.png"),
+            arcade.load_texture("images/death6.png"),
+            arcade.load_texture("images/death7.png"),
+            arcade.load_texture("images/death8.png"),
+            arcade.load_texture("images/death9.png"),
+            arcade.load_texture("images/death10.png")
+        ]
+
+        self.death_frame = 0
+        self.death_timer = 0
+        self.death_frame_speed = 0.12
 
         self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
@@ -242,6 +261,14 @@ class Pacman(Character):
         self.center_x, self.center_y = 485, 270
 
         self.overwrite = [None, None]
+
+    def start_death(self):
+        self.state = PACMAN_DEAD
+        self.death_frame = 0
+        self.death_timer = 0
+        self.change_x = 0
+        self.change_y = 0
+        self.texture = self.death_textures[0]
 
     def set_movement(self, wtf):
         self.valid_directions = []
@@ -260,9 +287,9 @@ class Pacman(Character):
                 self.need_adjustment = False
                 self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
                 self.size = (30,30)
-            for item in PIVOT_GRAPH[self.recent_piv_row]:
-                if item[0] == self.recent_piv_col:
-                    self.valid_directions = item[1]
+            #for item in PIVOT_GRAPH[self.recent_piv_row]:
+                #if item[0] == self.recent_piv_col:
+                    #self.valid_directions = item[1]
             if "N" in self.valid_directions and self.vertical_queue == 1:
                 self.center_x = self.recent_piv_col
                 self.vertical_direction = self.vertical_queue    
@@ -454,6 +481,35 @@ class Blinky(Character):
 
         self.texture = self.texture_open[self.state]
 
+        self.frightened_texture_1 = arcade.load_texture("images/blue 0.gif")
+        self.frightened_texture_2 = arcade.load_texture("images/white.png")
+
+        self.blink_timer = 0
+        self.blink_state = 0
+        self.power_time_left = 0
+
+    def update_animation(self, delta_time: float = 1/60):
+        # Normal movement handled by super
+        super().update_animation(delta_time)
+
+        # Only blink during frightened mode
+        if self.state == GHOST_FLEE:
+            # power_mode_time_left is provided by GameView
+            if self.power_time_left < BLINK_THRESHOLD:
+                
+                self.blink_timer += delta_time
+                if self.blink_timer > BLINK_SPEED:
+                    self.blink_timer = 0
+                    self.blink_state = 1 - self.blink_state  # toggle 0 ↔ 1
+
+                # Swap textures depending on blink state
+                if self.blink_state == 0:
+                    self.texture = self.frightened_texture_1
+                else:
+                    self.texture = self.frightened_texture_2
+                
+                return
+
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
@@ -498,6 +554,35 @@ class Pinky(Character):
 
         self.texture = self.texture_open[self.state]
 
+        self.frightened_texture_1 = arcade.load_texture("images/blue 0.gif")
+        self.frightened_texture_2 = arcade.load_texture("images/white.png")
+
+        self.blink_timer = 0
+        self.blink_state = 0
+        self.power_time_left = 0
+
+    def update_animation(self, delta_time: float = 1/60):
+        # Normal movement handled by super
+        super().update_animation(delta_time)
+
+        # Only blink during frightened mode
+        if self.state == GHOST_FLEE:
+            # power_mode_time_left is provided by GameView
+            if self.power_time_left < BLINK_THRESHOLD:
+                
+                self.blink_timer += delta_time
+                if self.blink_timer > BLINK_SPEED:
+                    self.blink_timer = 0
+                    self.blink_state = 1 - self.blink_state  # toggle 0 ↔ 1
+
+                # Swap textures depending on blink state
+                if self.blink_state == 0:
+                    self.texture = self.frightened_texture_1
+                else:
+                    self.texture = self.frightened_texture_2
+                
+                return
+
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
@@ -537,6 +622,36 @@ class Inky(Character):
         }
 
         self.texture = self.texture_open[self.state]
+
+        self.frightened_texture_1 = arcade.load_texture("images/blue 0.gif")
+        self.frightened_texture_2 = arcade.load_texture("images/white.png")
+
+        self.blink_timer = 0
+        self.blink_state = 0
+        self.power_time_left = 0
+
+    def update_animation(self, delta_time: float = 1/60):
+        # Normal movement handled by super
+        super().update_animation(delta_time)
+
+        # Only blink during frightened mode
+        if self.state == GHOST_FLEE:
+            # power_mode_time_left is provided by GameView
+            if self.power_time_left < BLINK_THRESHOLD:
+                
+                self.blink_timer += delta_time
+                if self.blink_timer > BLINK_SPEED:
+                    self.blink_timer = 0
+                    self.blink_state = 1 - self.blink_state  # toggle 0 ↔ 1
+
+                # Swap textures depending on blink state
+                if self.blink_state == 0:
+                    self.texture = self.frightened_texture_1
+                else:
+                    self.texture = self.frightened_texture_2
+                
+                return
+
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
@@ -576,6 +691,35 @@ class Clyde(Character):
         }
 
         self.texture = self.texture_open[self.state]
+
+        self.frightened_texture_1 = arcade.load_texture("images/blue 0.gif")
+        self.frightened_texture_2 = arcade.load_texture("images/white.png")
+
+        self.blink_timer = 0
+        self.blink_state = 0
+        self.power_time_left = 0
+
+    def update_animation(self, delta_time: float = 1/60):
+        # Normal movement handled by super
+        super().update_animation(delta_time)
+
+        # Only blink during frightened mode
+        if self.state == GHOST_FLEE:
+            # power_mode_time_left is provided by GameView
+            if self.power_time_left < BLINK_THRESHOLD:
+                
+                self.blink_timer += delta_time
+                if self.blink_timer > BLINK_SPEED:
+                    self.blink_timer = 0
+                    self.blink_state = 1 - self.blink_state  # toggle 0 ↔ 1
+
+                # Swap textures depending on blink state
+                if self.blink_state == 0:
+                    self.texture = self.frightened_texture_1
+                else:
+                    self.texture = self.frightened_texture_2
+                
+                return
 
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""

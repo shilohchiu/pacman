@@ -52,6 +52,8 @@ class GameView(arcade.View):
         self.pellet_list = arcade.SpriteList()
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
+        self.power_mode = False
+        self.power_timer = 0
 
 
         # Create wall spritelist
@@ -220,6 +222,17 @@ class GameView(arcade.View):
         self.inky.update_eyes()
         self.pinky.update_eyes()
 
+        if self.power_mode:
+            self.power_timer -= delta_time
+
+        # push remaining time to ghosts so they can blink
+        for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+            ghost.power_time_left = self.power_timer
+
+        if self.power_timer <= 0:
+            self.power_mode = False
+            self.end_power_mode(delta_time)
+
         #pellet collsions
         points = Pellet.pellet_collision(self.pacman, self.pellet_list)
         self.score += points
@@ -267,5 +280,21 @@ class GameView(arcade.View):
     def on_key_release(self, key, modifiers):
         if not self.game_over:
             self.pacman.on_key_release(key, modifiers)
+
+    def activate_power_mode(self):
+        """Activate frightened mode for all ghosts."""
+        self.pacman.change_state(PACMAN_ATTACK)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_FLEE)
+
+        # 7 seconds of power-up (adjust as desired)
+        arcade.schedule(self.end_power_mode, 7.0)
+    
+    def end_power_mode(self, delta_time):
+        """Revert ghosts and Pac-Man to normal state."""
+        self.pacman.change_state(PACMAN_NORMAL)
+        for ghost in self.ghosts:
+            ghost.change_state(GHOST_CHASE)
+        arcade.unschedule(self.end_power_mode)
     
     
