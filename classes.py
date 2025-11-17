@@ -2,7 +2,8 @@ import arcade
 import arcade.gui.widgets.layout
 import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
+from character import Pacman, Blinky, Pinky, Inky, Clyde
+from pellet import Pellet, BigPellet
 from misc import *
 from walls import create_walls
 
@@ -115,6 +116,7 @@ class GameOverView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
             score_idx += 1
+      
       
 class ViewScoresView(arcade.View):
     """
@@ -229,8 +231,7 @@ class SaveScoreView(arcade.View):
                                  3*WINDOW_WIDTH/4, WINDOW_HEIGHT - (200 + (30*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
         
-            score_idx += 1 
-
+            score_idx += 1
 class HighScoreView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -479,7 +480,6 @@ class GameView(arcade.View):
                     continue
 
                 #locations to skip
-
                 #ghost house
                 if 250 < x < 470 and 280 < y < 490:
                     continue
@@ -499,7 +499,6 @@ class GameView(arcade.View):
                 self.pellet_list.append(pellet)
 
         #create big pellets
-
         big_pellet_0 = BigPellet(start_pos = (115,626))
         big_pellet_1 = BigPellet(start_pos = (597,626))
         big_pellet_2 = BigPellet(start_pos = (115,210))
@@ -509,6 +508,8 @@ class GameView(arcade.View):
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
+
+        #create fruit pellets
 
     def on_draw(self):
         self.clear()
@@ -561,9 +562,7 @@ class GameView(arcade.View):
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
-
-                
-        
+     
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
         print(f"PAC SIZE: {self.pacman.size}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
@@ -595,6 +594,7 @@ class GameView(arcade.View):
         global_score.adj_curr_score(point=points)
 
         #collision handling for ghost -> pacman 
+
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision and self.pacman.get_state() == PACMAN_NORMAL:
             # remove one life icon (last in list)
@@ -610,7 +610,8 @@ class GameView(arcade.View):
                 # no lives left; game over
                 self.game_over = True
         
-        if collision and self.pacman.get_state() == PACMAN_ATTACK:
+        #collision handling fro pacman -> ghost
+        elif collision and self.pacman.get_state() == PACMAN_ATTACK:
             ghost_num = 1
             for ghost in collision:
                 base_ghost_point = getattr(ghost, "point", 0)
