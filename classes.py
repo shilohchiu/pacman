@@ -594,15 +594,6 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-        # big pellet collision
-        #pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
-        #if pellet_collision:
-            #Character.change_state(self.pinky,"scattering")
-            #Character.change_state(self.inky,"scattering")
-            #Character.change_state(self.blinky,"scattering")
-            #Character.change_state(self.clyde,"scattering")
-
-
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision and self.pacman.get_state() == PACMAN_NORMAL:
