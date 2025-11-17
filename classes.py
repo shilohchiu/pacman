@@ -226,7 +226,7 @@ class GameView(arcade.View):
             self.power_timer -= delta_time
 
         # push remaining time to ghosts so they can blink
-        for ghost in [self.blinky, self.pinky, self.inky, self.clyde]:
+        for ghost in self.ghosts:
             ghost.power_time_left = self.power_timer
 
         if self.power_timer <= 0:
