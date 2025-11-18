@@ -87,6 +87,7 @@ class Character(arcade.Sprite):
         path = []
         point1 = self.closest_piv_point(self, point1)
         point2 = self.closest_piv_point(self, point2)
+        print(f"STARTING PIV POINT: {point1}")
         while True:
             if point1 == point2:
                 return path
@@ -95,6 +96,8 @@ class Character(arcade.Sprite):
                 path.append(point1)
                 print(f"added point: {point1}")
                 print(f"point1: {point1} \t point2: {point2}")
+                print(f"path: {path}")
+                print("-----------------")
         
     
     def rec_generate_path(self, idk, point1, point2):
@@ -102,7 +105,8 @@ class Character(arcade.Sprite):
             if col[0] == point1[0]:
                 piv_directions = col[1]
         new_point = 0
-
+        print(PIVOT_GRAPH[point1[1]])
+        print(piv_directions)
         v_factor = abs(point1[0] - point2[0])
         h_factor = abs(point1[1] - point2[1])
 
@@ -219,11 +223,14 @@ class Character(arcade.Sprite):
 
         return new_point
     
-    
+    # TODO: closest points is wrong, need to find way to find closest set of points as opposed to finding closest x and closest y
+        # can lead to disjointed pairs
+        # look at pacman logic?
     def closest_piv_point(self, idk, point, direction = None):
         self_pos = point
         curr_closest_x = self_pos[0]
         curr_closest_y = self_pos[1]
+        print(direction)
         if not direction:
             if self_pos[0] in PIVOT_COL:
                 for row in PIVOT_ROW:
@@ -237,20 +244,24 @@ class Character(arcade.Sprite):
                 curr_closest_y = self_pos[1]
         else:
             if direction == "N":
+                curr_closest_y = 100000
                 for row in PIVOT_ROW:
                     if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row > self_pos[1]:
                         curr_closest_y = row
             elif direction == "S":
+                curr_closest_y = 100000
                 for row in PIVOT_ROW:
                     if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row < self_pos[1]:
                         curr_closest_y = row
             elif direction == "E":
-                for col in PIVOT_COL:
-                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0]:
-                        curr_closest_x = col
-            elif direction == "W":
+                curr_closest_x = 100000
                 for col in PIVOT_COL:
                     if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col > self_pos[0]:
+                        curr_closest_x = col
+            elif direction == "W":
+                curr_closest_x = 100000
+                for col in PIVOT_COL:
+                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0]:
                         curr_closest_x = col
         
         return (curr_closest_x, curr_closest_y)
@@ -623,6 +634,9 @@ class Blinky(Character):
         super().set_movement(self)
         if not self.path:
             self.generate_path(self, (self.center_x, self.center_y), (485, 270))
+    
+    def on_update(self, delta_time):
+        nothing = ""
     
 
 class Pinky(Character):
