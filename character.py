@@ -53,10 +53,9 @@ class Character(arcade.Sprite):
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
-
-        self.generate_path(self)
+        print("placeholder")
         #print("PATH GENERATED")
-        self.pathfind(self)
+        
         #print("PATH FOUND (lol)")
 
     def set_target(self, target):
@@ -79,23 +78,182 @@ class Character(arcade.Sprite):
     # after reaching closest pivot point move in remaining direction until collision/recalculation
         # change to wander/reset target once wall is reached with no collision
 
-    def generate_path(self, idk):
-        self.path = []
+    # find closest piv point to start and target
+    # find closest piv point to parent piv point in proper direction
+        # only find closest to point1
+    # plug in new piv points into recursive generate path
+    # continue until both generated pivot points are the same 
+    def generate_path(self, idk, point1, point2):
+        path = []
+        point1 = self.closest_piv_point(self, point1)
+        point2 = self.closest_piv_point(self, point2)
+        while True:
+            if point1 == point2:
+                return path
+            else:
+                point1 = self.rec_generate_path(self, point1, point2)
+                path.append(point1)
+                print(f"added point: {point1}")
+                print(f"point1: {point1} \t point2: {point2}")
         
-    def closest_piv_point(self, idk):
-        self_pos = (self.center_x, self.center_y)
-        if self_pos[0] in PIVOT_COL:
-            for row in PIVOT_ROW:
-                if abs(row - self_pos[1]) < abs(closest_y - self_pos[1]):
-                    closest_y = row
-            closest_x = self_pos[0]
-        elif self_pos[1] in PIVOT_ROW:
-            for col in PIVOT_COL:
-                if abs(col - self_pos[0]) < abs(closest_x - self_pos[0]):
-                    closest_x = col
-            closest_y = self_pos[1]
-        if not ((closest_x,closest_y) in self.path):
-            closest_piv = (closest_x, closest_y)
+    
+    def rec_generate_path(self, idk, point1, point2):
+        for col in PIVOT_GRAPH[point1[1]]:
+            if col[0] == point1[0]:
+                piv_directions = col[1]
+        new_point = 0
+
+        v_factor = abs(point1[0] - point2[0])
+        h_factor = abs(point1[1] - point2[1])
+
+        if v_factor > h_factor:
+            priority = "VERTICAL"
+        else:
+            priority = "HORIZONTAL"
+        
+        if point1[0] > point2[0]:
+            vertical = "MOVE LEFT TO TARGET"
+        else:
+            vertical = "MOVE RIGHT TO TARGET"
+        if point1[1] > point2[1]:
+            horizontal = "MOVE DOWN TO TARGET"
+        else:
+            horizontal = "MOVE UP TO TARGET"
+
+        
+        if priority == "VERTICAL":
+            if vertical == "MOVE LEFT TO TARGET":
+                #if item == "W":
+                if "W" in piv_directions:
+                    new_point = self.closest_piv_point(self, point1, "W")
+                elif horizontal == "MOVE DOWN TO TARGET":
+                    #if item == "S":
+                    if "S" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "S")
+                    #elif item == "N":
+                    elif "N" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "N")
+                elif horizontal == "MOVE UP TO TARGET":
+                    #if item == "N":
+                    if "N" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "N")
+                    #elif item == "S":
+                    elif "S" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "S")
+                else:
+                    new_point = self.closest_piv_point(self, point1, "E")
+
+            if vertical == "MOVE RIGHT TO TARGET":
+                #if item == "E":
+                if "E" in piv_directions:
+                    new_point = self.closest_piv_point(self, point1, "E")
+                elif horizontal == "MOVE DOWN TO TARGET":
+                    #if item == "S":
+                    if "S" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "S")
+                    #elif item == "N":
+                    elif "N" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "N")
+                elif horizontal == "MOVE UP TO TARGET":
+                    #if item == "N":
+                    if "N" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "N")
+                    #elif item == "S":
+                    elif "S" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "S")
+                else:
+                    new_point = self.closest_piv_point(self, point1, "W")
+                    
+        else:
+            #if vertical == "MOVE LEFT TO TARGET":
+            if horizontal == "MOVE UP TO TARGET":
+                #if item == "W":
+                #if item == "N":
+                if "N" in piv_directions:
+                    new_point = self.closest_piv_point(self, point1, "N")
+                #elif horizontal == "MOVE DOWN TO TARGET":
+                elif vertical == "MOVE LEFT TO TARGET":
+                    #if item == "S":
+                    #if item == "W":
+                    if "W" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "W")
+                    #elif item == "N":
+                    #elif item == "E":
+                    elif "E" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "E")
+                #elif horizontal == "MOVE UP TO TARGET":
+                elif vertical == "MOVE RIGHT TO TARGET":
+                    #if item == "N":
+                    #if item == "E":
+                    if "E" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "E")
+                    #elif item == "S":
+                    #elif item == "W":
+                    elif "W" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "W")
+                else:
+                    new_point = self.closest_piv_point(self, point1, "S")
+
+            elif horizontal == "MOVE DOWN TO TARGET":
+                #if item == "S":
+                if "S" in piv_directions:
+                    new_point = self.closest_piv_point(self, point1, "S")
+                #elif horizontal == "MOVE DOWN TO TARGET":
+                elif vertical == "MOVE LEFT TO TARGET":
+                    #if item == "W":
+                    if "W" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "W")
+                    #elif item == "E":
+                    elif "E" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "E")
+                #elif horizontal == "MOVE UP TO TARGET":
+                elif vertical == "MOVE RIGHT TO TARGET":
+                    #if item == "E":
+                    if "E" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "E")
+                    #elif item == "W":
+                    elif "W" in piv_directions:
+                        new_point = self.closest_piv_point(self, point1, "W")
+                else:
+                    new_point = self.closest_piv_point(self, point1, "N")
+
+        return new_point
+    
+    
+    def closest_piv_point(self, idk, point, direction = None):
+        self_pos = point
+        curr_closest_x = self_pos[0]
+        curr_closest_y = self_pos[1]
+        if not direction:
+            if self_pos[0] in PIVOT_COL:
+                for row in PIVOT_ROW:
+                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
+                        curr_closest_y = row
+                curr_closest_x = self_pos[0]
+            elif self_pos[1] in PIVOT_ROW:
+                for col in PIVOT_COL:
+                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
+                        curr_closest_x = col
+                curr_closest_y = self_pos[1]
+        else:
+            if direction == "N":
+                for row in PIVOT_ROW:
+                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row > self_pos[1]:
+                        curr_closest_y = row
+            elif direction == "S":
+                for row in PIVOT_ROW:
+                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row < self_pos[1]:
+                        curr_closest_y = row
+            elif direction == "E":
+                for col in PIVOT_COL:
+                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0]:
+                        curr_closest_x = col
+            elif direction == "W":
+                for col in PIVOT_COL:
+                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col > self_pos[0]:
+                        curr_closest_x = col
+        
+        return (curr_closest_x, curr_closest_y)
 
     def pathfind(self, idk):
         print("PATH: ")
@@ -461,9 +619,11 @@ class Blinky(Character):
     def find_movement(self, target=None):
         self.horizontal_direction = 1
 
-    # disables ghost behavior
-    def on_update(self, delta_time):
-        nothing = ""
+    def set_movement(self, wtf):
+        super().set_movement(self)
+        if not self.path:
+            self.generate_path(self, (self.center_x, self.center_y), (485, 270))
+    
 
 class Pinky(Character):
     """

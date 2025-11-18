@@ -575,6 +575,8 @@ class GameView(arcade.View):
         
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
         print(f"PAC SIZE: {self.pacman.size}")
+        
+        print(f"BLINKY PATH: {self.blinky.path}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
         print(f"vertical factor: {self.pacman.vertical_direction}")
