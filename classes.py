@@ -466,33 +466,36 @@ class GameView(arcade.View):
         # create pellets
 
         temp_list = arcade.SpriteList()
-
-        for x in float_range (95,610,19.5):
-            for y in float_range (85,670,20):
-
+        for x in PELLET_COL: #float_range (115,596,(596-115)/2):
+            for y in PELLET_ROW: #float_range (85,670,20):
                 temp = arcade.SpriteCircle(7.5, arcade.color.WHITE)
                 temp.center_x = x
                 temp.center_y = y
                 temp_list.append(temp)
-
 
                 #check if pellet space does not collide with walls
                 if arcade.check_for_collision_with_list(temp,self.walls):
                     continue
 
                 #locations to skip
+                #top row of walls
+                if y == 612 and x in [165,185,265,285,298,425,445,525,545]:
+                    continue
                 #ghost house
-                if 250 < x < 470 and 280 < y < 490:
+                if 240 < x < 470 and 280 < y < 500:
                     continue
 
                 #alleyway
                 if (80 < x < 220 or 490 < x < 620) and 280 < y < 490:
                     continue
 
-                #big pellet locations
-                if (110 < x < 120 or 590 < x < 610) and 620 < y < 630:
+                #spawn location
+                if (y == 207 and (x == 345 or x == 365)):
                     continue
-                if (110 < x < 120 or 590 < x < 610) and 200 < y < 220:
+                #big pellet locations
+                if (110 < x < 120 or 590 < x < 610) and y==614:
+                    continue
+                if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
                 pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
@@ -500,10 +503,10 @@ class GameView(arcade.View):
                 self.pellet_list.append(pellet)
 
         #create big pellets
-        big_pellet_0 = BigPellet(start_pos = (115,626))
-        big_pellet_1 = BigPellet(start_pos = (597,626))
-        big_pellet_2 = BigPellet(start_pos = (115,210))
-        big_pellet_3 = BigPellet(start_pos = (597,210))
+        big_pellet_0 = BigPellet(start_pos = (115,614))
+        big_pellet_1 = BigPellet(start_pos = (595,614))
+        big_pellet_2 = BigPellet(start_pos = (115,207))
+        big_pellet_3 = BigPellet(start_pos = (595,207))
         temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
@@ -540,7 +543,7 @@ class GameView(arcade.View):
 
         # Placeholder for high score later
         arcade.draw_text("HIGH  ",
-                         WINDOW_WIDTH-250, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH-300, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
         #high Score
@@ -550,7 +553,7 @@ class GameView(arcade.View):
             curr_high_score = global_score.get_curr_score()
         output = f"{curr_high_score:06d}"
         arcade.draw_text(output,
-                         WINDOW_WIDTH - 150, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH - 200, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
     def on_update(self,delta_time):
@@ -573,13 +576,13 @@ class GameView(arcade.View):
             return
      
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
-        print(f"PAC SIZE: {self.pacman.size}")
-        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
-        print(f"horizontal factor: {self.pacman.horizontal_direction}")
-        print(f"vertical factor: {self.pacman.vertical_direction}")
-        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
-        print(f"directions: {self.pacman.directions}")
-        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
+        # print(f"PAC SIZE: {self.pacman.size}")
+        # print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        # print(f"horizontal factor: {self.pacman.horizontal_direction}")
+        # print(f"vertical factor: {self.pacman.vertical_direction}")
+        # print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
+        # print(f"directions: {self.pacman.directions}")
+        # print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 
 
         for sprite in self.sprites:
