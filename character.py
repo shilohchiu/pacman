@@ -136,6 +136,9 @@ class Character(arcade.Sprite):
                 print("VERTICALLY ALIGNED")
 
     def change_state(self, new_state):
+        # DEAD overrides everything
+        if self.state == GHOST_EATEN:
+            return
         self.state = new_state
         if self.frame_open:
             self.texture = self.texture_open.get(self.state, self.texture)
@@ -224,7 +227,7 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
+        super().__init__(walls, "images/pac-man.png",scale = PACMAN_SCALE, start_pos=(385, 385))
         self.speed = 2
 
         self.state = PACMAN_NORMAL
@@ -444,7 +447,7 @@ class Blinky(Character):
     def __init__(self, walls, start_pos=(300, 450), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.target = (Pacman.center_x, Pacman.center_y)
@@ -459,7 +462,7 @@ class Blinky(Character):
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/blinky right 0.gif"),
             GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
-            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_BLINK: arcade.load_texture("images/white.png",),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
@@ -494,7 +497,7 @@ class Pinky(Character):
     def __init__(self, walls, start_pos=(310, 450)):
         super().__init__(walls,
                          "images/pinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.state = GHOST_CHASE
@@ -538,7 +541,7 @@ class Inky(Character):
     def __init__(self, walls, start_pos=(290, 450)):
         super().__init__(walls,
                          "images/inky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.state = GHOST_CHASE
@@ -581,7 +584,7 @@ class Clyde(Character):
     def __init__(self, walls, start_pos=(320, 450)):
         super().__init__(walls,
                          "images/clyde.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.state = GHOST_CHASE

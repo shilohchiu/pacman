@@ -663,9 +663,13 @@ class GameView(arcade.View):
         self.pacman.change_state(PACMAN_ATTACK)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_FLEE)
+        
+        for ghost in self.ghosts:
+            arcade.schedule_once(lambda dt, g=ghost: g.change_state(GHOST_BLINK), 5.0)
 
         # 7 seconds of power-up (adjust as desired)
         arcade.schedule(self.end_power_mode, 7.0)
+        
     
     def end_power_mode(self, delta_time):
         """Revert ghosts and Pac-Man to normal state."""
@@ -673,3 +677,4 @@ class GameView(arcade.View):
         for ghost in self.ghosts:
             ghost.change_state(GHOST_CHASE)
         arcade.unschedule(self.end_power_mode)
+
