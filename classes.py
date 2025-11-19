@@ -18,8 +18,12 @@ from score import Score
 
 #Global Score 
 global_score = Score()
+
+
+
 db = open_firestore_db()
 user_ref = open_db_collection(db)
+
 
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
@@ -389,8 +393,10 @@ class GameView(arcade.View):
     """
     GameView class, shows playable game
     """
-    def __init__(self):
+    def __init__(self, level):
         super().__init__()
+        self.level = level
+        
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
@@ -426,6 +432,8 @@ class GameView(arcade.View):
             black_box.center_y = BLACK_BOX_Y_POSITION
             self.black_boxes.append(black_box)
 
+        #create timer for fruit
+        self.fruit_time = 0.0
 
         #reset score to 0 
         global_score.reset_curr_score()
@@ -513,16 +521,6 @@ class GameView(arcade.View):
             self.sprites.append(i)
             self.pellet_list.append(i)
 
-        #create fruit pellets
-        fruits= []
-        cherry = Fruit()
-        fruits.append(cherry)
-
-        #add fruit to list
-        for f in fruits:
-            self.sprites.append(f)
-            self.fruit_list.append(f)
-
     def on_draw(self):
         self.clear()
         self.collision_black_boxes.draw()
@@ -543,7 +541,7 @@ class GameView(arcade.View):
 
         # Placeholder for high score later
         arcade.draw_text("HIGH  ",
-                         WINDOW_WIDTH-300, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH-290, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
         #high Score
@@ -553,7 +551,7 @@ class GameView(arcade.View):
             curr_high_score = global_score.get_curr_score()
         output = f"{curr_high_score:06d}"
         arcade.draw_text(output,
-                         WINDOW_WIDTH - 200, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH - 180, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
     def on_update(self,delta_time):
@@ -604,6 +602,21 @@ class GameView(arcade.View):
         #pellet collsions
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
+
+
+        fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700, self.fruit_list,self.sprites, self.level)
+
+        if fruit_spawn:
+            self.fruit_time = 0
+
+        self.fruit_time = Fruit.count_down(self.fruit_list, self.fruit_time, delta_time)
+
+        fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700, self.fruit_list,self.sprites, self.level)
+
+        if fruit_spawn_2:
+            self.fruit_time = 0
+
+        self.fruit_time = Fruit.count_down(self.fruit_list, self.fruit_time, delta_time)
 
         #fruit collisions
         f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)

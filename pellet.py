@@ -5,7 +5,7 @@ different pellet options. (the pellets, power pellets, and fruit)
 Pellet is imported by classes
 """
 import arcade
-from constants.constants import *
+from constants.constants import FRUIT_POSITION, FRUIT_DATA
 from misc import *
 class Pellet(arcade.Sprite):
     def __init__(self, image, point=10, scale = .05, start_pos = (0,0)):
@@ -37,16 +37,40 @@ class BigPellet(Pellet):
                          scale = .07,
                          start_pos=start_pos)
 class Fruit(Pellet):
-    def __init__(self, image = 'images/fruit/cherry.png', start_pos = (WINDOW_WIDTH/2,330), point = 100, st_pt = 70, time = 9):
-        super().__init__(image,
-                         point=point,
+
+    def __init__(self, level = 0, start_pos = FRUIT_POSITION):
+        #determine which fruit to display based off of the given level
+        for fruit,f_info in FRUIT_DATA.items():
+            for f_level in f_info["levels"]:
+                if f_level == level:
+                    self.fruit = fruit
+                    self.level = level
+
+        super().__init__(FRUIT_DATA[self.fruit]["image"],
+                         point=FRUIT_DATA[self.fruit]["point"],
                          scale = .5,
                          start_pos=start_pos)
-        self.st_pt = st_pt
-        self.time = time 
         
-        def set_st_pt(self, pt):
-            self.st_pt = pt
+    def spawn(self, current_score, spawn_score,  fruit_list, sprites_list, level):
+        if current_score == spawn_score:
+            if len(fruit_list) == 0:
+                fruit = Fruit(level = level)
+                fruit_list.append(fruit)
+                sprites_list.append(fruit)
+                return True
+        return False
+    
+    def count_down(fruit_list, current_timer, delta_time, time_limit = 9.0):
+        if len(fruit_list) > 0:
+            current_timer += delta_time
+
+            if current_timer >= time_limit:
+                fruit_to_remove = fruit_list[0]
+                fruit_to_remove.remove_from_sprite_lists()
+                print("Fruit expired")
+        return current_timer
 
 
-        
+
+            
+

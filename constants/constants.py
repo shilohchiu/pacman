@@ -14,6 +14,56 @@ GHOST_CENTER_X, GHOST_CENTER_Y = (355, 385)
 GHOST_WIDTH = 30
 GHOST_SCALE = 1.75
 
+FRUIT_POSITION = (WINDOW_WIDTH/2, 330)
+
+FRUIT_DATA ={
+    "error":{
+        "levels":[0],
+        "point": 100,
+        "image": 'images/fruit/error.jpg'
+    },
+    "cherry":{
+        "levels":[1],
+        "point": 100,
+        "image": 'images/fruit/cherry.png'
+    },
+    "strawberry":{
+        "levels":[2],
+        "point": 300,
+        "image": 'images/fruit/cherry.png'
+    },
+    "peach":{
+        "levels":[2,3],
+        "point": 500,
+        "image": 'images/fruit/cherry.png'
+    },
+    "apple":{
+        "levels":[4,5],
+        "point": 700,
+        "image": 'images/fruit/cherry.png'
+    },
+    "grape":{
+        "levels":[6,7],
+        "point": 1000,
+        "image": 'images/fruit/cherry.png'
+    },
+    "galaxian":{
+        "levels":[9,10],
+        "point": 2000,
+        "image": 'images/fruit/cherry.png'
+    },
+    "bell":{
+        "levels":[11,12],
+        "point": 3000,
+        "image": 'images/fruit/cherry.png'
+    },
+    "key":{
+        "levels":[list(range(13,257))],
+        "point": 5000,
+        "image": 'images/fruit/cherry.png'
+    }
+}
+
 H_DISTANCE_BETWEEN_EDGE_AND_MAZE = int((WINDOW_WIDTH - MAZE_WIDTH) / 2)
 
 PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
@@ -48,6 +98,7 @@ PACMAN_ATTACK = "attack"
 GHOST_CHASE = "chase"
 GHOST_FLEE = "flee"
 GHOST_EATEN = "eaten"
+
 #TODO do we need both of the PIVOT_COL lists
 PIVOT_COL = [115, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
 # TOP HALF COL: 115, 225, 325, 385, 485, 595

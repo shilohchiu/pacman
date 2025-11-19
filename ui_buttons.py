@@ -34,7 +34,8 @@ class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         from classes import GameView
-        view = GameView()
+        #TODO: this is where incremented levels need to go
+        view = GameView(level = 1)
         self.window.show_view(view)
         self.uimanager.disable()
         
