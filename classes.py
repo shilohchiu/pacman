@@ -603,6 +603,14 @@ class GameView(arcade.View):
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision and self.pacman.get_state() == PACMAN_NORMAL:
+            # play death animation
+            self.pacman.start_death()
+            self.pacman.freeze()
+            self.blinky.freeze()
+            self.pinky.freeze()
+            self.clyde.freeze()
+            self.inky.freeze()
+
             # remove one life icon (last in list)
             if len(self.pacman_score_list) > 0:
                 # remove sprite from SpriteList

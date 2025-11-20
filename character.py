@@ -219,6 +219,17 @@ class Character(arcade.Sprite):
     def update_point(self, upd_point):
         self.point = upd_point
 
+    def start_death(self):
+        self.is_dying = True
+        self.death_frame = 0
+        self.death_time = 0
+
+    def freeze(self):
+        self.change_x = 0
+        self.change_y = 0
+        self.vertical_direction = 0
+        self.horizontal_direction = 0
+
 
 
 class Pacman(Character):
@@ -242,6 +253,24 @@ class Pacman(Character):
         }
 
         self.texture = self.texture_open[self.state]
+
+        self.death_textures = [
+            arcade.load_texture("images/death0.png"),
+            arcade.load_texture("images/death1.png"),
+            arcade.load_texture("images/death2.png"),
+            arcade.load_texture("images/death3.png"),
+            arcade.load_texture("images/death4.png"),
+            arcade.load_texture("images/death5.png"),
+            arcade.load_texture("images/death6.png"),
+            arcade.load_texture("images/death7.png"),
+            arcade.load_texture("images/death8.png"),
+            arcade.load_texture("images/death9.png"),
+            arcade.load_texture("images/death10.png")
+        ]
+        self.is_dying = False
+        self.death_frame = 0
+        self.death_time = 0
+        self.death_frame_duration = 0.12
 
         self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
@@ -439,6 +468,24 @@ class Pacman(Character):
                 self.overwrite = [None, None]
 
         self.set_movement(self)
+
+    def update_animation(self, delta_time: float = 1 / 60):
+        # Death animation overrides everything
+        if self.is_dying:
+            self.death_time += delta_time
+            self.texture = self.death_textures[self.death_frame]
+
+            # Advance frame
+            if self.death_time > self.death_frame_duration:
+                self.death_time -= self.death_frame_duration
+                self.death_frame += 1
+
+                # Animation finished
+                if self.death_frame >= len(self.death_textures):
+                    self.is_dying = False
+                # signal to GameView that Pac-Man died
+                    return
+        return super().update_animation(delta_time)
 
 class Blinky(Character):
     """
