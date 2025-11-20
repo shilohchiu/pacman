@@ -234,8 +234,6 @@ class Pacman(Character):
     Pacman subclass
     """
 
-    def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 1, start_pos=(385, 385))
     def __init__(self, walls, start_pos=PACMAN_SPAWN_COORD):
         super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
