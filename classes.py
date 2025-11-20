@@ -587,7 +587,8 @@ class GameView(arcade.View):
         # print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
         # print(f"directions: {self.pacman.directions}")
         # print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
-
+        print(f"pacman position: {self.pacman.center_x}, {self.pacman.center_y}")
+        print(f"blinky position: {self.blinky.center_x}, {self.blinky.center_y}")
 
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
