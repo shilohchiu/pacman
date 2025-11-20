@@ -63,25 +63,8 @@ class Character(arcade.Sprite):
         #print("GOT TARGET: ")
         #print(self.target)
 
-    # TODO: need to create own pathfinding algorithm
-    # look at closest pivot point to self and target
-    # find shortest possible path between pivot points using accessible pivot points
-        # Use directional markers to find valid moves
-            # Simulate tree logic and steal something from algo design?
-        # Use recursion and pixel count to find shortest path?
-    # ignore direction options that move farther away from target
-        # if below and to the right, only test pivot point options moving south and east
-    # prioritize axis that is farther away from target
-        # if substantially above/below target, prioritize vertical movement
-        # not necessary for recursive implementation, but necessary for "one try" style (just generate 1 path and go with it)
-    # after reaching closest pivot point move in remaining direction until collision/recalculation
-        # change to wander/reset target once wall is reached with no collision
-
-    # find closest piv point to start and target
-    # find closest piv point to parent piv point in proper direction
-        # only find closest to point1
-    # plug in new piv points into recursive generate path
-    # continue until both generated pivot points are the same 
+    # NOTE: sometimes gets "stuck" and circles between two points
+        # added escape method that creates "unable to find route" condition
     def generate_path(self, idk, point1, point2):
         path = []
         point1 = self.closest_piv_point(self, point1)
@@ -91,6 +74,8 @@ class Character(arcade.Sprite):
         while True:
             if point1 == point2:
                 return path
+            elif len(path) > (len(PIVOT_COL) * len(PIVOT_ROW)):
+                return []
             else:
                 point1 = self.rec_generate_path(self, point1, point2)
                 path.append(point1)
@@ -127,95 +112,65 @@ class Character(arcade.Sprite):
         
         if priority == "VERTICAL":
             if vertical == "MOVE LEFT TO TARGET":
-                #if item == "W":
                 if "W" in piv_directions:
                     new_point = self.closest_piv_point(self, point1, "W")
                 elif horizontal == "MOVE DOWN TO TARGET":
-                    #if item == "S":
                     if "S" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "S")
-                    #elif item == "N":
                     elif "N" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "N")
                 elif horizontal == "MOVE UP TO TARGET":
-                    #if item == "N":
                     if "N" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "N")
-                    #elif item == "S":
                     elif "S" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "S")
                 else:
                     new_point = self.closest_piv_point(self, point1, "E")
 
             if vertical == "MOVE RIGHT TO TARGET":
-                #if item == "E":
                 if "E" in piv_directions:
                     new_point = self.closest_piv_point(self, point1, "E")
                 elif horizontal == "MOVE DOWN TO TARGET":
-                    #if item == "S":
                     if "S" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "S")
-                    #elif item == "N":
                     elif "N" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "N")
                 elif horizontal == "MOVE UP TO TARGET":
-                    #if item == "N":
                     if "N" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "N")
-                    #elif item == "S":
                     elif "S" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "S")
                 else:
                     new_point = self.closest_piv_point(self, point1, "W")
                     
         else:
-            #if vertical == "MOVE LEFT TO TARGET":
             if horizontal == "MOVE UP TO TARGET":
-                #if item == "W":
-                #if item == "N":
                 if "N" in piv_directions:
                     new_point = self.closest_piv_point(self, point1, "N")
-                #elif horizontal == "MOVE DOWN TO TARGET":
                 elif vertical == "MOVE LEFT TO TARGET":
-                    #if item == "S":
-                    #if item == "W":
                     if "W" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "W")
-                    #elif item == "N":
-                    #elif item == "E":
                     elif "E" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "E")
-                #elif horizontal == "MOVE UP TO TARGET":
                 elif vertical == "MOVE RIGHT TO TARGET":
-                    #if item == "N":
-                    #if item == "E":
                     if "E" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "E")
-                    #elif item == "S":
-                    #elif item == "W":
                     elif "W" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "W")
                 else:
                     new_point = self.closest_piv_point(self, point1, "S")
 
             elif horizontal == "MOVE DOWN TO TARGET":
-                #if item == "S":
                 if "S" in piv_directions:
                     new_point = self.closest_piv_point(self, point1, "S")
-                #elif horizontal == "MOVE DOWN TO TARGET":
                 elif vertical == "MOVE LEFT TO TARGET":
-                    #if item == "W":
                     if "W" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "W")
-                    #elif item == "E":
                     elif "E" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "E")
-                #elif horizontal == "MOVE UP TO TARGET":
                 elif vertical == "MOVE RIGHT TO TARGET":
-                    #if item == "E":
                     if "E" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "E")
-                    #elif item == "W":
                     elif "W" in piv_directions:
                         new_point = self.closest_piv_point(self, point1, "W")
                 else:
@@ -223,9 +178,6 @@ class Character(arcade.Sprite):
 
         return new_point
     
-    # TODO: closest points is wrong, need to find way to find closest set of points as opposed to finding closest x and closest y
-        # can lead to disjointed pairs
-        # look at pacman logic?
     def closest_piv_point(self, idk, point, direction = None):
         self_pos = point
         curr_closest_x = 10000
@@ -297,42 +249,10 @@ class Character(arcade.Sprite):
     
         return (curr_closest_x, curr_closest_y)
 
+    # TODO: use self.path to influence movement
     def pathfind(self, idk):
         print("PATH: ")
-        print(self.path)
-        try:
-            path_x = self.path[0][0]
-            path_y = self.path[0][1]
-
-            #print(f" PATH X: {path_x} \t ENTITY X: {self.center_x}")
-            #print(f" PATH Y: {path_y} \t ENTITY Y: {self.center_y}")
-            x_diff = abs(path_x - self.center_x)
-            y_diff = abs(path_y - self.center_y)
-
-            #print(f"X DIFF: {x_diff} \t Y DIFF: {y_diff}")
-            if self.center_x < path_x and x_diff > 5:
-                self.horizontal_direction = 1
-            elif self.center_x > path_x and x_diff > 5:
-                self.horizontal_direction = -1
-            else:
-                self.horizontal_direction = 0
-                #print("HORIZONTALLY ALIGNED")
-
-            if self.horizontal_direction == 0:
-                if self.center_y < path_y and y_diff > 5:
-                    self.vertical_direction = 1
-                elif self.center_y > path_y and y_diff > 5:
-                    self.vertical_direction = -1
-                else:
-                    self.vertical_direction = 0
-                    #print("VERTICALLY ALIGNED")
-
-            if x_diff <= 5 and y_diff <= 5:
-                self.path.pop(0)
-                if len(self.path) == 0:
-                    self.path = None
-        except TypeError:
-            print("NO PATH")
+        
 
 
     def change_state(self, new_state):
