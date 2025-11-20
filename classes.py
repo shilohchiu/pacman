@@ -396,7 +396,7 @@ class EnterInitialsView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
 
         #create buttons
-        enter_button = EnterButton(self, text = "ENTER", width=BUTTON_WIDTH)
+        enter_button = EnterButton(self, text = ENTER_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(enter_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
