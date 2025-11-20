@@ -35,6 +35,16 @@ class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
         view = GameView()
         self.window.show_view(view)
         self.uimanager.disable()
+
+class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
+    def __init__(self, window, **kwargs):
+        super().__init__(**kwargs)
+        self.window = window
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        from classes import GameView
+        view = GameView()
+        self.window.show_view(view)
+        self.uimanager.disable()
         
 class ViewScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
