@@ -2,8 +2,11 @@ import arcade
 import arcade.gui.widgets.layout
 import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton, NextLevelButton
-from character import Pacman, Blinky, Pinky, Inky, Clyde, Pellet, BigPellet, Walls, Character
+from character import Pacman, Blinky, Pinky, Inky, Clyde
 from misc import *
+# from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
+# from character import Pacman, Blinky, Pinky, Inky, Clyde
+from pellet import Pellet, BigPellet, Fruit
 from walls import create_walls
 
 # Constant imports
@@ -12,12 +15,15 @@ from constants.button_constants import *
 from constants.view_constants import *
 
 # Firestore imports
-from query_fs import * 
+from query_fs import *
 from constants import *
 from score import Score
 
-#Global Score 
+#Global Score
 global_score = Score()
+
+
+
 db = open_firestore_db()
 user_ref = open_db_collection(db)
 
@@ -41,7 +47,8 @@ class MenuView(arcade.View):
         self.h_box.add(start_game_button)
 
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -136,9 +143,9 @@ class GameOverView(arcade.View):
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        
+
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
-        
+
         #create buttons
         view_score_button = ViewScoreButton(self.window, text = VIEW_SCORES_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(view_score_button)
@@ -151,7 +158,8 @@ class GameOverView(arcade.View):
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -163,7 +171,7 @@ class GameOverView(arcade.View):
         self.manager.draw()
         score_board = top_ten_scores(user_ref)
         score_idx = 1
-        
+
         arcade.draw_text("GAME OVER",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                             arcade.color.RED, font_size=H1_FONT_SIZE, anchor_x="center", bold=True)
@@ -184,7 +192,7 @@ class GameOverView(arcade.View):
                                  arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="right")
         
             score_idx += 1
-        
+
 class ViewScoresView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -195,9 +203,9 @@ class ViewScoresView(arcade.View):
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        
+
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
-        
+
         #create buttons
 
         start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
@@ -208,7 +216,8 @@ class ViewScoresView(arcade.View):
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -220,7 +229,7 @@ class ViewScoresView(arcade.View):
         self.manager.draw()
         user_scores = view_scores(user_ref, self.initial)
         score_idx = 1
-        
+
         arcade.draw_text("VIEW SCORES",
                             WINDOW_WIDTH/2, H1_TEXT_Y_POS,
                             arcade.color.RED, font_size=H1_FONT_SIZE, anchor_x="center", bold=True)
@@ -252,9 +261,9 @@ class SaveScoreView(arcade.View):
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        
+
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
-        
+
         #create buttons
 
         start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
@@ -265,7 +274,8 @@ class SaveScoreView(arcade.View):
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -277,27 +287,27 @@ class SaveScoreView(arcade.View):
         self.manager.draw()
         score_board = top_ten_scores(user_ref)
         score_idx = 1
-        
+
         arcade.draw_text("SCORE SAVED!",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-100,
                             arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
         arcade.draw_text("HIGH SCORES",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
                         arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
-            
+
         for user in score_board:
             arcade.draw_text(f"{score_idx} .",
                                  SCORE_IDX_COL_X_POS, WINDOW_HEIGHT - (SCOREBOARD_Y_OFFSET + (SCOREBOARD_ROW_DISTANCE*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
-                
+
             arcade.draw_text(f"{user[:3]}",
                                  INITIAL_COL_X_POS, WINDOW_HEIGHT - (SCOREBOARD_Y_OFFSET + (SCOREBOARD_ROW_DISTANCE*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="center")
-            
+
             arcade.draw_text(f"{score_board[user]:06d}",
                                  HIGH_SCORE_COL_X_POS, WINDOW_HEIGHT - (SCOREBOARD_Y_OFFSET + (SCOREBOARD_ROW_DISTANCE*score_idx)),
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
-        
+
             score_idx += 1
         
 class HighScoreView(arcade.View):
@@ -312,9 +322,9 @@ class HighScoreView(arcade.View):
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        
+
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
-        
+
         #create buttons
         save_score_button = SaveScoreButton(self.window, text = SAVE_SCORE_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(save_score_button)
@@ -334,13 +344,14 @@ class HighScoreView(arcade.View):
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
-    
+
     def on_draw(self):
         self.clear()
         self.manager.draw()
@@ -359,12 +370,12 @@ class HighScoreView(arcade.View):
         arcade.draw_text("Save score below or start new game.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
                         arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
-        
+
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
         super().__init__()
 
-        #input options 
+        #input options
         list_alph= list(string.ascii_uppercase)
         list_int = ["_","-",".","*"]
         self.list_opt = list_alph + list_int
@@ -377,16 +388,16 @@ class EnterInitialsView(arcade.View):
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
-        
+
         #create buttons
         enter_button = EnterButton(self, text = "ENTER", width=BUTTON_WIDTH)
         self.h_box.add(enter_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                            align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -403,10 +414,9 @@ class EnterInitialsView(arcade.View):
             view = SaveScoreView()
             self.window.show_view(view)
 
-    
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
-    
+
     def on_draw(self):
         self.clear()
         self.manager.draw()
@@ -415,28 +425,30 @@ class EnterInitialsView(arcade.View):
                         arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
 
         # Draw control instructions
-        arcade.draw_text("← → to move | ↑ ↓ to change", 
+        arcade.draw_text("← → to move | ↑ ↓ to change",
             WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 100,
             arcade.color.LIGHT_GRAY, font_size=18, anchor_x="center")
-       
+
         #Draw the combination wheel
 
         center_y = WINDOW_HEIGHT - 350
         slot_width = 80
         slot_spacing = 100
-        
+
         for i in range(3):
             center_x = WINDOW_WIDTH / 2 + (i - 1) * slot_spacing
             left_x = center_x - slot_width/2
             right_x = left_x + slot_width
             initial = self.initials[i]
-            
+
             # Draw the background slot box
-            arcade.draw_lrbt_rectangle_filled(left_x, right_x,center_y, center_y+60, arcade.color.DARK_BLUE_GRAY)
-            
+            arcade.draw_lrbt_rectangle_filled(left_x, right_x,center_y, center_y+60,
+                                              arcade.color.DARK_BLUE_GRAY)
+
             # Highlight the active slot
             if i == self.active_slot:
-                arcade.draw_lrbt_rectangle_filled(left_x,right_x,center_y-10, center_y+70, arcade.color.YELLOW)
+                arcade.draw_lrbt_rectangle_filled(left_x,right_x,center_y-10, center_y+70,
+                                                  arcade.color.YELLOW)
 
             # Draw the selected initial
             arcade.draw_text(initial,
@@ -446,12 +458,12 @@ class EnterInitialsView(arcade.View):
     def on_key_press(self, key, modifiers):
         current_char = self.initials[self.active_slot]
         current_idx = self.list_opt.index(current_char)
-        
+
         if key == arcade.key.UP:
         # Scroll up: moves to the next character, loops to the start if at the end
             new_idx = (current_idx + 1) % len(self.list_opt)
             self.initials[self.active_slot] = self.list_opt[new_idx]
-            
+
         elif key == arcade.key.DOWN:
             # Scroll down: moves to the previous character, loops to the end if at the start
             new_idx = (current_idx - 1) % len(self.list_opt)
@@ -469,8 +481,10 @@ class GameView(arcade.View):
     """
     GameView class, shows playable game
     """
-    def __init__(self):
+    def __init__(self, level):
         super().__init__()
+        self.level = level
+
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
@@ -478,6 +492,7 @@ class GameView(arcade.View):
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
         self.pellet_list = arcade.SpriteList()
+        self.fruit_list = arcade.SpriteList()
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
 
@@ -508,9 +523,10 @@ class GameView(arcade.View):
             black_box.center_y = BLACK_BOX_Y_POSITION
             self.black_boxes.append(black_box)
 
-        #create Score
-        self.score = 0
-        #reset score to 0 
+        #create timer for fruit
+        self.fruit_time = 0.0
+
+        #reset score to 0
         global_score.reset_curr_score()
 
         #viewing states
@@ -554,34 +570,36 @@ class GameView(arcade.View):
         # create pellets
 
         temp_list = arcade.SpriteList()
-
-        for x in float_range (95,610,19.5):
-            for y in float_range (85,670,20):
-
+        for x in PELLET_COL:
+            for y in PELLET_ROW:
                 temp = arcade.SpriteCircle(7.5, arcade.color.WHITE)
                 temp.center_x = x
                 temp.center_y = y
                 temp_list.append(temp)
-
 
                 #check if pellet space does not collide with walls
                 if arcade.check_for_collision_with_list(temp,self.walls):
                     continue
 
                 #locations to skip
-
+                #top row of walls
+                if y == 612 and x in [165,185,265,285,298,425,445,525,545]:
+                    continue
                 #ghost house
-                if 250 < x < 470 and 280 < y < 490:
+                if 240 < x < 470 and 280 < y < 500:
                     continue
 
                 #alleyway
                 if (80 < x < 220 or 490 < x < 620) and 280 < y < 490:
                     continue
 
-                #big pellet locations
-                if (110 < x < 120 or 590 < x < 610) and 620 < y < 630:
+                #spawn location
+                if (y == 207 and (x == 345 or x == 365)):
                     continue
-                if (110 < x < 120 or 590 < x < 610) and 200 < y < 220:
+                #big pellet locations
+                if (110 < x < 120 or 590 < x < 610) and y==614:
+                    continue
+                if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
                 pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
@@ -589,11 +607,10 @@ class GameView(arcade.View):
                 self.pellet_list.append(pellet)
 
         #create big pellets
-
-        big_pellet_0 = BigPellet(start_pos = (115,626))
-        big_pellet_1 = BigPellet(start_pos = (597,626))
-        big_pellet_2 = BigPellet(start_pos = (115,210))
-        big_pellet_3 = BigPellet(start_pos = (597,210))
+        big_pellet_0 = BigPellet(start_pos = (115,614))
+        big_pellet_1 = BigPellet(start_pos = (595,614))
+        big_pellet_2 = BigPellet(start_pos = (115,207))
+        big_pellet_3 = BigPellet(start_pos = (595,207))
         temp = [big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3]
         #add pellet to list
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
@@ -618,10 +635,9 @@ class GameView(arcade.View):
                          WINDOW_WIDTH - 460, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
-
         # Placeholder for high score later
         arcade.draw_text("HIGH  ",
-                         WINDOW_WIDTH-230, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH-290, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
 
         #high Score
@@ -631,9 +647,9 @@ class GameView(arcade.View):
             curr_high_score = global_score.get_curr_score()
         output = f"{curr_high_score:06d}"
         arcade.draw_text(output,
-                         WINDOW_WIDTH - 120, WINDOW_HEIGHT - 40,
+                         WINDOW_WIDTH - 180, WINDOW_HEIGHT - 40,
                          arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
-            
+
     def on_update(self,delta_time):
         #close logic when game over and choses correct view
         """
@@ -705,34 +721,58 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-        # big pellet collision
-        #pellet_collision = arcade.check_for_collision_with_list(self.pacman,BigPellet)
-        #if pellet_collision:
-            #Character.change_state(self.pinky,"scattering")
-            #Character.change_state(self.inky,"scattering")
-            #Character.change_state(self.blinky,"scattering")
-            #Character.change_state(self.clyde,"scattering")
 
         # TODO: check for one up life
         # if global_score > 10000:
         #     one_up()
+        fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
+                                  self.fruit_list, self.sprites, self.level)
 
-        #collision handling for ghost -> pacman 
+        if fruit_spawn:
+            self.fruit_time = 0
+
+        self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
+
+        fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700,
+                                    self.fruit_list, self.sprites, self.level)
+
+        if fruit_spawn_2:
+            self.fruit_time = 0
+
+        self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
+
+        #fruit collisions
+        f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)
+        global_score.adj_curr_score(point=f_points)
+
+        #collision handling for ghost -> pacman
+
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
-        if collision:
+        if collision and self.pacman.get_state() == PACMAN_NORMAL:
             # remove one life icon (last in list)
             if len(self.pacman_score_list) > 0:
                 # remove sprite from SpriteList
                 self.pacman_score_list.remove((self.pacman_score_list[-1]))
                 # reset pacman to start position
-                x, y = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+                x, y = PACMAN_SPAWN_COORD
                 self.pacman.center_x = x
                 self.pacman.center_y = y
 
             else:
-                # no lives left
+                # no lives left; game over
                 self.game_over = True
-                print("GAME OVER")
+
+        #collision handling for pacman -> ghost
+        elif collision and self.pacman.get_state() == PACMAN_ATTACK:
+            ghost_num = 1
+            for ghost in collision:
+                base_ghost_point = getattr(ghost, "point", 0)
+                global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
+                #TODO: change state to be accurate
+                ghost.change_state(GHOST_EATEN)
+                ghost_num += 1
+            if ghost_num == 5:
+                ghost_num = 0
 
         """
         Screenwrap
@@ -765,7 +805,7 @@ class GameView(arcade.View):
     def on_key_release(self, key, modifiers):
         if not self.game_over:
             self.pacman.on_key_release(key, modifiers)
-    
+
     def activate_power_mode(self):
         """Activate frightened mode for all ghosts."""
         self.pacman.change_state(PACMAN_ATTACK)
@@ -774,7 +814,7 @@ class GameView(arcade.View):
 
         # 7 seconds of power-up (adjust as desired)
         arcade.schedule(self.end_power_mode, 7.0)
-    
+
     def end_power_mode(self, delta_time):
         """Revert ghosts and Pac-Man to normal state."""
         self.pacman.change_state(PACMAN_NORMAL)

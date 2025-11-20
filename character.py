@@ -7,13 +7,12 @@ Character is imported by classes
 """
 import arcade
 from constants.constants import *
-from misc import *
 
 class Character(arcade.Sprite):
     """
     Character superclass
     """
-    def __init__(self, walls, image, scale = 1, start_pos= (0,0)):
+    def __init__(self, walls, image, scale = 1, start_pos= (0,0), point = 0):
 
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
@@ -75,8 +74,6 @@ class Character(arcade.Sprite):
             #print(f"TARGET: {self.target}")
             #print(f"SELF POS: {self_pos}")
             self.path = arcade.astar_calculate_path(self_pos, self.target, barrier, False)
-    
-
 
     def pathfind(self, idk):
         print("PATH: ")
@@ -142,6 +139,9 @@ class Character(arcade.Sprite):
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
 
+    def get_state(self):
+        return self.state
+    
     def on_update(self, delta_time):
         #Edits
         #self.blinky.find_movement(self)
@@ -209,6 +209,10 @@ class Character(arcade.Sprite):
             self.angle = -90       # up
         elif self.vertical_direction < 0:
             self.angle = 90      # down
+    
+    def update_point(self, upd_point):
+        self.point = upd_point
+
 
 
 class Pacman(Character):
@@ -216,8 +220,8 @@ class Pacman(Character):
     Pacman subclass
     """
 
-    def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=(385, 385))
+    def __init__(self, walls, start_pos=PACMAN_SPAWN_COORD):
+        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
 
         self.state = PACMAN_NORMAL
@@ -239,7 +243,7 @@ class Pacman(Character):
         self.left_pressed = False
         self.right_pressed = False
         self.directions = (0,0)
-        self.center_x, self.center_y = 485, 270
+        #self.center_x, self.center_y = 485, 270
 
         self.overwrite = [None, None]
 
@@ -329,10 +333,6 @@ class Pacman(Character):
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
 
-            
-            
-            
-
         else:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
@@ -379,9 +379,6 @@ class Pacman(Character):
             self.right_pressed = True
 
             self.directions = (1,0)
-
-        #self.set_movement(self)
-
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP:
@@ -434,12 +431,13 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(300, 450)):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.target = (Pacman.center_x, Pacman.center_y)
         self.state = GHOST_CHASE
 
@@ -480,12 +478,13 @@ class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, walls, start_pos=(310, 450)):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/pinky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
@@ -520,12 +519,13 @@ class Inky(Character):
     """
     Inky subclass
     """
-    def __init__(self, walls, start_pos=(290, 450)):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X-GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/inky.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
@@ -559,12 +559,13 @@ class Clyde(Character):
     """
     Clyde subclass
     """
-    def __init__(self, walls, start_pos=(320, 450)):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X+GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/clyde.png",
-                         scale = CHARACTER_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
+        self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 1.gif"),
@@ -595,41 +596,6 @@ class Clyde(Character):
     def on_update(self, delta_time):
         nothing = ""
 
-class Pellet(arcade.Sprite):
-    def __init__(self, image, point=1, scale = .05, start_pos = (0,0)):
-        #this refers to the sprite class and allows arcade commands to be used
-        super().__init__(image, scale=scale)
-        self.position = start_pos
-        self.point = point
-
-    def return_point(self):
-        return self.point
-
-    @staticmethod
-    def pellet_collision(pacman, pellet_list, game_view=None):
-        pellet_collision = arcade.check_for_collision_with_list(pacman, pellet_list)
-        points = 0
-        for pellet in pellet_collision:
-            points += getattr(pellet, "point",0)
-            if isinstance(pellet,BigPellet):
-                if game_view:
-                    game_view.activate_power_mode()
-                print('change state!!')
-            pellet.remove_from_sprite_lists()
-        return points
-
-class BigPellet(Pellet):
-    def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
-        super().__init__(image,
-                         point=50,
-                         scale = .07,
-                         start_pos=start_pos)
-class Fruit(Pellet):
-    def __init__(self, image = 'images/fruit.png', start_pos = (0,0)):
-        super().__init__(image,
-                         point=50,
-                         scale = 5,
-                         start_pos=start_pos)
 
 class Walls(arcade.Sprite):
     def __init__ (self, scale = 0.5, start_pos = (0,0)):
