@@ -486,6 +486,9 @@ class GameView(arcade.View):
         self.walls.enable_spatial_hashing()
         create_walls(self.walls)
 
+        # TODO: implement a countdown
+        self.countdown = Countdown(3)
+
         # Create larger black boxes (draw after Pac Man)
         self.black_boxes = arcade.SpriteList()
         # Create smaller black boxes (draw before Pac Man)
@@ -515,11 +518,15 @@ class GameView(arcade.View):
         self.new_high_score = False
         self.level_up = False
 
-        #create pacmans score images
-        for x in range(110,220,40):
-            pac_score=arcade.Sprite("images/pac-man.png", scale=.4)
+        """
+        Pac-Man's lives
+        """
+        for x in range(PACMAN_FIRST_LIFE_X_POSITION,
+                       PACMAN_FOURTH_LIFE_X_POSITION,
+                       PACMAN_LIFE_X_POSITION_STRIDE):
+            pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
             pac_score.center_x = x
-            pac_score.center_y = 40
+            pac_score.center_y = PACMAN_LIVES_Y_POSITION
             self.pacman_score_list.append(pac_score)
 
         # create characters
@@ -708,7 +715,7 @@ class GameView(arcade.View):
 
         # TODO: check for one up life
         # if global_score > 10000:
-        #     add_extra_life()
+        #     one_up()
 
         #collision handling for ghost -> pacman 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
@@ -774,3 +781,8 @@ class GameView(arcade.View):
         for ghost in self.ghosts:
             ghost.change_state(GHOST_CHASE)
         arcade.unschedule(self.end_power_mode)
+
+    def one_up(self):
+        """add an extra life"""
+        self.pacman_score_list(len)
+
