@@ -1,5 +1,5 @@
 """
-constants for button styling and h_box
+constants for button styling, h_box, text
 """
 
 from arcade.gui import UIFlatButton

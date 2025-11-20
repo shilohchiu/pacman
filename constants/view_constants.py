@@ -1,5 +1,5 @@
 """
-Constants used for views
+Constants used for views (draw_text)
 """
 from constants.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
@@ -7,6 +7,7 @@ LEVEL_DEFAULT_VALUE = 1
 
 H1_FONT_SIZE = 48
 H2_FONT_SIZE = 28
+TEXT_FONT_NAMES = ('llpixel', 'arial')
 
 H1_TEXT_Y_POS = WINDOW_HEIGHT-150
 
