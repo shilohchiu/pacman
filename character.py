@@ -253,6 +253,14 @@ class Character(arcade.Sprite):
         return (curr_closest_x, curr_closest_y)
 
     # TODO: use self.path to influence movement
+        # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
+        # flee targets farthest corner in diagonal quadrant
+            # random movement once quadrant is reached
+            # if exits quadrant, track back towards corner
+                # possibly code each ghost "home" to unique quadrant?
+        # when path is empty, randomize movement
+            # custom function, check for in piv row/col, pick random valid direction
+        # include some sort of math to use level/difficulty in rate of random movement
     def pathfind(self, idk):
         print("PATH: ")
         
