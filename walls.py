@@ -108,15 +108,15 @@ def create_outer_pieces(walls):
                     LOWEST_H_MINI_COMPONENT_Y_POS,
                     OUTER_HORIZONTAL_MINI)
 
-    create_vertical(walls, # create vertical mini component
+    create_vertical(walls, # create vertical mini component (lower one)
                     H_DISTANCE_BETWEEN_EDGE_AND_MAZE + OUTER_HORIZONTAL_MINI - HALF_TILE_WIDTH,
                     LOWEST_H_MINI_COMPONENT_Y_POS,
-                    OUTER_VERTICAL_MINI)
+                    OUTER_VERTICAL_MINI  - TILE_WIDTH)
 
-    create_horizontal(walls, # create horizontal mini component
+    create_horizontal(walls, # create horizontal mini component, lower part of alley)
                     H_DISTANCE_BETWEEN_EDGE_AND_MAZE - HALF_TILE_WIDTH,
-                    OUTER_VERTICAL_MINI + LOWEST_H_MINI_COMPONENT_Y_POS - TILE_WIDTH,
-                    OUTER_HORIZONTAL_MINI)
+                    OUTER_VERTICAL_MINI + LOWEST_H_MINI_COMPONENT_Y_POS - TILE_WIDTH - HALF_TILE_WIDTH,
+                    OUTER_HORIZONTAL_MINI + TILE_WIDTH)
 
     create_horizontal(walls, # create horizontal mini component (3rd from bottom)
                     H_DISTANCE_BETWEEN_EDGE_AND_MAZE - HALF_TILE_WIDTH,
@@ -140,17 +140,17 @@ def create_outer_pieces(walls):
                     LOWEST_H_MINI_COMPONENT_Y_POS,
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
 
-    create_vertical(walls, # create vertical mini component
+    create_vertical(walls, # create vertical mini component (Lower one)
                     WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE \
                     - HALF_TILE_WIDTH - PATH_WIDTH - MINI_WIDTH,
                     LOWEST_H_MINI_COMPONENT_Y_POS,
-                    OUTER_VERTICAL_MINI)
+                    OUTER_VERTICAL_MINI - TILE_WIDTH)
 
     create_horizontal(walls, # create horizontal mini component
                     WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE - \
                     HALF_TILE_WIDTH - PATH_WIDTH - MINI_WIDTH,
                     OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT + \
-                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)),
+                    int((WINDOW_HEIGHT - MAZE_HEIGHT) / 2 - TILE_WIDTH * (3 / 2)) - HALF_TILE_WIDTH,
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
 
     create_horizontal(walls, # create horizontal mini component
@@ -268,16 +268,16 @@ def create_bottom_inner_pieces(walls):
     # upper left vertical box
     create_box(walls,
                LEFT_VERTICAL_X_POS,
-               LOWEST_H_MINI_COMPONENT_Y_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS + HALF_TILE_WIDTH,
                SINGLE_UNIT_WIDTH,
-               OUTER_VERTICAL_MINI)
+               OUTER_VERTICAL_MINI - TILE_WIDTH)
 
     # upper right vertical box
     create_box(walls,
                RIGHT_VERTICAL_X_POS,
-               LOWEST_H_MINI_COMPONENT_Y_POS,
+               LOWEST_H_MINI_COMPONENT_Y_POS + HALF_TILE_WIDTH,
                SINGLE_UNIT_WIDTH,
-               OUTER_VERTICAL_MINI)
+               OUTER_VERTICAL_MINI - TILE_WIDTH)
 
     # lower left horizontal box
     create_box(walls,
@@ -399,10 +399,10 @@ def create_spawn_box(walls):
 
     create_horizontal(walls,
                     MIDDLE_T_X_POS,
-                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT - HALF_TILE_WIDTH,
                     SPAWN_BOX_MINI_WIDTH)
 
     create_horizontal(walls,
                     MIDDLE_T_X_POS + MIDDLE_T_H_WIDTH - SPAWN_BOX_MINI_WIDTH,
-                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT,
+                    SPAWN_BOX_Y_POS + SPAWN_BOX_HEIGHT - HALF_TILE_WIDTH,
                     SPAWN_BOX_MINI_WIDTH)
