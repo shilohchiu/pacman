@@ -78,11 +78,15 @@ class Character(arcade.Sprite):
                 return []
             else:
                 point1 = self.rec_generate_path(self, point1, point2)
-                path.append(point1)
-                print(f"added point: {point1}")
-                print(f"point1: {point1} \t point2: {point2}")
-                print(f"path: {path}")
-                print("-----------------")
+                if point1 in path:
+                    point1 = point2
+                    path = []
+                else:
+                    path.append(point1)
+                    print(f"added point: {point1}")
+                    print(f"point1: {point1} \t point2: {point2}")
+                    print(f"path: {path}")
+                    print("-----------------")
         
     
     def rec_generate_path(self, idk, point1, point2):
@@ -640,7 +644,7 @@ class Blinky(Character):
     def set_movement(self, wtf):
         super().set_movement(self)
         if not self.path:
-            self.path = self.generate_path(self, (self.center_x, self.center_y), (485, 270))
+            self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
     
     # def on_update(self, delta_time):
     #     nothing = ""
