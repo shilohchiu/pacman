@@ -487,7 +487,6 @@ class Blinky(Character):
         super().__init__(walls,
                          "images/blinky.png",
                          scale = GHOST_SCALE,
-                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -539,7 +538,6 @@ class Pinky(Character):
         super().__init__(walls,
                          "images/pinky.png",
                          scale = GHOST_SCALE,
-                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -585,7 +583,6 @@ class Inky(Character):
         super().__init__(walls,
                          "images/inky.png",
                          scale = GHOST_SCALE,
-                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
@@ -629,7 +626,6 @@ class Clyde(Character):
     def __init__(self, walls, start_pos=(GHOST_CENTER_X+GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/clyde.png",
-                         scale = GHOST_SCALE,
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
