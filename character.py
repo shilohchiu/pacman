@@ -233,17 +233,16 @@ class Character(arcade.Sprite):
         curr_closest_y = 10000
         print(direction)
         if not direction:
-            
-            for col in PIVOT_COL:
-                    for row in PIVOT_ROW:
-                        row_accessible = False
-                        for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == col:
-                                row_accessible = True
-                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row_accessible:
-                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
-                                curr_closest_x = col
-                                curr_closest_y = row
+            for row in PIVOT_ROW:
+                for col in PIVOT_COL:
+                    row_accessible = False
+                    for test_col in PIVOT_GRAPH[row]:
+                        if test_col[0] == col:
+                            row_accessible = True
+                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row_accessible:
+                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
+                            curr_closest_x = col
+                            curr_closest_y = row
         else:
             if direction == "N":
 
@@ -624,7 +623,9 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(115, 650)):
+    # testing location at (115, 650)
+    # other testing coord (485, 270)
+    def __init__(self, walls, start_pos= (115, 650)):
         super().__init__(walls,
                          "images/blinky.png",
                          scale = CHARACTER_SCALE,
@@ -663,6 +664,8 @@ class Blinky(Character):
     def find_movement(self, target=None):
         self.horizontal_direction = 1
 
+    # working coord at (485, 270) ?
+    # other testing coord (115, 650)
     def set_movement(self, wtf):
         super().set_movement(self)
         if not self.path:
