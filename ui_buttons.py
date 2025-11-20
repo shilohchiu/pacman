@@ -1,6 +1,3 @@
-import arcade
-import arcade.gui.widgets.buttons
-
 """
 Button Classes
 """
@@ -46,7 +43,7 @@ class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         from classes import GameView
-        view = GameView()
+        view = GameView(level = 2)
         self.window.show_view(view)
         self.uimanager.disable()
         
