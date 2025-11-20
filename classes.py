@@ -63,6 +63,12 @@ class MenuView(arcade.View):
 
         self.manager.draw()
 
+class DeathView(arcade.View):
+    """
+    View when pacman colides with ghost
+    """
+    
+
 class GameOverView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -634,6 +640,14 @@ class GameView(arcade.View):
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         if collision and self.pacman.get_state() == PACMAN_NORMAL:
+            # play death animation
+            self.pacman.start_death()
+            self.pacman.freeze()
+            self.blinky.freeze()
+            self.pinky.freeze()
+            self.clyde.freeze()
+            self.inky.freeze()
+
             # remove one life icon (last in list)
             if len(self.pacman_score_list) > 0:
                 # remove sprite from SpriteList
@@ -694,13 +708,19 @@ class GameView(arcade.View):
         self.pacman.change_state(PACMAN_ATTACK)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_FLEE)
+        
+        for ghost in self.ghosts:
+            arcade.schedule_once(lambda dt, g=ghost: g.change_state(GHOST_BLINK), 5.0)
 
         # 7 seconds of power-up (adjust as desired)
         arcade.schedule(self.end_power_mode, 7.0)
 
+        
+    
     def end_power_mode(self, delta_time):
         """Revert ghosts and Pac-Man to normal state."""
         self.pacman.change_state(PACMAN_NORMAL)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_CHASE)
         arcade.unschedule(self.end_power_mode)
+

@@ -133,6 +133,9 @@ class Character(arcade.Sprite):
                 print("VERTICALLY ALIGNED")
 
     def change_state(self, new_state):
+        # DEAD overrides everything
+        if self.state == GHOST_EATEN:
+            return
         self.state = new_state
         if self.frame_open:
             self.texture = self.texture_open.get(self.state, self.texture)
@@ -213,6 +216,17 @@ class Character(arcade.Sprite):
     def update_point(self, upd_point):
         self.point = upd_point
 
+    def start_death(self):
+        self.is_dying = True
+        self.death_frame = 0
+        self.death_time = 0
+
+    def freeze(self):
+        self.change_x = 0
+        self.change_y = 0
+        self.vertical_direction = 0
+        self.horizontal_direction = 0
+
 
 
 class Pacman(Character):
@@ -220,6 +234,8 @@ class Pacman(Character):
     Pacman subclass
     """
 
+    def __init__(self, walls, start_pos=(WINDOW_HEIGHT/2,WINDOW_WIDTH/2)):
+        super().__init__(walls, "images/pac-man.png",scale = PACMAN_SCALE, start_pos=(385, 385))
     def __init__(self, walls, start_pos=PACMAN_SPAWN_COORD):
         super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
         self.speed = 2
@@ -236,6 +252,24 @@ class Pacman(Character):
         }
 
         self.texture = self.texture_open[self.state]
+
+        self.death_textures = [
+            arcade.load_texture("images/death0.png"),
+            arcade.load_texture("images/death1.png"),
+            arcade.load_texture("images/death2.png"),
+            arcade.load_texture("images/death3.png"),
+            arcade.load_texture("images/death4.png"),
+            arcade.load_texture("images/death5.png"),
+            arcade.load_texture("images/death6.png"),
+            arcade.load_texture("images/death7.png"),
+            arcade.load_texture("images/death8.png"),
+            arcade.load_texture("images/death9.png"),
+            arcade.load_texture("images/death10.png")
+        ]
+        self.is_dying = False
+        self.death_frame = 0
+        self.death_time = 0
+        self.death_frame_duration = 0.12
 
         self.speed = PLAYER_MOVEMENT_SPEED
         self.up_pressed = False
@@ -427,6 +461,24 @@ class Pacman(Character):
 
         self.set_movement(self)
 
+    def update_animation(self, delta_time: float = 1 / 60):
+        # Death animation overrides everything
+        if self.is_dying:
+            self.death_time += delta_time
+            self.texture = self.death_textures[self.death_frame]
+
+            # Advance frame
+            if self.death_time > self.death_frame_duration:
+                self.death_time -= self.death_frame_duration
+                self.death_frame += 1
+
+                # Animation finished
+                if self.death_frame >= len(self.death_textures):
+                    self.is_dying = False
+                # signal to GameView that Pac-Man died
+                    return
+        return super().update_animation(delta_time)
+
 class Blinky(Character):
     """
     Blinky subclass
@@ -434,6 +486,7 @@ class Blinky(Character):
     def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
+                         scale = GHOST_SCALE,
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
@@ -443,11 +496,15 @@ class Blinky(Character):
 
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/blinky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/blinky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png",),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -482,17 +539,22 @@ class Pinky(Character):
         super().__init__(walls,
                          "images/pinky.png",
                          scale = GHOST_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/pinky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -523,17 +585,22 @@ class Inky(Character):
         super().__init__(walls,
                          "images/inky.png",
                          scale = GHOST_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/inky right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
@@ -563,17 +630,22 @@ class Clyde(Character):
         super().__init__(walls,
                          "images/clyde.png",
                          scale = GHOST_SCALE,
+                         scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.speed = 3
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 1.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 0.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
+            GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
             GHOST_CHASE: arcade.load_texture("images/clyde right 0.gif"),
-            GHOST_FLEE: arcade.load_texture("images/blue 1.gif")
+            GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
+            GHOST_BLINK: arcade.load_texture("images/white.png"),
+            GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
 
         self.texture = self.texture_open[self.state]
