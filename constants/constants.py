@@ -92,6 +92,7 @@ PACMAN_ATTACK = "attack"
 GHOST_CHASE = "chase"
 GHOST_FLEE = "flee"
 GHOST_EATEN = "eaten"
+GHOST_BLINK = "blink"
 
 #TODO do we need both of the PIVOT_COL lists
 PIVOT_COL = [115, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
