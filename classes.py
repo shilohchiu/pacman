@@ -22,8 +22,7 @@ from score import Score
 #Global Score
 global_score = Score()
 
-
-
+#global firestore information
 db = open_firestore_db()
 user_ref = open_db_collection(db)
 
