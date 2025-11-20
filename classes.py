@@ -24,6 +24,8 @@ user_ref = open_db_collection(db)
 # keep track of level
 level = LEVEL_DEFAULT_VALUE
 
+# TODO: load in font
+
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self):
@@ -314,20 +316,21 @@ class HighScoreView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
         
         #create buttons
-        save_score_button = SaveScoreButton(self.window, text = "Save Score", width=BUTTON_WIDTH, style = BUTTON_STYLE)
+        save_score_button = SaveScoreButton(self.window, text = SAVE_SCORE_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(save_score_button)
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
-        self.h_box.add(start_game_button)
-
-        exit_button = ExitButton(text = "Exit", width = 150, style = BUTTON_STYLE)
+        exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width = BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # game over or level up text?
         if level_up:
+            start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
         else:
+            start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
+
+        self.h_box.add(start_game_or_next_level_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
