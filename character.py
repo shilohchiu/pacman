@@ -87,6 +87,7 @@ class Character(arcade.Sprite):
         path = []
         point1 = self.closest_piv_point(self, point1)
         point2 = self.closest_piv_point(self, point2)
+        path.append(point1)
         print(f"STARTING PIV POINT: {point1}")
         while True:
             if point1 == point2:
@@ -228,41 +229,79 @@ class Character(arcade.Sprite):
         # look at pacman logic?
     def closest_piv_point(self, idk, point, direction = None):
         self_pos = point
-        curr_closest_x = self_pos[0]
-        curr_closest_y = self_pos[1]
+        curr_closest_x = self.center_x
+        curr_closest_y = self.center_y
         print(direction)
         if not direction:
-            if self_pos[0] in PIVOT_COL:
-                for row in PIVOT_ROW:
-                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
-                        curr_closest_y = row
-                curr_closest_x = self_pos[0]
-            elif self_pos[1] in PIVOT_ROW:
-                for col in PIVOT_COL:
-                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
-                        curr_closest_x = col
-                curr_closest_y = self_pos[1]
+            
+            for col in PIVOT_COL:
+                    for row in PIVOT_ROW:
+                        row_accessible = False
+                        for test_col in PIVOT_GRAPH[row]:
+                            if test_col[0] == curr_closest_x:
+                                row_accessible = True
+                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row_accessible:
+                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
+                                curr_closest_x = col
+                                curr_closest_y = row
         else:
+            curr_closest_x = 10000
+            curr_closest_y = 10000
             if direction == "N":
-                curr_closest_y = 100000
-                for row in PIVOT_ROW:
-                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row > self_pos[1]:
-                        curr_closest_y = row
+
+                for col in PIVOT_COL:
+                    for row in PIVOT_ROW:
+                        row_accessible = False
+                        for test_col in PIVOT_GRAPH[row]:
+                            if test_col[0] == col:
+                                row_accessible = True
+                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row > self_pos[1] and row_accessible:
+                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
+                                curr_closest_x = col
+                                curr_closest_y = row
+
             elif direction == "S":
-                curr_closest_y = 100000
-                for row in PIVOT_ROW:
-                    if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row < self_pos[1]:
-                        curr_closest_y = row
+
+                for col in PIVOT_COL:
+                    for row in PIVOT_ROW:
+                        row_accessible = False
+                        for test_col in PIVOT_GRAPH[row]:
+                            if test_col[0] == col:
+                                row_accessible = True
+                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row < self_pos[1] and row_accessible:
+                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
+                                curr_closest_x = col
+                                curr_closest_y = row
+
             elif direction == "E":
-                curr_closest_x = 100000
-                for col in PIVOT_COL:
-                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col > self_pos[0]:
-                        curr_closest_x = col
+
+                for row in PIVOT_ROW:
+                    for col in PIVOT_COL:
+                        col_accessible = False
+                        for test_col in PIVOT_GRAPH[row]:
+                            if test_col[0] == col:
+                                col_accessible = True
+                        
+                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and col > self_pos[0] and col_accessible:
+                            if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
+                                curr_closest_y = row
+                                curr_closest_x = col
+            
+                            
+
             elif direction == "W":
-                curr_closest_x = 100000
-                for col in PIVOT_COL:
-                    if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0]:
-                        curr_closest_x = col
+
+                for row in PIVOT_ROW:
+                    for col in PIVOT_COL:
+                        col_accessible = False
+                        for test_col in PIVOT_GRAPH[row]:
+                            if test_col[0] == col:
+                                col_accessible = True
+                                
+                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and col < self_pos[0] and col_accessible:
+                            if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
+                                curr_closest_y = row
+                                curr_closest_x = col
         
         return (curr_closest_x, curr_closest_y)
 
@@ -633,10 +672,10 @@ class Blinky(Character):
     def set_movement(self, wtf):
         super().set_movement(self)
         if not self.path:
-            self.generate_path(self, (self.center_x, self.center_y), (485, 270))
+            self.path = self.generate_path(self, (self.center_x, self.center_y), (485, 270))
     
-    def on_update(self, delta_time):
-        nothing = ""
+    # def on_update(self, delta_time):
+    #     nothing = ""
     
 
 class Pinky(Character):
