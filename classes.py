@@ -27,6 +27,7 @@ db = open_firestore_db()
 user_ref = open_db_collection(db)
 
 # keep track of level
+# global level
 level = LEVEL_DEFAULT_VALUE
 
 # TODO: load in font
@@ -142,8 +143,7 @@ class GameOverView(arcade.View):
     def __init__(self):
         super().__init__()
         # set level to default
-        global level
-        level = LEVEL_DEFAULT_VALUE
+        # global level
 
         #UIManager
         self.manager = arcade.gui.UIManager()
@@ -486,9 +486,12 @@ class GameView(arcade.View):
     """
     GameView class, shows playable game
     """
-    def __init__(self, level):
+    def __init__(self):
         super().__init__()
-        self.level = level
+        # self.level = level
+
+        global level
+        print(level)
 
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
@@ -688,11 +691,15 @@ class GameView(arcade.View):
         """
         if (self.game_over and self.new_high_score):
             view = HighScoreView(self.level_up)
+            # global level
+            level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
+            # global level
+            level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
@@ -705,8 +712,8 @@ class GameView(arcade.View):
         # print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
         # print(f"directions: {self.pacman.directions}")
         # print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
-        print(f"pacman position: {self.pacman.center_x}, {self.pacman.center_y}")
-        print(f"blinky position: {self.blinky.center_x}, {self.blinky.center_y}")
+        # print(f"pacman position: {self.pacman.center_x}, {self.pacman.center_y}")
+        # print(f"blinky position: {self.blinky.center_x}, {self.blinky.center_y}")
 
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
@@ -732,8 +739,9 @@ class GameView(arcade.View):
         # TODO: check for one up life
         # if global_score > 10000:
         #     one_up()
+        # global level
         fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
-                                  self.fruit_list, self.sprites, self.level)
+                                  self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn:
             self.fruit_time = 0
@@ -741,7 +749,7 @@ class GameView(arcade.View):
         self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
 
         fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700,
-                                    self.fruit_list, self.sprites, self.level)
+                                    self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn_2:
             self.fruit_time = 0

@@ -6,6 +6,7 @@ Button Classes
 """
 import arcade
 import arcade.gui.widgets.buttons
+from constants.view_constants import LEVEL_DEFAULT_VALUE
 
 class EnterButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
@@ -36,7 +37,7 @@ class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         from classes import GameView
         #TODO: this is where incremented levels need to go
-        view = GameView(level = 1)
+        view = GameView()
         self.window.show_view(view)
         self.uimanager.disable()
 
