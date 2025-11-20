@@ -340,10 +340,10 @@ class HighScoreView(arcade.View):
 
         # game over or level up text?
         if level_up:
-            start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
+            start_game_or_next_level_button = NextLevelButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
         else:
-            start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
+            start_game_or_next_level_button = StartGameButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
 
         self.h_box.add(start_game_or_next_level_button)
