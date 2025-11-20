@@ -4,7 +4,6 @@ import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 from pellet import Pellet, BigPellet, Fruit
-from misc import *
 from walls import create_walls
 
 # Constant imports
@@ -481,8 +480,8 @@ class GameView(arcade.View):
         # create pellets
 
         temp_list = arcade.SpriteList()
-        for x in PELLET_COL: #float_range (115,596,(596-115)/2):
-            for y in PELLET_ROW: #float_range (85,670,20):
+        for x in PELLET_COL:
+            for y in PELLET_ROW:
                 temp = arcade.SpriteCircle(7.5, arcade.color.WHITE)
                 temp.center_x = x
                 temp.center_y = y
@@ -617,7 +616,7 @@ class GameView(arcade.View):
         if fruit_spawn:
             self.fruit_time = 0
 
-        self.fruit_time = Fruit.count_down(self.fruit_list, self.fruit_time, delta_time)
+        self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
 
         fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700,
                                     self.fruit_list, self.sprites, self.level)
@@ -625,7 +624,7 @@ class GameView(arcade.View):
         if fruit_spawn_2:
             self.fruit_time = 0
 
-        self.fruit_time = Fruit.count_down(self.fruit_list, self.fruit_time, delta_time)
+        self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
 
         #fruit collisions
         f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)

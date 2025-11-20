@@ -6,7 +6,7 @@ Pellet is imported by classes
 """
 import arcade
 from constants.constants import FRUIT_POSITION, FRUIT_DATA
-from misc import *
+ 
 class Pellet(arcade.Sprite):
     def __init__(self, image, point=10, scale = .05, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
@@ -50,7 +50,7 @@ class Fruit(Pellet):
                          point=FRUIT_DATA[self.fruit]["point"],
                          scale = .5,
                          start_pos=start_pos)
-        
+
     def spawn(self, current_score, spawn_score,  fruit_list, sprites_list, level):
         if current_score == spawn_score:
             if len(fruit_list) == 0:
@@ -59,8 +59,8 @@ class Fruit(Pellet):
                 sprites_list.append(fruit)
                 return True
         return False
-    
-    def count_down(fruit_list, current_timer, delta_time, time_limit = 9.0):
+
+    def count_down(self, fruit_list, current_timer, delta_time, time_limit = 9.0):
         if len(fruit_list) > 0:
             current_timer += delta_time
 
@@ -69,8 +69,3 @@ class Fruit(Pellet):
                 fruit_to_remove.remove_from_sprite_lists()
                 print("Fruit expired")
         return current_timer
-
-
-
-            
-

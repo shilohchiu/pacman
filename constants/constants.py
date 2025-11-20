@@ -70,10 +70,10 @@ PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
 PIVOT_ROW = [645, 575, 515, 385, 270, 210, 150, 90]
 
 BLACK_BOX_WIDTH = 50
-# BLACK_BOX_RATIO = 0.75 # ratio describes collision box / actual box size 
+# BLACK_BOX_RATIO = 0.75 # ratio describes collision box / actual box size
 # BLACK_BOX_SIZE = BLACK_BOX_RATIO // 1
 # COLLISION_BLACK_BOX_SIZE = (BLACK_BOX_RATIO * BLACK_BOX_SIZE) // 1
-BLACK_BOX_DISTANCE = MAZE_WIDTH + BLACK_BOX_WIDTH 
+BLACK_BOX_DISTANCE = MAZE_WIDTH + BLACK_BOX_WIDTH
 BLACK_BOX_X_POSITION_1 = int(H_DISTANCE_BETWEEN_EDGE_AND_MAZE / 2)
 COLLISION_BLACK_BOX_X_POSITIONS =[BLACK_BOX_X_POSITION_1 - int(BLACK_BOX_WIDTH / 2),
                         BLACK_BOX_X_POSITION_1 + BLACK_BOX_DISTANCE + 10 + BLACK_BOX_WIDTH]
@@ -87,9 +87,9 @@ COLLISION_BLACK_BOX_X_OFFSET_VAL = 1
 SCREENWRAP_RIGHT_SIDE = 650
 SCREENWRAP_LEFT_SIDE = 100
 
-# BLACK_BOX_X_POS_RIGHT = 
+# BLACK_BOX_X_POS_RIGHT =
 # BLACK_BOX_X_POS_LEFT =
-# BLACK_BOX_Y_POS = 
+# BLACK_BOX_Y_POS =
 
 
 PACMAN_NORMAL = "normal"
@@ -106,23 +106,23 @@ PIVOT_COL = [115, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
 # BOT HALF COL: 165, 545
 # BOT HALF SPEC: 165, 545, 285, 425
 PIVOT_ROW = [650, 580, 520, 460, 385, 330, 270, 210, 150, 90]
-PIVOT_GRAPH = {650: [(115,("S", "E")), 
-                        (225, ("S", "E", "W")), 
+PIVOT_GRAPH = {650: [(115,("S", "E")),
+                        (225, ("S", "E", "W")),
                         (325, ("S", "W")),
                         (385, ("S", "E")),
                         (485, ("S", "E", "W")),
                         (595, ("S", "W"))
                      ],
-                    580: [(115,("N", "S", "E")), 
-                        (225, ("N", "S", "E", "W")), 
+                    580: [(115,("N", "S", "E")),
+                        (225, ("N", "S", "E", "W")),
                         (285, ("S", "E", "W")),
                         (325, ("N", "E", "W")),
                         (385, ("N", "E", "W")),
                         (425, ("S", "E", "W")),
                         (485, ("N", "S", "E", "W")),
                         (595, ("N", "S", "W"))],
-                    520: [(115,("N", "E")), 
-                        (225, ("N", "S", "W")), 
+                    520: [(115,("N", "E")),
+                        (225, ("N", "S", "W")),
                         (285, ("N", "E")),
                         (325, ("S", "W")),
                         (385, ("S", "E")),
@@ -140,17 +140,17 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (485, ("N", "S", "E", "W"))],
                     330: [(285, ("N", "S", "E")),
                         (425, ("N", "S", "W"))],
-                    270: [(115,("N", "E")), 
-                        (225, ("N", "S", "E", "W")), 
+                    270: [(115,("N", "E")),
+                        (225, ("N", "S", "E", "W")),
                         (285, ("N", "E", "W")),
                         (325, ("S", "W")),
                         (385, ("S", "E")),
                         (425, ("N", "E", "W")),
                         (485, ("N", "S", "E", "W")),
                         (595, ("S", "W"))],
-                    210: [(115,("N", "E")), 
+                    210: [(115,("N", "E")),
                         (165, ("S", "W")),
-                        (225, ("N", "S", "W")), 
+                        (225, ("N", "S", "W")),
                         (285, ("S", "E", "W")),
                         (325, ("N", "E", "W")),
                         (355, ("E", "W")),
@@ -159,9 +159,9 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (485, ("N", "S", "W")),
                         (545, ("S", "E")),
                         (595, ("N", "W"))],
-                    150: [(115,("S", "E")), 
+                    150: [(115,("S", "E")),
                         (165, ("N", "E", "W")),
-                        (225, ("N", "W")), 
+                        (225, ("N", "W")),
                         (285, ("N", "E")),
                         (325, ("S", "W")),
                         (385, ("S", "E")),
@@ -169,7 +169,7 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (485, ("N", "E")),
                         (545, ("N", "E", "W")),
                         (595, ("S", "W"))],
-                    90: [(115,("N", "E")), 
+                    90: [(115,("N", "E")),
                         (325, ("N", "E", "W")),
                         (385, ("N", "E", "W")),
                         (595, ("N", "W"))],

@@ -7,7 +7,6 @@ Character is imported by classes
 """
 import arcade
 from constants.constants import *
-from misc import *
 
 class Character(arcade.Sprite):
     """
