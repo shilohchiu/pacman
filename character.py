@@ -79,8 +79,7 @@ class Character(arcade.Sprite):
             else:
                 point1 = self.rec_generate_path(self, point1, point2)
                 if point1 in path:
-                    point1 = point2
-                    path = []
+                    return []
                 else:
                     path.append(point1)
                     print(f"added point: {point1}")
