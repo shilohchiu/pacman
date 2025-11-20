@@ -229,8 +229,8 @@ class Character(arcade.Sprite):
         # look at pacman logic?
     def closest_piv_point(self, idk, point, direction = None):
         self_pos = point
-        curr_closest_x = self.center_x
-        curr_closest_y = self.center_y
+        curr_closest_x = 10000
+        curr_closest_y = 10000
         print(direction)
         if not direction:
             
@@ -238,27 +238,24 @@ class Character(arcade.Sprite):
                     for row in PIVOT_ROW:
                         row_accessible = False
                         for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == curr_closest_x:
+                            if test_col[0] == col:
                                 row_accessible = True
                         if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row_accessible:
                             if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
                                 curr_closest_x = col
                                 curr_closest_y = row
         else:
-            curr_closest_x = 10000
-            curr_closest_y = 10000
             if direction == "N":
 
                 for col in PIVOT_COL:
                     for row in PIVOT_ROW:
                         row_accessible = False
                         for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == col:
+                            if test_col[0] == col and col == self_pos[0]:
                                 row_accessible = True
-                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row > self_pos[1] and row_accessible:
-                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
-                                curr_closest_x = col
-                                curr_closest_y = row
+                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row > self_pos[1] and row_accessible:
+                            curr_closest_x = col
+                            curr_closest_y = row
 
             elif direction == "S":
 
@@ -266,12 +263,11 @@ class Character(arcade.Sprite):
                     for row in PIVOT_ROW:
                         row_accessible = False
                         for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == col:
+                            if test_col[0] == col and col == self_pos[0]:
                                 row_accessible = True
-                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and row < self_pos[1] and row_accessible:
-                            if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]):
-                                curr_closest_x = col
-                                curr_closest_y = row
+                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and row < self_pos[1] and row_accessible:
+                            curr_closest_x = col
+                            curr_closest_y = row
 
             elif direction == "E":
 
@@ -279,13 +275,12 @@ class Character(arcade.Sprite):
                     for col in PIVOT_COL:
                         col_accessible = False
                         for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == col:
+                            if test_col[0] == col and row == self_pos[1]:
                                 col_accessible = True
                         
-                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and col > self_pos[0] and col_accessible:
-                            if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
-                                curr_closest_y = row
-                                curr_closest_x = col
+                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col > self_pos[0] and col_accessible:
+                            curr_closest_y = row
+                            curr_closest_x = col
             
                             
 
@@ -295,14 +290,13 @@ class Character(arcade.Sprite):
                     for col in PIVOT_COL:
                         col_accessible = False
                         for test_col in PIVOT_GRAPH[row]:
-                            if test_col[0] == col:
+                            if test_col[0] == col and row == self_pos[1]:
                                 col_accessible = True
                                 
-                        if abs(row - self_pos[1]) < abs(curr_closest_y - self_pos[1]) and col < self_pos[0] and col_accessible:
-                            if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]):
-                                curr_closest_y = row
-                                curr_closest_x = col
-        
+                        if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0] and col_accessible:
+                            curr_closest_y = row
+                            curr_closest_x = col
+    
         return (curr_closest_x, curr_closest_y)
 
     def pathfind(self, idk):
