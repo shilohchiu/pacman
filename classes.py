@@ -436,7 +436,7 @@ class EnterInitialsView(arcade.View):
 
         #Draw the combination wheel
 
-        center_y = WINDOW_HEIGHT - 350
+        center_y = WINDOW_HEIGHT/2
         slot_width = 80
         slot_spacing = 100
 
@@ -447,18 +447,24 @@ class EnterInitialsView(arcade.View):
             initial = self.initials[i]
 
             # Draw the background slot box
-            arcade.draw_lrbt_rectangle_filled(left_x, right_x,center_y, center_y+60,
-                                              arcade.color.DARK_BLUE_GRAY)
+            arcade.draw_lrbt_rectangle_filled(left_x, right_x,center_y-30, center_y+20,
+                                              NORMAL_BUTTON_BG_COLOR)
 
             # Highlight the active slot
             if i == self.active_slot:
-                arcade.draw_lrbt_rectangle_filled(left_x,right_x,center_y-10, center_y+70,
-                                                  arcade.color.YELLOW)
+                arcade.draw_lrbt_rectangle_filled(left_x,right_x,center_y-40, center_y+30,
+                                                  HOVER_BUTTON_BG_COLOR)
 
             # Draw the selected initial
             arcade.draw_text(initial,
-                center_x, center_y+20,
-                arcade.color.WHITE, font_size=40, anchor_x="center", anchor_y="center", bold=True
+                center_x, center_y,
+                NORMAL_BUTTON_FONT_COLOR, font_size=40, anchor_x="center", anchor_y="center", bold=True
+            )
+             # Highlight the active letter
+            if i == self.active_slot:
+                arcade.draw_text(initial,
+                    center_x, center_y,
+                    HOVER_BUTTON_FONT_COLOR, font_size=40, anchor_x="center", anchor_y="center", bold=True
             )
     def on_key_press(self, key, modifiers):
         current_char = self.initials[self.active_slot]
