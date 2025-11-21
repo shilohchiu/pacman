@@ -502,6 +502,8 @@ class GameView(arcade.View):
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
+        self._power_end_call = None         # callable scheduled to end power mode
+        self._ghost_blink_calls = {} 
 
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
@@ -771,23 +773,19 @@ class GameView(arcade.View):
         #collision handling for ghost -> pacman
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
-        if collision and self.pacman.get_state() == PACMAN_NORMAL:
+        if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
             # play death animation
             self.pacman.start_death()
             self.pacman.freeze()
-            self.blinky.freeze()
-            self.pinky.freeze()
-            self.clyde.freeze()
-            self.inky.freeze()
+            for g in self.ghosts:
+                g.freeze()
 
             # remove one life icon (last in list)
             if len(self.pacman_score_list) > 0:
                 # remove sprite from SpriteList
                 self.pacman_score_list.remove((self.pacman_score_list[-1]))
                 # reset pacman to start position
-                x, y = PACMAN_SPAWN_COORD
-                self.pacman.center_x = x
-                self.pacman.center_y = y
+                arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
 
             else:
                 # no lives left; game over
@@ -838,25 +836,65 @@ class GameView(arcade.View):
             self.pacman.on_key_release(key, modifiers)
 
     def activate_power_mode(self):
-        """Activate frightened mode for all ghosts."""
+        """Activate frightened mode for all ghosts. Refreshes timer if already active."""
+        # Set pacman state and make ghosts flee now
         self.pacman.change_state(PACMAN_ATTACK)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_FLEE)
-        
+
+        # Cancel any previous per-ghost blink schedule and reschedule fresh one.
         for ghost in self.ghosts:
-            arcade.schedule_once(lambda dt, g=ghost: g.change_state(GHOST_BLINK), 5.0)
+            # If we previously scheduled a blink callable for this ghost, unschedule it.
+            prev = self._ghost_blink_calls.get(ghost)
+            if prev:
+                try:
+                    arcade.unschedule(prev)
+                except Exception:
+                    pass
+
+            # Create a callable that will set the ghost to BLINK in 5s.
+            blink_call = lambda dt, g=ghost: g.change_state(GHOST_BLINK)
+            self._ghost_blink_calls[ghost] = blink_call
+            arcade.schedule_once(blink_call, 5.0)
+
+        # Cancel previous end-power schedule and schedule a new one 7s from now.
+        if self._power_end_call:
+            try:
+                arcade.unschedule(self._power_end_call)
+            except Exception:
+                pass
+
+        # store the callable so we can unschedule it if another pellet is eaten
+        self._power_end_call = lambda dt: self.end_power_mode()
+        arcade.schedule_once(self._power_end_call, 7.0)
 
         # 7 seconds of power-up (adjust as desired)
-        arcade.schedule(self.end_power_mode, 7.0)
+        arcade.schedule_once(lambda dt:self.end_power_mode, 7.0)
 
         
     
-    def end_power_mode(self, delta_time):
+    def end_power_mode(self):
         """Revert ghosts and Pac-Man to normal state."""
         self.pacman.change_state(PACMAN_NORMAL)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_CHASE)
-        arcade.unschedule(self.end_power_mode)
+
+        # clear scheduled call references so future pellets schedule cleanly
+        if self._power_end_call:
+            try:
+                arcade.unschedule(self._power_end_call)
+            except Exception:
+                pass
+        self._power_end_call = None
+
+        # clear any leftover per-ghost blink callables
+        for ghost, call in list(self._ghost_blink_calls.items()):
+            try:
+                arcade.unschedule(call)
+            except Exception:
+                pass
+            self._ghost_blink_calls.pop(ghost, None)
+
 
     def one_up(self):
         """add an extra life"""

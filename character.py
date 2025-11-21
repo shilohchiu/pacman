@@ -339,15 +339,29 @@ class Character(arcade.Sprite):
         self.point = upd_point
 
     def start_death(self):
+        """Begin Pac-Man death animation. Centralize state changes here."""
         self.is_dying = True
         self.death_frame = 0
-        self.death_time = 0
+        self.death_time = 0.0
+        self.speed = 0
+        # Stop movement immediately
+        self.change_x = 0
+        self.change_y = 0
+        self.vertical_direction = 0
+        self.horizontal_direction = 0
+        # flag to let GameView know animation finished
+        self.death_finished = False
 
     def freeze(self):
         self.change_x = 0
         self.change_y = 0
         self.vertical_direction = 0
         self.horizontal_direction = 0
+        self.speed = 0
+    def reset_pos(self):
+        x, y = PACMAN_SPAWN_COORD
+        self.center_x = x
+        self.center_y = y
 
 
 
@@ -582,11 +596,13 @@ class Pacman(Character):
 
     def update_animation(self, delta_time: float = 1 / 60):
         # Death animation overrides everything
-        if self.is_dying:
+        if getattr(self, "is_dying", False):
             self.death_time += delta_time
-            self.texture = self.death_textures[self.death_frame]
+            # ensure frame index safe
+            frame_index = min(self.death_frame, len(self.death_textures) - 1)
+            self.texture = self.death_textures[frame_index]
 
-            # Advance frame
+            # Advance frame at fixed duration
             if self.death_time > self.death_frame_duration:
                 self.death_time -= self.death_frame_duration
                 self.death_frame += 1
@@ -594,8 +610,15 @@ class Pacman(Character):
                 # Animation finished
                 if self.death_frame >= len(self.death_textures):
                     self.is_dying = False
-                # signal to GameView that Pac-Man died
+                    self.death_finished = True
+                    # Optionally hide Pac-Man until reset:
+                    # self.visible = False
                     return
+
+            # While dying, do not run normal open/close animation
+            return
+
+        # Not dying: run normal frame toggle from parent
         return super().update_animation(delta_time)
 
 class Blinky(Character):
@@ -629,19 +652,31 @@ class Blinky(Character):
         self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+           Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/blinky right 0.gif")
-            self.texture_close = arcade.load_texture("images/blinky right 1.gif") # right
+            # right
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky right 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky right 0.gif")
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/blinky left 0.gif")
-            self.texture_close = arcade.load_texture("images/blinky left 1.gif") # left
+            # left
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky left 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.gif")
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/blinky up 0.gif")
-            self.texture_close = arcade.load_texture("images/blinky up 1.gif") # up
+            # up
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky up 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky up 0.gif")
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/blinky down 0.gif")
-            self.texture_close = arcade.load_texture("images/blinky down 1.gif") # down
+            # down
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky down 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky down 0.gif")
+
+        # Ensure the currently displayed texture matches the frame
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
 
     def find_movement(self, target=None):
         self.horizontal_direction = 1
