@@ -5,7 +5,7 @@ enemies and pacman; things that move)
 
 Character is imported by classes
 """
-import arcade
+import arcade, random
 from constants.constants import *
 
 class Character(arcade.Sprite):
@@ -39,6 +39,7 @@ class Character(arcade.Sprite):
         self.texture_close = {}
         self.state = None
         self.frame_open = True
+        self.quadrant = ""
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -252,6 +253,39 @@ class Character(arcade.Sprite):
     
         return (curr_closest_x, curr_closest_y)
 
+    
+    
+    def get_quadrant(point):
+        if point[1] > 385:
+            horizontal = "T"
+        else:
+            horizontal = "B"
+
+        if point[0] < 355:
+            vertical = "L"
+        else:
+            vertical = "R"
+        
+        return horizontal + vertical
+    
+    def set_rand_movement(self,idk):
+        for col in PIVOT_GRAPH[self.recent_piv_row]:
+            if col[0] == self.recent_piv_col:
+                valid_directions = col[1]
+        direction = random.choice(valid_directions)
+        if direction == "N":
+            self.horizontal_direction = 0
+            self.vertical_direction = 1
+        elif direction == "S":
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        elif direction == "E":
+            self.horizontal_direction = 1
+            self.vertical_direction = 0
+        elif direction == "W":
+            self.horizontal_direction = -1
+            self.vertical_direction = 0
+    
     # TODO: use self.path to influence movement
         # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
         # flee targets farthest corner in diagonal quadrant
@@ -261,8 +295,28 @@ class Character(arcade.Sprite):
         # when path is empty, randomize movement
             # custom function, check for in piv row/col, pick random valid direction
         # include some sort of math to use level/difficulty in rate of random movement
+
     def pathfind(self, idk):
-        print("PATH: ")
+        point = self.path[0]
+        if self.center_x < point[0]:
+            self.horizontal_direction = 1
+            self.vertical_direction = 0
+        elif self.center_x > point[0]:
+            self.horizontal_direction = -1
+            self.vertical_direction = 0
+        else:
+            self.horizontal_direction = 0
+            self.vertical_direction = 0
+
+        if self.center_y < point[1]:
+            self.horizontal_direction = 0
+            self.vertical_direction = 1
+        elif self.center_y > point[1]:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        else:
+            self.horizontal_direction = 0
+            self.vertical_direction = 0
         
 
 
@@ -289,6 +343,7 @@ class Character(arcade.Sprite):
 
         self.in_piv_col = False
         self.in_piv_row = False
+        self.get_quadrant(self)
 
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
@@ -602,7 +657,7 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
+    def __init__(self, walls, start_pos=(115, 650), point = 200):
         super().__init__(walls,
                          "images/blinky.png",
                          scale = GHOST_SCALE,
@@ -643,16 +698,25 @@ class Blinky(Character):
             self.texture_open = arcade.load_texture("images/blinky down 0.gif")
             self.texture_close = arcade.load_texture("images/blinky down 1.gif") # down
 
-    def find_movement(self, target=None):
-        self.horizontal_direction = 1
 
     # working coord at (485, 270) ?
     # other testing coord (115, 650)
     def set_movement(self, wtf):
         super().set_movement(self)
-        if not self.path:
-            self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-    
+        self.target = (Pacman.center_x, Pacman.center_y)
+
+        if self.get_quadrant(self.target) != self.get_quadrant((self.center_x,self.center_y)):
+            if not self.path:
+                
+                self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+            else:
+                if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                    self.path.pop(0)
+                self.pathfind(self)
+        else:
+            if self.in_piv_col and self.in_piv_row:
+                self.set_rand_movement(self)
+                
     # def on_update(self, delta_time):
     #     nothing = ""
     
