@@ -130,12 +130,6 @@ class LevelUpView(arcade.View):
         
             score_idx += 1
 
-class DeathView(arcade.View):
-    """
-    View when pacman colides with ghost
-    """
-    
-
 class GameOverView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
