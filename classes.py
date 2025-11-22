@@ -773,35 +773,37 @@ class GameView(arcade.View):
         #collision handling for ghost -> pacman
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
-        if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
-            # play death animation
-            self.pacman.start_death()
-            self.pacman.freeze()
-            for g in self.ghosts:
-                g.freeze()
+        for ghost in collision:
+            if ghost.state == GHOST_CHASE:
+                if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
+                    # play death animation
+                    self.pacman.start_death()
+                    self.pacman.freeze()
+                    for g in self.ghosts:
+                        g.freeze()
 
-            # remove one life icon (last in list)
-            if len(self.pacman_score_list) > 0:
-                # remove sprite from SpriteList
-                self.pacman_score_list.remove((self.pacman_score_list[-1]))
-                # reset pacman to start position
-                arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
+                    # remove one life icon (last in list)
+                    if len(self.pacman_score_list) > 0:
+                        # remove sprite from SpriteList
+                        self.pacman_score_list.remove((self.pacman_score_list[-1]))
+                        # reset pacman to start position
+                        arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
 
-            else:
-                # no lives left; game over
-                self.game_over = True
+                    else:
+                        # no lives left; game over
+                        self.game_over = True
 
-        #collision handling for pacman -> ghost
-        elif collision and self.pacman.get_state() == PACMAN_ATTACK:
-            ghost_num = 1
-            for ghost in collision:
-                base_ghost_point = getattr(ghost, "point", 0)
-                global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
-                #TODO: change state to be accurate
-                ghost.change_state(GHOST_EATEN)
-                ghost_num += 1
-            if ghost_num == 5:
-                ghost_num = 0
+            #collision handling for pacman -> ghost
+            elif collision and self.pacman.get_state() == PACMAN_ATTACK:
+                ghost_num = 1
+                for ghost in collision:
+                    base_ghost_point = getattr(ghost, "point", 0)
+                    global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
+                    #TODO: change state to be accurate
+                    ghost.change_state(GHOST_EATEN)
+                    ghost_num += 1
+                if ghost_num == 5:
+                    ghost_num = 0
 
         """
         Screenwrap
