@@ -19,7 +19,7 @@ class Character(arcade.Sprite):
         self.grid_size = 5
         self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
-        self.speed = 1
+        self.speed = 0.5
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.in_piv_col = False
@@ -40,6 +40,8 @@ class Character(arcade.Sprite):
         self.state = None
         self.frame_open = True
         self.quadrant = ""
+        self.target_quadrant = ""
+        self.target_quadrant_change = False
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -255,36 +257,56 @@ class Character(arcade.Sprite):
 
     
     
-    def get_quadrant(point):
-        if point[1] > 385:
+    def update_quadrant(self):
+        if self.center_y > 385:
             horizontal = "T"
         else:
             horizontal = "B"
 
-        if point[0] < 355:
+        if self.center_x < 355:
             vertical = "L"
         else:
             vertical = "R"
         
-        return horizontal + vertical
+        self.quadrant = horizontal + vertical
+    
+    def update_target_quadrant(self):
+        if self.target[1] > 385:
+            horizontal = "T"
+        else:
+            horizontal = "B"
+
+        if self.target[0] < 355:
+            vertical = "L"
+        else:
+            vertical = "R"
+        if not self.target_quadrant and self.target_quadrant != horizontal + vertical:
+            self.target_quadrant_change = True
+        self.target_quadrant = horizontal + vertical
     
     def set_rand_movement(self,idk):
-        for col in PIVOT_GRAPH[self.recent_piv_row]:
-            if col[0] == self.recent_piv_col:
-                valid_directions = col[1]
-        direction = random.choice(valid_directions)
-        if direction == "N":
-            self.horizontal_direction = 0
-            self.vertical_direction = 1
-        elif direction == "S":
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
-        elif direction == "E":
-            self.horizontal_direction = 1
-            self.vertical_direction = 0
-        elif direction == "W":
-            self.horizontal_direction = -1
-            self.vertical_direction = 0
+        try:
+            for col in PIVOT_GRAPH[self.recent_piv_row]:
+                if col[0] == self.recent_piv_col:
+                    
+                    valid_directions = col[1]
+            direction = random.choice(valid_directions)
+            if direction == "N":
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+            elif direction == "S":
+                self.horizontal_direction = 0
+                self.vertical_direction = -1
+            elif direction == "E":
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif direction == "W":
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+        except:
+            self.horizontal_direction = self.horizontal_direction
+            self.vertical_direction = self.vertical_direction
+
     
     # TODO: use self.path to influence movement
         # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
@@ -298,17 +320,14 @@ class Character(arcade.Sprite):
 
     def pathfind(self, idk):
         point = self.path[0]
+
         if self.center_x < point[0]:
             self.horizontal_direction = 1
             self.vertical_direction = 0
         elif self.center_x > point[0]:
             self.horizontal_direction = -1
             self.vertical_direction = 0
-        else:
-            self.horizontal_direction = 0
-            self.vertical_direction = 0
-
-        if self.center_y < point[1]:
+        elif self.center_y < point[1]:
             self.horizontal_direction = 0
             self.vertical_direction = 1
         elif self.center_y > point[1]:
@@ -343,7 +362,7 @@ class Character(arcade.Sprite):
 
         self.in_piv_col = False
         self.in_piv_row = False
-        self.get_quadrant(self)
+        self.update_quadrant()
 
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
@@ -361,8 +380,8 @@ class Character(arcade.Sprite):
 
         #print("SET TARGET")
         self.set_movement(self)
-        self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
-        self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
+        self.change_x = self.horizontal_direction * self.speed
+        self.change_y = self.vertical_direction * self.speed
 
         self.physics_engine.update()
 
@@ -663,9 +682,7 @@ class Blinky(Character):
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         
-        self.speed = 3
         self.point = point
-        self.target = (Pacman.center_x, Pacman.center_y)
         self.state = GHOST_CHASE
 
         self.texture_open = {
@@ -703,16 +720,22 @@ class Blinky(Character):
     # other testing coord (115, 650)
     def set_movement(self, wtf):
         super().set_movement(self)
-        self.target = (Pacman.center_x, Pacman.center_y)
-
-        if self.get_quadrant(self.target) != self.get_quadrant((self.center_x,self.center_y)):
-            if not self.path:
-                
+        print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
+        print(f"TARGET: {self.target}")
+        print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
+        print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
+        print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
+        print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
+        self.update_target_quadrant()
+        if self.quadrant != self.target_quadrant:
+            if not self.path or self.target_quadrant_change:
                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                self.target_quadrant_change = False
             else:
                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
                     self.path.pop(0)
-                self.pathfind(self)
+                if self.path:
+                    self.pathfind(self)
         else:
             if self.in_piv_col and self.in_piv_row:
                 self.set_rand_movement(self)
@@ -730,7 +753,7 @@ class Pinky(Character):
                          "images/pinky.png",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
+
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
@@ -775,7 +798,6 @@ class Inky(Character):
                          "images/inky.png",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
@@ -819,7 +841,7 @@ class Clyde(Character):
                          "images/clyde.png",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
+
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
