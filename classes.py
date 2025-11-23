@@ -52,6 +52,9 @@ class MenuView(arcade.View):
 
         self.manager.add(ui_anchor_layout)
 
+        #reset score to 0
+        global_score.reset_curr_score()
+
     def on_show_view(self):
         """ Called when switching to this view"""
         self.background = arcade.load_texture("images/background.png")
@@ -213,10 +216,10 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
+        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
-        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH)
+        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -494,10 +497,8 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
-        # self.level = level
 
         global level
-        print(level)
 
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
@@ -541,9 +542,6 @@ class GameView(arcade.View):
 
         #create timer for fruit
         self.fruit_time = 0.0
-
-        #reset score to 0
-        global_score.reset_curr_score()
 
         #viewing states
         self.game_over = False
@@ -703,6 +701,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -710,6 +710,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
 
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
