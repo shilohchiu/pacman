@@ -36,7 +36,7 @@ class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
         #TODO: this is where incremented levels need to go
         view = GameView()
         self.window.show_view(view)
-        self.uimanager.disable()
+        # self.uimanager.disable()
 
 class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
