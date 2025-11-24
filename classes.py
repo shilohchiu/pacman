@@ -132,12 +132,6 @@ class LevelUpView(arcade.View):
         
             score_idx += 1
 
-class DeathView(arcade.View):
-    """
-    View when pacman colides with ghost
-    """
-    
-
 class GameOverView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -329,6 +323,8 @@ class HighScoreView(arcade.View):
     def __init__(self, level_up : bool):
         super().__init__()
 
+        self.message = ""
+
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -346,9 +342,11 @@ class HighScoreView(arcade.View):
         if level_up:
             start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
+            self.message = "proceed to next level"
         else:
             start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
+            self.message = "start a new game"
 
         self.h_box.add(start_game_or_next_level_button)
 
@@ -377,9 +375,13 @@ class HighScoreView(arcade.View):
         arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=28, anchor_x="center")
-        arcade.draw_text("Save score below or start new game.",
+        
+        arcade.draw_text(f"Save score below or {self.message}.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
-                        arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+                        arcade.color.WHITE, font_size=20, anchor_x="center", bold=True)
+        
+        
+        
 
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
@@ -514,6 +516,8 @@ class GameView(arcade.View):
         self.fruit_list = arcade.SpriteList()
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
+        self.intro_player = None
+        self.intro_playing = True
 
         # Create wall spritelist
         self.walls = arcade.SpriteList()
@@ -632,6 +636,11 @@ class GameView(arcade.View):
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
+    
+    def on_show_view(self):
+        arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
+        self.intro_player = arcade.play_sound(self.pacman.sounds["intro"])
+        self.intro_playing = True
 
     def on_draw(self):
         self.clear()
@@ -668,6 +677,12 @@ class GameView(arcade.View):
 
     def on_update(self,delta_time):
         #close logic when game over and choses correct view
+        if self.intro_playing:
+            # Wait until the intro finishes
+            if not self.intro_player.playing:
+                self.intro_playing = False
+            else:
+                return
         """
         level up & highscore functionality
         """
@@ -767,6 +782,8 @@ class GameView(arcade.View):
 
         #fruit collisions
         f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)
+        if f_points > 0:
+            arcade.play_sound(self.pacman.sounds["fruit"])
         global_score.adj_curr_score(point=f_points)
 
         #collision handling for ghost -> pacman
@@ -776,6 +793,7 @@ class GameView(arcade.View):
             if ghost.state == GHOST_CHASE:
                 if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
                     # play death animation
+                    arcade.play_sound(self.pacman.sounds["pacman_death"])
                     self.pacman.start_death()
                     self.pacman.freeze()
                     for g in self.ghosts:
@@ -796,9 +814,10 @@ class GameView(arcade.View):
             elif collision and self.pacman.get_state() == PACMAN_ATTACK:
                 ghost_num = 1
                 for ghost in collision:
+                    if ghost.state == GHOST_FLEE or ghost.state == GHOST_BLINK:
+                        arcade.play_sound(self.pacman.sounds["ghost_eaten"])
                     base_ghost_point = getattr(ghost, "point", 0)
                     global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
-                    #TODO: change state to be accurate
                     ghost.change_state(GHOST_EATEN)
                     ghost_num += 1
                 if ghost_num == 5:
@@ -832,6 +851,10 @@ class GameView(arcade.View):
             return
         
     def on_key_press(self, key, modifiers):
+        if self.intro_playing:
+            return 
+        if self.pacman.is_dying:
+            return
         if key == arcade.key.ESCAPE:
             if self.window:
                 self.window.close()
