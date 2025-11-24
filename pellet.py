@@ -23,6 +23,8 @@ class Pellet(arcade.Sprite):
         points = 0
         for pellet in pellet_collision:
             points += getattr(pellet, "point",0)
+            if not pacman.waka_player or not pacman.waka_player.playing:
+                pacman.waka_player = arcade.play_sound(pacman.sounds["waka"])
             if isinstance(pellet,BigPellet):
                 if game_view:
                     game_view.activate_power_mode()

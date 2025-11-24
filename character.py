@@ -39,6 +39,7 @@ class Character(arcade.Sprite):
         self.texture_close = {}
         self.state = None
         self.frame_open = True
+        self.waka_player = None
         # sounds
         self.sounds = {
         "waka": arcade.load_sound("assets/pacman_chomp.wav"),
