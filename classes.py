@@ -331,6 +331,8 @@ class HighScoreView(arcade.View):
     def __init__(self, level_up : bool):
         super().__init__()
 
+        self.message = ""
+
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -348,9 +350,11 @@ class HighScoreView(arcade.View):
         if level_up:
             start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
+            self.message = "proceed to next level"
         else:
             start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
+            self.message = "start a new game"
 
         self.h_box.add(start_game_or_next_level_button)
 
@@ -379,9 +383,13 @@ class HighScoreView(arcade.View):
         arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=28, anchor_x="center")
-        arcade.draw_text("Save score below or start new game.",
+        
+        arcade.draw_text(f"Save score below or {self.message}.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
-                        arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+                        arcade.color.WHITE, font_size=20, anchor_x="center", bold=True)
+        
+        
+        
 
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
