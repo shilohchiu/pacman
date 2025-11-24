@@ -286,27 +286,26 @@ class Character(arcade.Sprite):
     
     def set_rand_movement(self,idk):
         try:
-            for col in PIVOT_GRAPH[self.recent_piv_row]:
-                if col[0] == self.recent_piv_col:
-                    
-                    valid_directions = col[1]
-            direction = random.choice(valid_directions)
-            if direction == "N":
-                self.horizontal_direction = 0
-                self.vertical_direction = 1
-            elif direction == "S":
-                self.horizontal_direction = 0
-                self.vertical_direction = -1
-            elif direction == "E":
-                self.horizontal_direction = 1
-                self.vertical_direction = 0
-            elif direction == "W":
-                self.horizontal_direction = -1
-                self.vertical_direction = 0
-        except:
+            if not (self.horizontal_direction or self.vertical_direction):
+                for col in PIVOT_GRAPH[self.recent_piv_row]:
+                    if col[0] == self.recent_piv_col:
+                        valid_directions = col[1]
+                direction = random.choice(valid_directions)
+                if direction == "N":
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 1
+                elif direction == "S":
+                    self.horizontal_direction = 0
+                    self.vertical_direction = -1
+                elif direction == "E":
+                    self.horizontal_direction = 1
+                    self.vertical_direction = 0
+                elif direction == "W":
+                    self.horizontal_direction = -1
+                    self.vertical_direction = 0
+        except UnboundLocalError:
             self.horizontal_direction = self.horizontal_direction
             self.vertical_direction = self.vertical_direction
-
     
     # TODO: use self.path to influence movement
         # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
@@ -320,22 +319,22 @@ class Character(arcade.Sprite):
 
     def pathfind(self, idk):
         point = self.path[0]
-
-        if self.center_x < point[0]:
-            self.horizontal_direction = 1
-            self.vertical_direction = 0
-        elif self.center_x > point[0]:
-            self.horizontal_direction = -1
-            self.vertical_direction = 0
-        elif self.center_y < point[1]:
-            self.horizontal_direction = 0
-            self.vertical_direction = 1
-        elif self.center_y > point[1]:
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
-        else:
-            self.horizontal_direction = 0
-            self.vertical_direction = 0
+        if not (self.horizontal_direction or self.vertical_direction):
+            if self.center_x < point[0]:
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif self.center_x > point[0]:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            elif self.center_y < point[1]:
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+            elif self.center_y > point[1]:
+                self.horizontal_direction = 0
+                self.vertical_direction = -1
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
         
 
 
@@ -734,10 +733,15 @@ class Blinky(Character):
             else:
                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
                     self.path.pop(0)
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
                 if self.path:
                     self.pathfind(self)
         else:
-            if self.in_piv_col and self.in_piv_row:
+                
+            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
                 self.set_rand_movement(self)
                 
     # def on_update(self, delta_time):
