@@ -644,7 +644,6 @@ class GameView(arcade.View):
         self.intro_player = arcade.play_sound(self.pacman.sounds["intro"])
         self.intro_playing = True
 
-
     def on_draw(self):
         self.clear()
         self.collision_black_boxes.draw()
@@ -817,7 +816,8 @@ class GameView(arcade.View):
             elif collision and self.pacman.get_state() == PACMAN_ATTACK:
                 ghost_num = 1
                 for ghost in collision:
-                    arcade.play_sound(self.pacman.sounds["ghost_eaten"])
+                    if ghost.state == GHOST_FLEE or ghost.state == GHOST_BLINK:
+                        arcade.play_sound(self.pacman.sounds["ghost_eaten"])
                     base_ghost_point = getattr(ghost, "point", 0)
                     global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
                     ghost.change_state(GHOST_EATEN)
