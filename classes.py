@@ -4,8 +4,6 @@ import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton, NextLevelButton
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 from misc import *
-# from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
-# from character import Pacman, Blinky, Pinky, Inky, Clyde
 from pellet import Pellet, BigPellet, Fruit
 from walls import create_walls
 

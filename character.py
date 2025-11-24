@@ -656,12 +656,12 @@ class Blinky(Character):
            Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
             # right
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky right 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky right 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky right 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky right 0.png")
         elif self.horizontal_direction < 0:
             # left
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky left 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky left 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.png")
         elif self.vertical_direction > 0:
             # up
             self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky up 1.gif")
