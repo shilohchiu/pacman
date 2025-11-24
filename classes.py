@@ -27,6 +27,7 @@ user_ref = open_db_collection(db)
 # keep track of level
 # global level
 level = LEVEL_DEFAULT_VALUE
+last_one_up = 0
 
 # TODO: load in font
 
@@ -49,6 +50,9 @@ class MenuView(arcade.View):
                             align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
+
+        #reset score to 0
+        global_score.reset_curr_score()
 
     def on_show_view(self):
         """ Called when switching to this view"""
@@ -166,6 +170,9 @@ class GameOverView(arcade.View):
 
         self.manager.add(ui_anchor_layout)
 
+        global last_one_up
+        last_one_up = 0
+
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
 
@@ -211,10 +218,10 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
+        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
-        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH)
+        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -500,10 +507,8 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
-        # self.level = level
 
         global level
-        print(level)
 
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
@@ -547,9 +552,6 @@ class GameView(arcade.View):
 
         #create timer for fruit
         self.fruit_time = 0.0
-
-        #reset score to 0
-        global_score.reset_curr_score()
 
         #viewing states
         self.game_over = False
@@ -709,6 +711,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -716,6 +720,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
 
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
@@ -751,11 +757,6 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-
-        # TODO: check for one up life
-        # if global_score > 10000:
-        #     one_up()
-        # global level
         fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
                                   self.fruit_list, self.sprites, level = level)
 
@@ -810,6 +811,13 @@ class GameView(arcade.View):
                     ghost_num += 1
                 if ghost_num == 5:
                     ghost_num = 0
+        
+        # global_score.get_curr_score() // ONE_UP
+
+        global last_one_up
+        if global_score.get_curr_score() // ONE_UP > last_one_up:
+            last_one_up = global_score.get_curr_score() // ONE_UP
+            self.one_up(self.pacman_score_list)
 
         """
         Screenwrap
@@ -904,7 +912,15 @@ class GameView(arcade.View):
             self._ghost_blink_calls.pop(ghost, None)
 
 
-    def one_up(self):
+    def one_up(self, score_list):
         """add an extra life"""
-        self.pacman_score_list(len)
+        if (len(score_list) <=  3):
+            pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
+            
+            pac_score.center_y = PACMAN_LIVES_Y_POSITION
+
+            pac_score.center_x = PACMAN_FIRST_LIFE_X_POSITION + len(score_list) * PACMAN_LIFE_X_POSITION_STRIDE
+
+            score_list.append(pac_score)
+    
 
