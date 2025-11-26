@@ -29,6 +29,7 @@ user_ref = open_db_collection(db)
 # keep track of level
 # global level
 level = LEVEL_DEFAULT_VALUE
+last_one_up = 0
 
 # TODO: load in font
 
@@ -51,6 +52,9 @@ class MenuView(arcade.View):
                             align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
+
+        #reset score to 0
+        global_score.reset_curr_score()
 
     def on_show_view(self):
         """ Called when switching to this view"""
@@ -130,12 +134,6 @@ class LevelUpView(arcade.View):
         
             score_idx += 1
 
-class DeathView(arcade.View):
-    """
-    View when pacman colides with ghost
-    """
-    
-
 class GameOverView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -167,6 +165,9 @@ class GameOverView(arcade.View):
                             align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
+
+        global last_one_up
+        last_one_up = 0
 
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
@@ -213,10 +214,10 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
+        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
-        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH)
+        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -271,7 +272,7 @@ class SaveScoreView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH)
+        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style = BUTTON_STYLE)
@@ -324,6 +325,8 @@ class HighScoreView(arcade.View):
     def __init__(self, level_up : bool):
         super().__init__()
 
+        self.message = ""
+
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -341,9 +344,11 @@ class HighScoreView(arcade.View):
         if level_up:
             start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
+            self.message = "proceed to next level"
         else:
             start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
+            self.message = "start a new game"
 
         self.h_box.add(start_game_or_next_level_button)
 
@@ -372,9 +377,13 @@ class HighScoreView(arcade.View):
         arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=28, anchor_x="center")
-        arcade.draw_text("Save score below or start new game.",
+        
+        arcade.draw_text(f"Save score below or {self.message}.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
-                        arcade.color.WHITE, font_size=30, anchor_x="center", bold=True)
+                        arcade.color.WHITE, font_size=20, anchor_x="center", bold=True)
+        
+        
+        
 
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
@@ -494,14 +503,14 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
-        # self.level = level
 
         global level
-        print(level)
 
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
+        self._power_end_call = None         # callable scheduled to end power mode
+        self._ghost_blink_calls = {} 
 
         #sprite list for characters and pellets
         self.sprites = arcade.SpriteList()
@@ -509,6 +518,8 @@ class GameView(arcade.View):
         self.fruit_list = arcade.SpriteList()
         self.ghosts = arcade.SpriteList()
         self.pacman_score_list = arcade.SpriteList()
+        self.intro_player = None
+        self.intro_playing = True
 
         # Create wall spritelist
         self.walls = arcade.SpriteList()
@@ -539,9 +550,6 @@ class GameView(arcade.View):
 
         #create timer for fruit
         self.fruit_time = 0.0
-
-        #reset score to 0
-        global_score.reset_curr_score()
 
         #viewing states
         self.game_over = False
@@ -630,6 +638,11 @@ class GameView(arcade.View):
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
+    
+    def on_show_view(self):
+        arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
+        self.intro_player = arcade.play_sound(self.pacman.sounds["intro"])
+        self.intro_playing = True
 
     def on_draw(self):
         self.clear()
@@ -666,6 +679,12 @@ class GameView(arcade.View):
 
     def on_update(self,delta_time):
         #close logic when game over and choses correct view
+        if self.intro_playing:
+            # Wait until the intro finishes
+            if not self.intro_player.playing:
+                self.intro_playing = False
+            else:
+                return
         """
         level up & highscore functionality
         """
@@ -701,6 +720,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -708,6 +729,8 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
+            #reset score to 0
+            global_score.reset_curr_score()
             return
 
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
@@ -744,11 +767,6 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-
-        # TODO: check for one up life
-        # if global_score > 10000:
-        #     one_up()
-        # global level
         fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
                                   self.fruit_list, self.sprites, level = level)
 
@@ -767,44 +785,53 @@ class GameView(arcade.View):
 
         #fruit collisions
         f_points = Fruit.pellet_collision(self.pacman, self.fruit_list, game_view=self)
+        if f_points > 0:
+            arcade.play_sound(self.pacman.sounds["fruit"])
         global_score.adj_curr_score(point=f_points)
 
         #collision handling for ghost -> pacman
 
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
-        if collision and self.pacman.get_state() == PACMAN_NORMAL:
-            # play death animation
-            self.pacman.start_death()
-            self.pacman.freeze()
-            self.blinky.freeze()
-            self.pinky.freeze()
-            self.clyde.freeze()
-            self.inky.freeze()
+        for ghost in collision:
+            if ghost.state == GHOST_CHASE:
+                if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
+                    # play death animation
+                    arcade.play_sound(self.pacman.sounds["pacman_death"])
+                    self.pacman.start_death()
+                    self.pacman.freeze()
+                    for g in self.ghosts:
+                        g.freeze()
 
-            # remove one life icon (last in list)
-            if len(self.pacman_score_list) > 0:
-                # remove sprite from SpriteList
-                self.pacman_score_list.remove((self.pacman_score_list[-1]))
-                # reset pacman to start position
-                x, y = PACMAN_SPAWN_COORD
-                self.pacman.center_x = x
-                self.pacman.center_y = y
+                    # remove one life icon (last in list)
+                    if len(self.pacman_score_list) > 0:
+                        # remove sprite from SpriteList
+                        self.pacman_score_list.remove((self.pacman_score_list[-1]))
+                        # reset pacman to start position
+                        arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
 
-            else:
-                # no lives left; game over
-                self.game_over = True
+                    else:
+                        # no lives left; game over
+                        self.game_over = True
 
-        #collision handling for pacman -> ghost
-        elif collision and self.pacman.get_state() == PACMAN_ATTACK:
-            ghost_num = 1
-            for ghost in collision:
-                base_ghost_point = getattr(ghost, "point", 0)
-                global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
-                #TODO: change state to be accurate
-                ghost.change_state(GHOST_EATEN)
-                ghost_num += 1
-            if ghost_num == 5:
-                ghost_num = 0
+            #collision handling for pacman -> ghost
+            elif collision and self.pacman.get_state() == PACMAN_ATTACK:
+                ghost_num = 1
+                for ghost in collision:
+                    if ghost.state == GHOST_FLEE or ghost.state == GHOST_BLINK:
+                        arcade.play_sound(self.pacman.sounds["ghost_eaten"])
+                    base_ghost_point = getattr(ghost, "point", 0)
+                    global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
+                    ghost.change_state(GHOST_EATEN)
+                    ghost_num += 1
+                if ghost_num == 5:
+                    ghost_num = 0
+        
+        # global_score.get_curr_score() // ONE_UP
+
+        global last_one_up
+        if global_score.get_curr_score() // ONE_UP > last_one_up:
+            last_one_up = global_score.get_curr_score() // ONE_UP
+            self.one_up(self.pacman_score_list)
 
         """
         Screenwrap
@@ -827,6 +854,10 @@ class GameView(arcade.View):
             return
         
     def on_key_press(self, key, modifiers):
+        if self.intro_playing:
+            return 
+        if self.pacman.is_dying:
+            return
         if key == arcade.key.ESCAPE:
             if self.window:
                 self.window.close()
@@ -839,27 +870,75 @@ class GameView(arcade.View):
             self.pacman.on_key_release(key, modifiers)
 
     def activate_power_mode(self):
-        """Activate frightened mode for all ghosts."""
+        """Activate frightened mode for all ghosts. Refreshes timer if already active."""
+        # Set pacman state and make ghosts flee now
         self.pacman.change_state(PACMAN_ATTACK)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_FLEE)
-        
+
+        # Cancel any previous per-ghost blink schedule and reschedule fresh one.
         for ghost in self.ghosts:
-            arcade.schedule_once(lambda dt, g=ghost: g.change_state(GHOST_BLINK), 5.0)
+            # If we previously scheduled a blink callable for this ghost, unschedule it.
+            prev = self._ghost_blink_calls.get(ghost)
+            if prev:
+                try:
+                    arcade.unschedule(prev)
+                except Exception:
+                    pass
+
+            # Create a callable that will set the ghost to BLINK in 5s.
+            blink_call = lambda dt, g=ghost: g.change_state(GHOST_BLINK)
+            self._ghost_blink_calls[ghost] = blink_call
+            arcade.schedule_once(blink_call, 5.0)
+
+        # Cancel previous end-power schedule and schedule a new one 7s from now.
+        if self._power_end_call:
+            try:
+                arcade.unschedule(self._power_end_call)
+            except Exception:
+                pass
+
+        # store the callable so we can unschedule it if another pellet is eaten
+        self._power_end_call = lambda dt: self.end_power_mode()
+        arcade.schedule_once(self._power_end_call, 7.0)
 
         # 7 seconds of power-up (adjust as desired)
-        arcade.schedule(self.end_power_mode, 7.0)
+        arcade.schedule_once(lambda dt:self.end_power_mode, 7.0)
 
         
     
-    def end_power_mode(self, delta_time):
+    def end_power_mode(self):
         """Revert ghosts and Pac-Man to normal state."""
         self.pacman.change_state(PACMAN_NORMAL)
         for ghost in self.ghosts:
             ghost.change_state(GHOST_CHASE)
-        arcade.unschedule(self.end_power_mode)
 
-    def one_up(self):
+        # clear scheduled call references so future pellets schedule cleanly
+        if self._power_end_call:
+            try:
+                arcade.unschedule(self._power_end_call)
+            except Exception:
+                pass
+        self._power_end_call = None
+
+        # clear any leftover per-ghost blink callables
+        for ghost, call in list(self._ghost_blink_calls.items()):
+            try:
+                arcade.unschedule(call)
+            except Exception:
+                pass
+            self._ghost_blink_calls.pop(ghost, None)
+
+
+    def one_up(self, score_list):
         """add an extra life"""
-        self.pacman_score_list(len)
+        if (len(score_list) <=  3):
+            pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
+            
+            pac_score.center_y = PACMAN_LIVES_Y_POSITION
+
+            pac_score.center_x = PACMAN_FIRST_LIFE_X_POSITION + len(score_list) * PACMAN_LIFE_X_POSITION_STRIDE
+
+            score_list.append(pac_score)
+    
 
