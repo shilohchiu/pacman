@@ -56,8 +56,10 @@ class Character(arcade.Sprite):
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
-        self.set_rand_movement(self)
-        #print("PATH GENERATED")
+        if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
+                self.set_rand_movement(self)
         
         #print("PATH FOUND (lol)")
 
@@ -778,15 +780,15 @@ class Blinky(Character):
                 self.vertical_direction = 0
                 self.set_rand_movement(self)
                 
-    # def on_update(self, delta_time):
-    #     nothing = ""
+    def on_update(self, delta_time):
+        nothing = ""
     
 
 class Pinky(Character):
     """
     Pinky subclass
     """
-    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
+    def __init__(self, walls, start_pos=(115, 90), point = 200):
         super().__init__(walls,
                          "images/pinky.png",
                          scale = GHOST_SCALE,
@@ -824,8 +826,8 @@ class Pinky(Character):
             self.texture_open = arcade.load_texture("images/pinky down 0.gif")
             self.texture_close = arcade.load_texture("images/pinky down 1.gif") # down
 
-    def on_update(self, delta_time):
-        nothing = ""
+    # def on_update(self, delta_time):
+    #     nothing = ""
 
 class Inky(Character):
     """

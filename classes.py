@@ -733,7 +733,8 @@ class GameView(arcade.View):
         #self.blinky.update_animation()
         self.clyde.update_animation()
         self.inky.update_animation()
-        self.pinky.update_animation()
+        # TODO: fix crash
+        # self.pinky.update_animation()
         self.blinky.update_eyes()
         self.clyde.update_eyes()
         self.inky.update_eyes()
