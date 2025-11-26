@@ -42,6 +42,7 @@ class Character(arcade.Sprite):
         self.quadrant = ""
         self.target_quadrant = ""
         self.target_quadrant_change = False
+        self.last_direction = ""
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
@@ -55,7 +56,7 @@ class Character(arcade.Sprite):
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
-        print("placeholder")
+        self.set_rand_movement(self)
         #print("PATH GENERATED")
         
         #print("PATH FOUND (lol)")
@@ -280,7 +281,7 @@ class Character(arcade.Sprite):
             vertical = "L"
         else:
             vertical = "R"
-        if not self.target_quadrant and self.target_quadrant != horizontal + vertical:
+        if self.target_quadrant and self.target_quadrant != horizontal + vertical:
             self.target_quadrant_change = True
         self.target_quadrant = horizontal + vertical
     
@@ -290,7 +291,18 @@ class Character(arcade.Sprite):
                 for col in PIVOT_GRAPH[self.recent_piv_row]:
                     if col[0] == self.recent_piv_col:
                         valid_directions = col[1]
-                direction = random.choice(valid_directions)
+                direction = ""
+                retread = True
+                while retread:
+                    direction = random.choice(valid_directions)
+                    if direction == "N" and self.last_direction != "S":
+                        retread = False
+                    elif direction == "E" and self.last_direction != "W":
+                        retread = False
+                    elif direction == "W" and self.last_direction != "E":
+                        retread = False
+                    elif direction == "S" and self.last_direction != "N":
+                        retread = False
                 if direction == "N":
                     self.horizontal_direction = 0
                     self.vertical_direction = 1
@@ -303,9 +315,21 @@ class Character(arcade.Sprite):
                 elif direction == "W":
                     self.horizontal_direction = -1
                     self.vertical_direction = 0
+                self.last_direction = direction
         except UnboundLocalError:
-            self.horizontal_direction = self.horizontal_direction
-            self.vertical_direction = self.vertical_direction
+            direction = self.last_direction
+            if direction == "N":
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+            elif direction == "S":
+                self.horizontal_direction = 0
+                self.vertical_direction = -1
+            elif direction == "E":
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif direction == "W":
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
     
     # TODO: use self.path to influence movement
         # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
@@ -321,17 +345,25 @@ class Character(arcade.Sprite):
         point = self.path[0]
         if not (self.horizontal_direction or self.vertical_direction):
             if self.center_x < point[0]:
+                self.center_y = self.recent_piv_row
                 self.horizontal_direction = 1
                 self.vertical_direction = 0
+                self.last_direction = "E"
             elif self.center_x > point[0]:
+                self.center_y = self.recent_piv_row
                 self.horizontal_direction = -1
                 self.vertical_direction = 0
+                self.last_direction = "W"
             elif self.center_y < point[1]:
+                self.center_x = self.recent_piv_col
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
+                self.last_direction = "N"
             elif self.center_y > point[1]:
+                self.center_x = self.recent_piv_col
                 self.horizontal_direction = 0
                 self.vertical_direction = -1
+                self.last_direction = "S"
             else:
                 self.horizontal_direction = 0
                 self.vertical_direction = 0
@@ -728,6 +760,8 @@ class Blinky(Character):
         self.update_target_quadrant()
         if self.quadrant != self.target_quadrant:
             if not self.path or self.target_quadrant_change:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
                 self.target_quadrant_change = False
             else:
