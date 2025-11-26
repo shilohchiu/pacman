@@ -212,10 +212,10 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        start_game_button =StartGameButton(self.window, text = "BACK TO GAME", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
-        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -270,7 +270,7 @@ class SaveScoreView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
+        start_game_button =StartGameButton(self.window, text = "Back to Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style = BUTTON_STYLE)
@@ -622,7 +622,7 @@ class GameView(arcade.View):
                 if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
-                pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
+                pellet = Pellet("images/pellet.png", point = 10, scale = PELLET_SCALE, start_pos=(x,y))
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
 
