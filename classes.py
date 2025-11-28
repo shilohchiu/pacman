@@ -732,10 +732,31 @@ class GameView(arcade.View):
             #reset score to 0
             global_score.reset_curr_score()
             return
-
-        self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
-        print(f"PAC SIZE: {self.pacman.size}")
         
+        if self.blinky.state == GHOST_EATEN:
+            self.blinky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+        else:
+            self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.pinky.state == GHOST_EATEN:
+            self.pinky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+        else:
+            self.pinky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.inky.state == GHOST_EATEN:
+            self.inky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+        else:
+            self.inky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.clyde.state == GHOST_EATEN:
+            self.clyde.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+        else:
+            self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        
+        
+        
+        print(f"PAC SIZE: {self.pacman.size}")
         print(f"BLINKY PATH: {self.blinky.path}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
@@ -754,8 +775,8 @@ class GameView(arcade.View):
         self.pacman.update_rotation()
         # TODO: fix crash
         #self.blinky.update_animation()
-        self.clyde.update_animation()
-        self.inky.update_animation()
+        # self.clyde.update_animation()
+        # self.inky.update_animation()
         # TODO: fix crash
         # self.pinky.update_animation()
         self.blinky.update_eyes()
