@@ -43,6 +43,7 @@ class Character(arcade.Sprite):
         self.target_quadrant = ""
         self.target_quadrant_change = False
         self.last_direction = ""
+        self.in_spawn = False
         self.waka_player = None
         # sounds
         self.sounds = {
@@ -477,11 +478,19 @@ class Character(arcade.Sprite):
         self.vertical_direction = 0
         self.horizontal_direction = 0
         self.speed = 0
+
     def reset_pos(self):
         x, y = PACMAN_SPAWN_COORD
         self.center_x = x
         self.center_y = y
 
+    def check_in_spawn(self):
+        ghost_minus_x = GHOST_CENTER_X - GHOST_WIDTH
+        ghost_plus_x = GHOST_CENTER_X + GHOST_WIDTH
+        if (self.center_y >= GHOST_CENTER_Y and self.center_y < 460) and (self.center_x >= ghost_minus_x and self.center_x <= ghost_plus_x):
+            self.in_spawn = True
+        else:
+            self.in_spawn = False
 
 
 class Pacman(Character):
@@ -809,25 +818,41 @@ class Blinky(Character):
         print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
         print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
         self.update_target_quadrant()
-        if self.quadrant != self.target_quadrant:
-            if not self.path or self.target_quadrant_change:
-                self.horizontal_direction = 0
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
                 self.vertical_direction = 0
-                self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-                self.target_quadrant_change = False
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
             else:
-                if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                    self.path.pop(0)
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+            self.check_in_spawn()
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                if self.path:
-                    self.pathfind(self)
-        else:
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
                 
-            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-                self.horizontal_direction = 0
-                self.vertical_direction = 0
-                self.set_rand_movement(self)
+
                 
     # def on_update(self, delta_time):
     #     nothing = ""
@@ -877,32 +902,44 @@ class Pinky(Character):
     
     def set_movement(self, wtf):
         super().set_movement(self)
-        print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
-        print(f"TARGET: {self.target}")
-        print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
-        print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
-        print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
-        print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
+        print(f"IS: {self.in_spawn}")
+        print(f"PINKY POS: {(self.center_x, self.center_y)}")
         self.update_target_quadrant()
-        if self.quadrant != self.target_quadrant:
-            if not self.path or self.target_quadrant_change:
-                self.horizontal_direction = 0
+        self.check_in_spawn()
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
                 self.vertical_direction = 0
-                self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-                self.target_quadrant_change = False
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
             else:
-                if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                    self.path.pop(0)
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                if self.path:
-                    self.pathfind(self)
-        else:
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
                 
-            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-                self.horizontal_direction = 0
-                self.vertical_direction = 0
-                self.set_rand_movement(self)
+
                 
 
     # def on_update(self, delta_time):
@@ -957,25 +994,39 @@ class Inky(Character):
         print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
         print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
         self.update_target_quadrant()
-        if self.quadrant != self.target_quadrant:
-            if not self.path or self.target_quadrant_change:
-                self.horizontal_direction = 0
+        self.check_in_spawn()
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
                 self.vertical_direction = 0
-                self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-                self.target_quadrant_change = False
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
             else:
-                if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                    self.path.pop(0)
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                if self.path:
-                    self.pathfind(self)
-        else:
-                
-            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-                self.horizontal_direction = 0
-                self.vertical_direction = 0
-                self.set_rand_movement(self)
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
                 
 
     # def on_update(self, delta_time):
@@ -1022,35 +1073,43 @@ class Clyde(Character):
         elif self.vertical_direction < 0:
             self.texture_open = arcade.load_texture("images/clyde down 0.gif")
             self.texture_close = arcade.load_texture("images/clyde down 1.gif") # down
-    
+
     def set_movement(self, wtf):
         super().set_movement(self)
-        print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
-        print(f"TARGET: {self.target}")
-        print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
-        print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
-        print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
-        print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
         self.update_target_quadrant()
-        if self.quadrant != self.target_quadrant:
-            if not self.path or self.target_quadrant_change:
-                self.horizontal_direction = 0
+        self.check_in_spawn()
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
                 self.vertical_direction = 0
-                self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-                self.target_quadrant_change = False
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
             else:
-                if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                    self.path.pop(0)
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                if self.path:
-                    self.pathfind(self)
-        else:
-                
-            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-                self.horizontal_direction = 0
-                self.vertical_direction = 0
-                self.set_rand_movement(self)
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
                 
 
     # def on_update(self, delta_time):
