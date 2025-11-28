@@ -759,7 +759,7 @@ class GameView(arcade.View):
 
         level_score = global_score.get_curr_score() - self.prev_score
         fruit_spawn = Fruit.spawn(self, level_score, 700,
-                                  self.fruit_list, self.sprites, level = 4)
+                                  self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn:
             self.fruit_time = 0
