@@ -755,7 +755,7 @@ class Blinky(Character):
     """
     def __init__(self, walls, start_pos=(115, 650), point = 200):
         super().__init__(walls,
-                         "images/blinky.png",
+                         "images/blinky up 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         
@@ -864,7 +864,7 @@ class Pinky(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/pinky.png",
+                         "images/pinky right 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
 
@@ -963,7 +963,7 @@ class Inky(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X-GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/inky.png",
+                         "images/inky left 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         self.point = point
@@ -1057,7 +1057,7 @@ class Clyde(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X+GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/clyde.png",
+                         "images/clyde down 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
 
