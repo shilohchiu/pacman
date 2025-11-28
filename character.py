@@ -886,19 +886,31 @@ class Pinky(Character):
         self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/pinky right 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky right 1.gif") # right
+            # right
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/pinky right 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/pinky right 0.gif")
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/pinky left 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky left 1.gif") # left
+            # left
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/pinky left 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/pinky left 0.gif")
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/pinky up 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky up 1.gif") # up
+            # up
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/pinky up 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/pinky up 0.gif")
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/pinky down 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky down 1.gif") # down
+            # down
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/pinky down 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/pinky down 0.gif")
+
+        # Ensure the currently displayed texture matches the frame
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
     
     def set_movement(self, wtf):
         super().set_movement(self)
@@ -971,19 +983,26 @@ class Inky(Character):
 
         self.texture = self.texture_open[self.state]
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/inky right 0.gif")
-            self.texture_close = arcade.load_texture("images/inky right 1.gif") # right
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/inky right 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/inky right 0.gif")
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/inky left 0.gif")
-            self.texture_close = arcade.load_texture("images/inky left 1.gif") # left
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/inky left 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/inky left 0.gif")
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/inky up 0.gif")
-            self.texture_close = arcade.load_texture("images/inky up 1.gif") # up
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/inky up 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/inky up 0.gif")
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/inky down 0.gif")
-            self.texture_close = arcade.load_texture("images/inky down 1.gif") # down
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/inky down 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/inky down 0.gif")
+
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
 
     def set_movement(self, wtf):
         super().set_movement(self)
@@ -1060,19 +1079,26 @@ class Clyde(Character):
         self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/clyde right 0.gif")
-            self.texture_close = arcade.load_texture("images/clyde right 1.gif") # right
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/clyde right 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/clyde right 0.gif")
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/clyde left 0.gif")
-            self.texture_close = arcade.load_texture("images/clyde left 1.gif") # left
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/clyde left 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/clyde left 0.gif")
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/clyde up 0.gif")
-            self.texture_close = arcade.load_texture("images/clyde up 1.gif") # up
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/clyde up 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/clyde up 0.gif")
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/clyde down 0.gif")
-            self.texture_close = arcade.load_texture("images/clyde down 1.gif") # down
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/clyde down 1.gif")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/clyde down 0.gif")
+
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
 
     def set_movement(self, wtf):
         super().set_movement(self)
