@@ -39,6 +39,16 @@ class Character(arcade.Sprite):
         self.texture_close = {}
         self.state = None
         self.frame_open = True
+        self.waka_player = None
+        # sounds
+        self.sounds = {
+        "waka": arcade.load_sound("assets/pacman_chomp.wav"),
+        "intro": arcade.load_sound("assets/pacman_beginning.wav"),
+        "ghost_eaten": arcade.load_sound("assets/pacman_eatghost.wav"),
+        "pacman_death": arcade.load_sound("assets/pacman_death.wav"),
+        "fruit": arcade.load_sound("assets/pacman_eatfruit.wav"),
+        "one_up": arcade.load_sound("assets/pacman_extrapac.wav")
+    }
 
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
