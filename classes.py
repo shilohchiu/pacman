@@ -225,6 +225,9 @@ class ViewScoresView(arcade.View):
 
         self.manager.add(ui_anchor_layout)
 
+        global level
+        level = LEVEL_DEFAULT_VALUE
+
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
 
@@ -503,6 +506,8 @@ class GameView(arcade.View):
         super().__init__()
 
         global level
+        if level == LEVEL_DEFAULT_VALUE:
+            global_score.reset_curr_score()
 
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
@@ -719,7 +724,7 @@ class GameView(arcade.View):
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             #reset score to 0
-            global_score.reset_curr_score()
+            # global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -728,7 +733,7 @@ class GameView(arcade.View):
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             #reset score to 0
-            global_score.reset_curr_score()
+            # global_score.reset_curr_score()
             return
 
         self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
@@ -806,9 +811,9 @@ class GameView(arcade.View):
                         # reset pacman to start position
                         arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
 
-                    else:
-                        # no lives left; game over
-                        self.game_over = True
+                        if len(self.pacman_score_list) == 0:
+                            self.game_over = True
+                        
 
             #collision handling for pacman -> ghost
             elif collision and self.pacman.get_state() == PACMAN_ATTACK:
