@@ -733,22 +733,22 @@ class GameView(arcade.View):
             return
         
         if self.blinky.state == GHOST_EATEN:
-            self.blinky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+            self.blinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
         else:
             self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.pinky.state == GHOST_EATEN:
-            self.pinky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+            self.pinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
         else:
             self.pinky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.inky.state == GHOST_EATEN:
-            self.inky.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+            self.inky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
         else:
             self.inky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.clyde.state == GHOST_EATEN:
-            self.clyde.set_target(GHOST_CENTER_X, GHOST_CENTER_Y)
+            self.clyde.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
         else:
             self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
 
