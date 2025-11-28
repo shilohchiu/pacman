@@ -53,7 +53,8 @@ class Fruit(Pellet):
                          scale = .5,
                          start_pos=start_pos)
 
-    def spawn(self, current_score, spawn_score,  fruit_list, sprites_list, level):
+    def spawn(self, current_score, spawn_score, fruit_list, sprites_list, level):
+
         if current_score == spawn_score:
             if len(fruit_list) == 0:
                 fruit = Fruit(level = level)
@@ -69,5 +70,4 @@ class Fruit(Pellet):
             if current_timer >= time_limit:
                 fruit_to_remove = fruit_list[0]
                 fruit_to_remove.remove_from_sprite_lists()
-                print("Fruit expired")
         return current_timer

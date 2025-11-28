@@ -4,8 +4,6 @@ import string
 from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton, NextLevelButton
 from character import Pacman, Blinky, Pinky, Inky, Clyde
 from misc import *
-# from ui_buttons import ExitButton, EnterButton, SaveScoreButton, StartGameButton, ViewScoreButton
-# from character import Pacman, Blinky, Pinky, Inky, Clyde
 from pellet import Pellet, BigPellet, Fruit
 from walls import create_walls
 
@@ -214,10 +212,10 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        start_game_button =StartGameButton(self.window, text = "BACK TO GAME", width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
-        exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -226,6 +224,9 @@ class ViewScoresView(arcade.View):
                             align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
+
+        global level
+        level = LEVEL_DEFAULT_VALUE
 
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
@@ -256,7 +257,7 @@ class ViewScoresView(arcade.View):
                                  arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="right")
         
             score_idx += 1
-        
+
 class SaveScoreView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -272,7 +273,7 @@ class SaveScoreView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Start Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
+        start_game_button =StartGameButton(self.window, text = "Back to Game", width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style = BUTTON_STYLE)
@@ -315,7 +316,7 @@ class SaveScoreView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
 
             score_idx += 1
-        
+ 
 class HighScoreView(arcade.View):
     """
     HighScoreView Class that either says 
@@ -381,9 +382,6 @@ class HighScoreView(arcade.View):
         arcade.draw_text(f"Save score below or {self.message}.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
                         arcade.color.WHITE, font_size=20, anchor_x="center", bold=True)
-        
-        
-        
 
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
@@ -503,9 +501,14 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
+        #save prev_score 
+        self.prev_score = global_score.get_curr_score()
 
         global level
+        if level == LEVEL_DEFAULT_VALUE:
+            global_score.reset_curr_score()
 
+    
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
@@ -624,7 +627,7 @@ class GameView(arcade.View):
                 if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
-                pellet = Pellet("images/pellet.png", point = 10, scale = 0.055, start_pos=(x,y))
+                pellet = Pellet("images/pellet.png", point = 10, scale = PELLET_SCALE, start_pos=(x,y))
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
 
@@ -720,8 +723,6 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
-            #reset score to 0
-            global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -729,8 +730,6 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
-            #reset score to 0
-            global_score.reset_curr_score()
             return
         
         if self.blinky.state == GHOST_EATEN:
@@ -788,7 +787,10 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-        fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
+        #fruit spawning
+
+        level_score = global_score.get_curr_score() - self.prev_score
+        fruit_spawn = Fruit.spawn(self, level_score, 700,
                                   self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn:
@@ -796,7 +798,7 @@ class GameView(arcade.View):
 
         self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
 
-        fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700,
+        fruit_spawn_2 = Fruit.spawn(self, level_score, 1700,
                                     self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn_2:
@@ -830,9 +832,9 @@ class GameView(arcade.View):
                         # reset pacman to start position
                         arcade.schedule_once(lambda dt:self.pacman.reset_pos(),1.3)
 
-                    else:
-                        # no lives left; game over
-                        self.game_over = True
+                        if len(self.pacman_score_list) == 0:
+                            self.game_over = True
+                        
 
             #collision handling for pacman -> ghost
             elif collision and self.pacman.get_state() == PACMAN_ATTACK:
