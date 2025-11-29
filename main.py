@@ -5,7 +5,7 @@ game runs.
 import arcade
 import classes
 
-from constants import WINDOW_HEIGHT, WINDOW_WIDTH
+from constants.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
 def main():
     """ Main function """
