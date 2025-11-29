@@ -58,7 +58,7 @@ FRUIT_DATA ={
         "image": 'images/fruit/bell.png'
     },
     "key":{
-        "levels":[list(range(13,257))],
+        "levels":list(range(13,257)),
         "point": 5000,
         "image": 'images/fruit/key.png'
     }
