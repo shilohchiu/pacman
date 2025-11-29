@@ -257,7 +257,7 @@ class ViewScoresView(arcade.View):
                                  arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="right")
         
             score_idx += 1
-        
+
 class SaveScoreView(arcade.View):
     """
     GameOverView Class, show the end of game as well as buttons to switch to other screen 
@@ -316,7 +316,7 @@ class SaveScoreView(arcade.View):
                                  arcade.color.WHITE, font_size=28, anchor_x="right")
 
             score_idx += 1
-        
+ 
 class HighScoreView(arcade.View):
     """
     HighScoreView Class that either says 
@@ -382,9 +382,6 @@ class HighScoreView(arcade.View):
         arcade.draw_text(f"Save score below or {self.message}.",
                         WINDOW_WIDTH/2, WINDOW_HEIGHT-300,
                         arcade.color.WHITE, font_size=20, anchor_x="center", bold=True)
-        
-        
-        
 
 class EnterInitialsView(arcade.View):
     def __init__(self, view_score = False):
@@ -504,11 +501,14 @@ class GameView(arcade.View):
     """
     def __init__(self):
         super().__init__()
+        #save prev_score 
+        self.prev_score = global_score.get_curr_score()
 
         global level
         if level == LEVEL_DEFAULT_VALUE:
             global_score.reset_curr_score()
 
+    
         #calls to firebase
         self.high_score = rt_high_score(user_ref)
         self.low_high_score = is_high_score(user_ref)
@@ -723,8 +723,6 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
-            #reset score to 0
-            # global_score.reset_curr_score()
             return
         elif(self.game_over and not self.new_high_score):
             view = GameOverView()
@@ -732,13 +730,40 @@ class GameView(arcade.View):
             level = LEVEL_DEFAULT_VALUE
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
-            #reset score to 0
-            # global_score.reset_curr_score()
             return
-
-        self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
-        print(f"PAC SIZE: {self.pacman.size}")
         
+        if self.blinky.state == GHOST_EATEN:
+            self.blinky.speed = 3
+            self.blinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.blinky.speed = 1
+            self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.pinky.state == GHOST_EATEN:
+            self.pinky.speed = 3
+            self.pinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.pinky.speed = 1
+            self.pinky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.inky.state == GHOST_EATEN:
+            self.inky.speed = 3
+            self.inky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.inky.speed = 1
+            self.inky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.clyde.state == GHOST_EATEN:
+            self.clyde.speed = 3
+            self.clyde.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.clyde.speed = 1
+            self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        
+        
+        
+        print(f"PAC SIZE: {self.pacman.size}")
         print(f"BLINKY PATH: {self.blinky.path}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
         print(f"horizontal factor: {self.pacman.horizontal_direction}")
@@ -756,10 +781,11 @@ class GameView(arcade.View):
         self.pacman.update_animation(delta_time)
         self.pacman.update_rotation()
         # TODO: fix crash
-        #self.blinky.update_animation()
-        self.clyde.update_animation()
-        self.inky.update_animation()
-        self.pinky.update_animation()
+        # self.blinky.update_animation()
+        # self.clyde.update_animation()
+        # self.inky.update_animation()
+        # TODO: fix crash
+        # self.pinky.update_animation()
         self.blinky.update_eyes()
         self.clyde.update_eyes()
         self.inky.update_eyes()
@@ -769,7 +795,10 @@ class GameView(arcade.View):
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
         global_score.adj_curr_score(point=points)
 
-        fruit_spawn = Fruit.spawn(self, global_score.get_curr_score(), 700,
+        #fruit spawning
+
+        level_score = global_score.get_curr_score() - self.prev_score
+        fruit_spawn = Fruit.spawn(self, level_score, 700,
                                   self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn:
@@ -777,7 +806,7 @@ class GameView(arcade.View):
 
         self.fruit_time = Fruit.count_down(self, self.fruit_list, self.fruit_time, delta_time)
 
-        fruit_spawn_2 = Fruit.spawn(self, global_score.get_curr_score(), 1700,
+        fruit_spawn_2 = Fruit.spawn(self, level_score, 1700,
                                     self.fruit_list, self.sprites, level = level)
 
         if fruit_spawn_2:

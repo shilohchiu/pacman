@@ -43,3 +43,4 @@ class Score:
 
     def reset_curr_score(self):
         self.curr_score = 0
+  

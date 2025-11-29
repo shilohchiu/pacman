@@ -12,7 +12,7 @@ PACMAN_SPAWN_COORD = (355, 210)
 
 GHOST_CENTER_X, GHOST_CENTER_Y = (355, 385)
 GHOST_WIDTH = 30
-GHOST_SCALE = 1.75
+GHOST_SCALE = 1
 
 FRUIT_POSITION = (WINDOW_WIDTH/2, 330)
 
@@ -30,37 +30,37 @@ FRUIT_DATA ={
     "strawberry":{
         "levels":[2],
         "point": 300,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/strawberry.png'
     },
     "peach":{
-        "levels":[2,3],
+        "levels":[3,4],
         "point": 500,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/peach.png'
     },
     "apple":{
-        "levels":[4,5],
+        "levels":[5,6],
         "point": 700,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/apple.png'
     },
     "grape":{
-        "levels":[6,7],
+        "levels":[7,8],
         "point": 1000,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/grape.png'
     },
     "galaxian":{
         "levels":[9,10],
         "point": 2000,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/galaxian.png'
     },
     "bell":{
         "levels":[11,12],
         "point": 3000,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/bell.png'
     },
     "key":{
         "levels":[list(range(13,257))],
         "point": 5000,
-        "image": 'images/fruit/cherry.png'
+        "image": 'images/fruit/key.png'
     }
 }
 
@@ -128,6 +128,7 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (595, ("N", "W"))],
                     460: [(285, ("S", "E")),
                         (325, ("N", "E", "W")),
+                        (355, ("E", "W")),
                         (385, ("N", "E", "W")),
                         (425, ("S", "W"))],
                     385: [(225, ("N", "S", "E", "W")),
