@@ -627,7 +627,7 @@ class GameView(arcade.View):
                 if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
-                pellet = Pellet("images/pellet.png", point = 10, scale = PELLET_SCALE, start_pos=(x,y))
+                pellet = Pellet("images/pellet.png", point = 10, scale = 1, start_pos=(x,y))
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
 
@@ -896,8 +896,6 @@ class GameView(arcade.View):
         # 7 seconds of power-up (adjust as desired)
         arcade.schedule_once(lambda dt:self.end_power_mode, 7.0)
 
-        
-    
     def end_power_mode(self):
         """Revert ghosts and Pac-Man to normal state."""
         self.pacman.change_state(PACMAN_NORMAL)
@@ -920,10 +918,9 @@ class GameView(arcade.View):
                 pass
             self._ghost_blink_calls.pop(ghost, None)
 
-
     def one_up(self, score_list):
         """add an extra life"""
-        if (len(score_list) <=  3):
+        if (len(score_list) <= PACMAN_NUM_LIVES):
             pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
             
             pac_score.center_y = PACMAN_LIVES_Y_POSITION

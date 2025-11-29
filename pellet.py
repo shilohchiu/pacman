@@ -5,10 +5,10 @@ different pellet options. (the pellets, power pellets, and fruit)
 Pellet is imported by classes
 """
 import arcade
-from constants.constants import FRUIT_POSITION, FRUIT_DATA
+from constants.constants import FRUIT_POSITION, FRUIT_DATA, BIG_PELLET_SCALE, PELLET_SCALE
  
 class Pellet(arcade.Sprite):
-    def __init__(self, image, point=10, scale = .05, start_pos = (0,0)):
+    def __init__(self, image, point=10, scale = PELLET_SCALE, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image, scale=scale)
         self.position = start_pos
@@ -36,7 +36,7 @@ class BigPellet(Pellet):
     def __init__(self, image = 'images/big_pellet.png', start_pos = (0,0)):
         super().__init__(image,
                          point=50,
-                         scale = .07,
+                         scale = BIG_PELLET_SCALE,
                          start_pos=start_pos)
 class Fruit(Pellet):
 

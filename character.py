@@ -715,13 +715,13 @@ class Pinky(Character):
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
-            GHOST_CHASE: arcade.load_texture("images/pinky right 1.gif"),
+            GHOST_CHASE: arcade.load_texture("images/pinky right 1.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
             GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
-            GHOST_CHASE: arcade.load_texture("images/pinky right 0.gif"),
+            GHOST_CHASE: arcade.load_texture("images/pinky right 0.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
             GHOST_BLINK: arcade.load_texture("images/white.png"),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
@@ -732,17 +732,17 @@ class Pinky(Character):
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/pinky right 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky right 1.gif") # right
+            self.texture_open = arcade.load_texture("images/pinky right 0.png")
+            self.texture_close = arcade.load_texture("images/pinky right 1.png") # right
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/pinky left 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky left 1.gif") # left
+            self.texture_open = arcade.load_texture("images/pinky left 0.png")
+            self.texture_close = arcade.load_texture("images/pinky left 1.png") # left
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/pinky up 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky up 1.gif") # up
+            self.texture_open = arcade.load_texture("images/pinky up 0.png")
+            self.texture_close = arcade.load_texture("images/pinky up 1.png") # up
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/pinky down 0.gif")
-            self.texture_close = arcade.load_texture("images/pinky down 1.gif") # down
+            self.texture_open = arcade.load_texture("images/pinky down 0.png")
+            self.texture_close = arcade.load_texture("images/pinky down 1.png") # down
 
     def on_update(self, delta_time):
         nothing = ""
@@ -760,13 +760,13 @@ class Inky(Character):
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
-            GHOST_CHASE: arcade.load_texture("images/inky right 1.gif"),
+            GHOST_CHASE: arcade.load_texture("images/inky right 1.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
             GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
-            GHOST_CHASE: arcade.load_texture("images/inky right 0.gif"),
+            GHOST_CHASE: arcade.load_texture("images/inky right 0.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
             GHOST_BLINK: arcade.load_texture("images/white.png"),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
@@ -776,17 +776,17 @@ class Inky(Character):
     def update_eyes(self):
         """Rotate Ghost eyes to face his current movement direction."""
         if self.horizontal_direction > 0:
-            self.texture_open = arcade.load_texture("images/inky right 0.gif")
-            self.texture_close = arcade.load_texture("images/inky right 1.gif") # right
+            self.texture_open = arcade.load_texture("images/inky right 0.png")
+            self.texture_close = arcade.load_texture("images/inky right 1.png") # right
         elif self.horizontal_direction < 0:
-            self.texture_open = arcade.load_texture("images/inky left 0.gif")
-            self.texture_close = arcade.load_texture("images/inky left 1.gif") # left
+            self.texture_open = arcade.load_texture("images/inky left 0.png")
+            self.texture_close = arcade.load_texture("images/inky left 1.png") # left
         elif self.vertical_direction > 0:
-            self.texture_open = arcade.load_texture("images/inky up 0.gif")
-            self.texture_close = arcade.load_texture("images/inky up 1.gif") # up
+            self.texture_open = arcade.load_texture("images/inky up 0.png")
+            self.texture_close = arcade.load_texture("images/inky up 1.png") # up
         elif self.vertical_direction < 0:
-            self.texture_open = arcade.load_texture("images/inky down 0.gif")
-            self.texture_close = arcade.load_texture("images/inky down 1.gif") # down
+            self.texture_open = arcade.load_texture("images/inky down 0.png")
+            self.texture_close = arcade.load_texture("images/inky down 1.png") # down
 
     def on_update(self, delta_time):
         nothing = ""
