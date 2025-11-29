@@ -25,7 +25,7 @@ from constants.constants import(
 from constants.button_constants import(
     BUTTON_STYLE, BUTTON_WIDTH, ENTER_BUTTON_TEXT, EXIT_BUTTON_TEXT, H_BOX_SPACE_BETWEEN,
     HOVER_BUTTON_BG_COLOR, HOVER_BUTTON_FONT_COLOR, NEXT_LEVEL_BUTTON_TEXT, NORMAL_BUTTON_BG_COLOR,
-    NORMAL_BUTTON_FONT_COLOR, SAVE_SCORE_BUTTON_TEXT, START_GAME_BUTTON_TEXT, VIEW_SCORES_BUTTON_TEXT
+    NORMAL_BUTTON_FONT_COLOR, SAVE_SCORE_BUTTON_TEXT, START_GAME_BUTTON_TEXT,VIEW_SCORES_BUTTON_TEXT
 )
 from constants.view_constants import(
     H1_FONT_SIZE, H2_FONT_SIZE, H1_TEXT_Y_POS, HIGH_SCORE_COL_X_POS, INITIAL_COL_X_POS,
@@ -106,7 +106,8 @@ class LevelUpView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=H_BOX_SPACE_BETWEEN, vertical=False)
+        self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=H_BOX_SPACE_BETWEEN,
+                                                           vertical=False)
 
         #create buttons
         view_score_button = ViewScoreButton(self.window, text = VIEW_SCORES_BUTTON_TEXT,
@@ -122,7 +123,8 @@ class LevelUpView(arcade.View):
 
         # Create a widget to hold the v_box widget, that will center the buttons
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
-        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top", align_y=-WINDOW_HEIGHT*0.75)
+        ui_anchor_layout.add(child=self.h_box, anchor_x="center_x", anchor_y="top",
+                             align_y=-WINDOW_HEIGHT*0.75)
 
         self.manager.add(ui_anchor_layout)
 
@@ -137,7 +139,8 @@ class LevelUpView(arcade.View):
 
         arcade.draw_text("LEVEL UP!",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-150,
-                            arcade.color.WHITE, font_size=H1_FONT_SIZE, anchor_x="center", bold=True)
+                            arcade.color.WHITE, font_size=H1_FONT_SIZE, anchor_x="center",
+                            bold=True)
         arcade.draw_text(f"Score: {global_score.get_curr_score():06d}",
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="center")
@@ -271,16 +274,16 @@ class ViewScoresView(arcade.View):
                             WINDOW_WIDTH/2, WINDOW_HEIGHT-190,
                             arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="center")
         for score in user_scores:
-            arcade.draw_text(f"{score_idx} .",
-                SCORE_IDX_COL_X_POS,WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{score_idx} .", SCORE_IDX_COL_X_POS,
+                WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="right")
 
-            arcade.draw_text(f"{self.initial[:3]}",
-                INITIAL_COL_X_POS,WINDOW_HEIGHT - (SCOREBOARD_Y_OFFSET + (SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{self.initial[:3]}", INITIAL_COL_X_POS,
+                WINDOW_HEIGHT - (SCOREBOARD_Y_OFFSET + (SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="center")
 
-            arcade.draw_text(f"{score:06d}",
-                HIGH_SCORE_COL_X_POS,WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{score:06d}", HIGH_SCORE_COL_X_POS,
+                WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=H2_FONT_SIZE, anchor_x="right")
 
             score_idx += 1
@@ -331,16 +334,16 @@ class SaveScoreView(arcade.View):
                         arcade.color.WHITE, font_size=48, anchor_x="center", bold=True)
 
         for user in score_board:
-            arcade.draw_text(f"{score_idx} .",
-                SCORE_IDX_COL_X_POS,WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{score_idx} .", SCORE_IDX_COL_X_POS,
+                WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=28, anchor_x="right")
 
-            arcade.draw_text(f"{user[:3]}",
-                INITIAL_COL_X_POS, WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{user[:3]}", INITIAL_COL_X_POS,
+                WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=28, anchor_x="center")
 
-            arcade.draw_text(f"{score_board[user]:06d}",
-                HIGH_SCORE_COL_X_POS,WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
+            arcade.draw_text(f"{score_board[user]:06d}", HIGH_SCORE_COL_X_POS,
+                WINDOW_HEIGHT -(SCOREBOARD_Y_OFFSET +(SCOREBOARD_ROW_DISTANCE*score_idx)),
                 arcade.color.WHITE, font_size=28, anchor_x="right")
 
             score_idx += 1
@@ -367,18 +370,21 @@ class HighScoreView(arcade.View):
                                             width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(save_score_button)
 
-        exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width = BUTTON_WIDTH, style = BUTTON_STYLE)
+        exit_button = ExitButton(text = EXIT_BUTTON_TEXT,
+                                 width = BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(exit_button)
 
         # game over or level up text?
         if level_up:
-            start_game_or_next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT,
-                                                              width=BUTTON_WIDTH, style = BUTTON_STYLE)
+            start_game_or_next_level_button = NextLevelButton(self.window,
+                                                text = NEXT_LEVEL_BUTTON_TEXT,
+                                                width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
             self.message = "proceed to next level"
         else:
-            start_game_or_next_level_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT,
-                                                              width=BUTTON_WIDTH, style = BUTTON_STYLE)
+            start_game_or_next_level_button = StartGameButton(self.window,
+                                                text = START_GAME_BUTTON_TEXT,
+                                                width=BUTTON_WIDTH, style = BUTTON_STYLE)
             self.display_text = "GAME OVER!"
             self.message = "start a new game"
 
@@ -433,7 +439,8 @@ class EnterInitialsView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
 
         #create buttons
-        enter_button = EnterButton(self, text = ENTER_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        enter_button = EnterButton(self, text = ENTER_BUTTON_TEXT, width=BUTTON_WIDTH,
+                                   style=BUTTON_STYLE)
         self.h_box.add(enter_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -493,15 +500,13 @@ class EnterInitialsView(arcade.View):
                                                   HOVER_BUTTON_BG_COLOR)
 
             # Draw the selected initial
-            arcade.draw_text(initial,
-                center_x, center_y,
-                NORMAL_BUTTON_FONT_COLOR, font_size=40, anchor_x="center", anchor_y="center", bold=True
+            arcade.draw_text(initial, center_x, center_y, NORMAL_BUTTON_FONT_COLOR,
+                             font_size=40, anchor_x="center", anchor_y="center", bold=True
             )
              # Highlight the active letter
             if i == self.active_slot:
-                arcade.draw_text(initial,
-                    center_x, center_y,
-                    HOVER_BUTTON_FONT_COLOR, font_size=40, anchor_x="center", anchor_y="center", bold=True
+                arcade.draw_text(initial, center_x, center_y, HOVER_BUTTON_FONT_COLOR,
+                                font_size=40, anchor_x="center", anchor_y="center", bold=True
             )
     def on_key_press(self, key, modifiers):
         current_char = self.initials[self.active_slot]
@@ -655,7 +660,8 @@ class GameView(arcade.View):
                 if (110 < x < 120 or 590 < x < 610) and y==207:
                     continue
                 #if space matches all criteria generate pellet
-                pellet = Pellet("images/pellet.png", point = 10, scale = PELLET_SCALE, start_pos=(x,y))
+                pellet = Pellet("images/pellet.png", point = 10, scale = PELLET_SCALE,
+                                start_pos=(x,y))
                 self.sprites.append(pellet)
                 self.pellet_list.append(pellet)
 
@@ -808,7 +814,8 @@ class GameView(arcade.View):
         collision = arcade.check_for_collision_with_list(self.pacman, self.ghosts)
         for ghost in collision:
             if ghost.state == GHOST_CHASE:
-                if collision and self.pacman.get_state() == PACMAN_NORMAL and not self.pacman.is_dying:
+                if (collision and self.pacman.get_state() == PACMAN_NORMAL
+                    and not self.pacman.is_dying):
                     # play death animation
                     arcade.play_sound(self.pacman.sounds["pacman_death"])
                     self.pacman.start_death()
@@ -948,6 +955,7 @@ class GameView(arcade.View):
 
             pac_score.center_y = PACMAN_LIVES_Y_POSITION
 
-            pac_score.center_x = PACMAN_FIRST_LIFE_X_POSITION + len(score_list) * PACMAN_LIFE_X_POSITION_STRIDE
+            pac_score.center_x = (PACMAN_FIRST_LIFE_X_POSITION + len(score_list)
+                                  * PACMAN_LIFE_X_POSITION_STRIDE)
 
             score_list.append(pac_score)
