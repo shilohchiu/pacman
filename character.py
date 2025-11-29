@@ -818,7 +818,7 @@ class Blinky(Character):
         print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
         print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
         self.update_target_quadrant()
-        if self.in_spawn:
+        if self.in_spawn and self.state != GHOST_EATEN:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
                 self.vertical_direction = 0
@@ -828,7 +828,10 @@ class Blinky(Character):
             else:
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
-            self.check_in_spawn()
+        
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
         
         else:       
 
@@ -929,6 +932,10 @@ class Pinky(Character):
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
         
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        
         else:       
 
             if self.quadrant != self.target_quadrant:
@@ -1024,6 +1031,10 @@ class Inky(Character):
             else:
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
+
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
         
         else:       
 
@@ -1104,6 +1115,8 @@ class Clyde(Character):
         super().set_movement(self)
         self.update_target_quadrant()
         self.check_in_spawn()
+
+
         if self.in_spawn:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
@@ -1114,6 +1127,10 @@ class Clyde(Character):
             else:
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
+        
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
         
         else:       
 
