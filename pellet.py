@@ -6,7 +6,7 @@ Pellet is imported by classes
 """
 import arcade
 from constants.constants import FRUIT_POSITION, FRUIT_DATA
- 
+
 class Pellet(arcade.Sprite):
     def __init__(self, image, point=10, scale = .05, start_pos = (0,0)):
         #this refers to the sprite class and allows arcade commands to be used

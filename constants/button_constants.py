@@ -53,4 +53,3 @@ BUTTON_STYLE = {
                 border_width=BUTTON_BORDER_WIDTH,
             )
         }
-
