@@ -60,14 +60,12 @@ class Character(arcade.Sprite):
         #print(self.target)
         self.walls = walls
 
-    def get_position(self):
-        # position of sprite
-        return (self.center_x * 1, self.center_y * 1)
-
+    # Default character movement implementation results in only random turns
     def set_movement(self):
-
         self.update_target_quadrant()
         self.check_in_spawn()
+
+        # Centers ghosts to exit spawn when appropriate
         if self.in_spawn:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
@@ -79,66 +77,58 @@ class Character(arcade.Sprite):
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
         
-        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
-        
+        # Calls choose random movement function
         else: 
-
             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
         
-        #print("PATH FOUND (lol)")
-
     def set_target(self, target):
-        #placeholder to be overwritten
         self.target = target
-        #print("GOT TARGET: ")
-        #print(self.target)
 
-    # NOTE: sometimes gets "stuck" and circles between two points
-        # added escape method that creates "unable to find route" condition
+    # Base case for recurisve path generation function
     def generate_path(self, point1, point2):
         path = []
         point1 = self.closest_piv_point(point1)
         point2 = self.closest_piv_point(point2)
         path.append(point1)
         print(f"STARTING PIV POINT: {point1}")
-        while_loop_length = 0
         while True:
+            # Test to see if final points are added
             if point1 == point2:
                 return path
+            # If path length is longer than possible indicates infinte loop
             elif len(path) > (len(PIVOT_COL) * len(PIVOT_ROW)):
+                # Empty path results in random movement
                 return []
             else:
                 point1 = self.rec_generate_path(point1, point2)
+                # If retread is detected, also switch to random movement
                 if point1 in path:
                     return []
                 else:
                     path.append(point1)
-                    print(f"added point: {point1}")
-                    print(f"point1: {point1} \t point2: {point2}")
-                    print(f"path: {path}")
-                    print("-----------------")
         
-    
+    # Recursive case for path generation
     def rec_generate_path(self, point1, point2):
+        # Finds positions available turn directions
         for col in PIVOT_GRAPH[point1[1]]:
             if col[0] == point1[0]:
                 piv_directions = col[1]
         new_point = 0
-        print(PIVOT_GRAPH[point1[1]])
-        print(piv_directions)
+        # Finds which direction is a larger length away from targeted position
         v_factor = abs(point1[0] - point2[0])
         h_factor = abs(point1[1] - point2[1])
 
+        # If larger vertical distance, prioritize moving in vertical direction
+        # Otherwise prioritize moving in horizontal direction
         if v_factor > h_factor:
             priority = "VERTICAL"
         else:
             priority = "HORIZONTAL"
         
+        # Determines which direction target point is in relation to starting point
         if point1[0] > point2[0]:
             vertical = "MOVE LEFT TO TARGET"
         else:
@@ -148,7 +138,12 @@ class Character(arcade.Sprite):
         else:
             horizontal = "MOVE UP TO TARGET"
 
-        
+        # Finds pivot point in most optimal direction based on the following criteria:
+            # Attempts to move in completely prioritized axis and direction first
+            # If unavailable, then moves to non-prioritized axis but prioritized direction
+            # If unavailable, then moves to non-prioritized axis and non-prioritized direction
+            # If unavailable, then moves to prioritized axis and non-prioritized direction
+        # Attemps to minimize length of path generated
         if priority == "VERTICAL":
             if vertical == "MOVE LEFT TO TARGET":
                 if "W" in piv_directions:
@@ -217,15 +212,18 @@ class Character(arcade.Sprite):
 
         return new_point
     
+    # Finds the closest accessible pivot point in proper direction to given point
     def closest_piv_point(self, point, direction = None):
         self_pos = point
+        # Placeholder large values to be immediately overwritten
         curr_closest_x = 10000
         curr_closest_y = 10000
-        print(direction)
+        # Allows for calculation with no need for directional influence
         if not direction:
             for row in PIVOT_ROW:
                 for col in PIVOT_COL:
                     row_accessible = False
+                    # Tests to find if each column is accesible from each row using PIVOT_GRAPH constant
                     for test_col in PIVOT_GRAPH[row]:
                         if test_col[0] == col:
                             row_accessible = True
@@ -234,6 +232,7 @@ class Character(arcade.Sprite):
                             curr_closest_x = col
                             curr_closest_y = row
         else:
+            # Only tests for pivot points above (North) of given point
             if direction == "N":
 
                 for col in PIVOT_COL:
@@ -246,6 +245,7 @@ class Character(arcade.Sprite):
                             curr_closest_x = col
                             curr_closest_y = row
 
+            # Only tests for pivot points below (South) of given point
             elif direction == "S":
 
                 for col in PIVOT_COL:
@@ -258,6 +258,7 @@ class Character(arcade.Sprite):
                             curr_closest_x = col
                             curr_closest_y = row
 
+            # Only tests for pivot points to the right (East) of given point
             elif direction == "E":
 
                 for row in PIVOT_ROW:
@@ -272,7 +273,7 @@ class Character(arcade.Sprite):
                             curr_closest_x = col
             
                             
-
+            # Only tests for pivot points to the left (West) of given point
             elif direction == "W":
 
                 for row in PIVOT_ROW:
@@ -289,20 +290,25 @@ class Character(arcade.Sprite):
         return (curr_closest_x, curr_closest_y)
 
     
-    
+    # Calculates quadrant self is located in and updates variable accordingly
     def update_quadrant(self):
         if self.center_y > 385:
+            # Refers to top half
             horizontal = "T"
         else:
+            # Refers to bottom half
             horizontal = "B"
 
         if self.center_x < 355:
+            # Refers to left half
             vertical = "L"
         else:
+            # Refers to right half
             vertical = "R"
-        
+        # Combines into output
         self.quadrant = horizontal + vertical
     
+    # Calculates quadrant the target is located in and updates variable accordingly
     def update_target_quadrant(self):
         if self.target[1] > 385:
             horizontal = "T"
@@ -317,14 +323,19 @@ class Character(arcade.Sprite):
             self.target_quadrant_change = True
         self.target_quadrant = horizontal + vertical
     
+    # Randomly calculates and sets movement based on available directions
     def set_rand_movement(self):
+        # Try/Except catches errors stemming from random movement attempted in non pivot condition
         try:
+            # Only adjusts direction when movement is stopped 
+            # Movement is always stopped once a pivot point is reached
             if not (self.horizontal_direction or self.vertical_direction):
                 for col in PIVOT_GRAPH[self.recent_piv_row]:
                     if col[0] == self.recent_piv_col:
                         valid_directions = col[1]
                 direction = ""
                 retread = True
+                # Use of retread boolean prevents random direction from causing self to 180
                 while retread:
                     direction = random.choice(valid_directions)
                     if direction == "N" and self.last_direction != "S":
@@ -336,11 +347,13 @@ class Character(arcade.Sprite):
                     elif direction == "S" and self.last_direction != "N":
                         retread = False
                     
-                    # prevents ghosts from randomly pathing into wrapping row
+                    # prevents ghosts from randomly pathing into screen-wrapping row
                     if self.recent_piv_row == 385 and self.recent_piv_col == 225 and direction == "E":
                         retread = False
                     elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
                         retread = False
+
+                # Sets movement according to direction chosen
                 if direction == "N":
                     self.horizontal_direction = 0
                     self.vertical_direction = 1
@@ -355,6 +368,7 @@ class Character(arcade.Sprite):
                     self.vertical_direction = 0
                 self.last_direction = direction
         except UnboundLocalError:
+            # Continues ghost in last direction when unbound is raised
             direction = self.last_direction
             if direction == "N":
                 self.horizontal_direction = 0
@@ -369,16 +383,19 @@ class Character(arcade.Sprite):
                 self.horizontal_direction = -1
                 self.vertical_direction = 0
             
-            # prevents ghosts from randomly pathing into wrapping row
+            # prevents ghosts from randomly pathing into screen-wrapping row
             if self.recent_piv_row == 385 and self.recent_piv_col == 225 and direction == "E":
                 direction = "W"
             elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
                 direction = "E"
 
+    # Reads through path variable and sets direction appropriately
     def pathfind(self):
         point = self.path[0]
+        # Only updates movements when movement is completely stopped
         if not (self.horizontal_direction or self.vertical_direction):
             if self.center_x < point[0]:
+                # Resets y-value to proper row to avoid minor misalignments
                 self.center_y = self.recent_piv_row
                 self.horizontal_direction = 1
                 self.vertical_direction = 0
@@ -389,6 +406,7 @@ class Character(arcade.Sprite):
                 self.vertical_direction = 0
                 self.last_direction = "W"
             elif self.center_y < point[1]:
+                # Resets x-value to proper column to avoid minor misalignments
                 self.center_x = self.recent_piv_col
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
@@ -399,6 +417,7 @@ class Character(arcade.Sprite):
                 self.vertical_direction = -1
                 self.last_direction = "S"
             else:
+                # Resets positioning to be properly aligned with pivot point
                 self.center_x = self.recent_piv_col
                 self.center_y = self.recent_piv_row
 
@@ -432,14 +451,16 @@ class Character(arcade.Sprite):
         self.in_piv_col = False
         self.in_piv_row = False
         self.update_quadrant()
-
+        
+        # Finds if character is slightly misaligned with pivot point (but close enough) by testing row (y value)
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
                 self.in_piv_row = True
                 if self.recent_piv_row != num:
                     self.need_adjustment = True
                 self.recent_piv_row = num
-
+        
+        # Finds if character is slightly misaligned with pivot point (but close enough) by testing column (x value)
         for num in range(int(plinus_x[0]), int(plinus_x[1])):
             if num in PIVOT_COL:
                 self.in_piv_col = True
@@ -447,7 +468,6 @@ class Character(arcade.Sprite):
                     self.need_adjustment = True
                 self.recent_piv_col = num
 
-        #print("SET TARGET")
         self.set_movement()
         self.change_x = self.horizontal_direction * self.speed
         self.change_y = self.vertical_direction * self.speed
@@ -572,26 +592,31 @@ class Pacman(Character):
 
         self.overwrite = [None, None]
 
+    # Determines pacman movement through user input
     def set_movement(self):
         self.valid_directions = []
-        #self.in_piv_col = can move up or down (dependent on x cord)
-        #self.in_piv_row = can move left or right (dependent on y cord)
-
-
+        # Monitors previous directions x,y through queue system to allow for input buffer
         self.horizontal_queue = self.directions[0]
         self.vertical_queue = self.directions[1]
 
+        # Only accepts movement if in pivot point
         if self.in_piv_col and self.in_piv_row:
+            # Prevents from readjusting to the same point after passing
             if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
+                # Shrinks pacman briefly to avoid any clipping into walls
                 self.size = (1,1)
                 self.center_x = self.recent_piv_col
                 self.center_y = self.recent_piv_row
                 self.need_adjustment = False
                 self.last_adjustment = (self.recent_piv_row, self.recent_piv_col)
                 self.size = (30,30)
+            # Finds valid directions of pivot point from PIVOT_GRAPH and stores them
             for item in PIVOT_GRAPH[self.recent_piv_row]:
                 if item[0] == self.recent_piv_col:
                     self.valid_directions = item[1]
+            
+            # Reads movement from queue to allow for input buffer
+            # Only reads movement updates if in valid direction
             if "N" in self.valid_directions and self.vertical_queue == 1:
                 self.center_x = self.recent_piv_col
                 self.vertical_direction = self.vertical_queue    
@@ -626,11 +651,8 @@ class Pacman(Character):
             
             
             
-
+        # Makes adjustment if not currently in pivot row
         elif self.in_piv_col and not self.in_piv_row:
-            # if self.need_adjustment:
-            #     self.center_x = self.recent_piv_col
-            #     self.need_adjustment = False
             if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
                 self.size = (1,1)
                 self.center_x = self.recent_piv_col
@@ -642,11 +664,8 @@ class Pacman(Character):
             self.horizontal_queue = 0
             self.vertical_queue = self.directions[1]
             
-
+        # Makes adjustment if not currently in pivot column
         elif not self.in_piv_col and self.in_piv_row:
-            # if self.need_adjustment:
-            #     self.center_y = self.recent_piv_row
-            #     self.need_adjustment = False
             if self.need_adjustment and (self.recent_piv_row, self.recent_piv_col) != (self.last_adjustment):
                 self.size = (1,1)
                 self.center_x = self.recent_piv_col
@@ -658,11 +677,14 @@ class Pacman(Character):
             self.vertical_direction = self.vertical_queue
             self.vertical_queue = 0
 
+        # Queues input directions
         else:
             self.horizontal_queue = self.directions[0]
             self.vertical_queue = self.directions[1]
 
-
+    # Takes user input and adjusts for pressing multiple keys at once
+    # Pressing UP and RIGHT will convert input to just the button pressed second, then returns to button pressed first after second button
+    # is released
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
             if self.right_pressed:
@@ -770,12 +792,9 @@ class Pacman(Character):
                     self.is_dying = False
                     self.death_finished = True
                     self.speed = PACMAN_SPEED
-                    # Optionally hide Pac-Man until reset:
-                    # self.visible = False
-                    # return
 
             # While dying, do not run normal open/close animation
-            # return
+            return
 
         # Not dying: run normal frame toggle from parent
         return super().update_animation(delta_time)
@@ -833,23 +852,13 @@ class Blinky(Character):
             self.texture = self.texture_open.get(self.state, self.texture)
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
-
-
-    def find_movement(self, target=None):
-        self.horizontal_direction = 1
-
-    # working coord at (485, 270) ?
-    # other testing coord (115, 650)
+    
+    # Uses pathfinding to move Blinky (red ghost) towards pacmans quadrant
+    # Once quadrant is reached, switch to random movement
     def set_movement(self):
         super().set_movement()
-            
-        print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
-        print(f"TARGET: {self.target}")
-        print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
-        print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
-        print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
-        print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
         self.update_target_quadrant()
+        # Exits spawn properly if not in respawning state (just as eyes after being eaten)
         if self.in_spawn and self.state != GHOST_EATEN:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
@@ -861,19 +870,17 @@ class Blinky(Character):
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
         
-        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
-        
         else:       
 
             if self.quadrant != self.target_quadrant:
+                # Generates new path if either path does not exist or the target's (pacman) quadrant changes
                 if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.path = self.generate_path((self.center_x, self.center_y), self.target)
                     self.target_quadrant_change = False
                 else:
+                    # If blinky reaches a point on its path, remove it from path and continue onto the next
                     if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
                         self.path.pop(0)
                         self.horizontal_direction = 0
@@ -886,11 +893,6 @@ class Blinky(Character):
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
-                
-
-                
-    # def on_update(self, delta_time):
-    #     nothing = ""
     
 
 class Pinky(Character):
@@ -946,14 +948,12 @@ class Pinky(Character):
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
 
-    
+
     def set_movement(self):
         super().set_movement()
-        print(f"IS: {self.in_spawn}")
-        print(f"PINKY POS: {(self.center_x, self.center_y)}")
         self.update_target_quadrant()
-        self.check_in_spawn()
-        if self.in_spawn:
+        # Exits spawn properly if not in respawning state (just as eyes after being eaten)
+        if self.in_spawn and self.state != GHOST_EATEN:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
                 self.vertical_direction = 0
@@ -964,19 +964,17 @@ class Pinky(Character):
                 self.horizontal_direction = 0
                 self.vertical_direction = 1
         
-        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-            self.horizontal_direction = 0
-            self.vertical_direction = -1
-        
         else:       
 
             if self.quadrant != self.target_quadrant:
+                # Generates new path if either path does not exist or the target's (pacman) quadrant changes
                 if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.path = self.generate_path((self.center_x, self.center_y), self.target)
                     self.target_quadrant_change = False
                 else:
+                    # If pinky reaches a point on its path, remove it from path and continue onto the next
                     if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
                         self.path.pop(0)
                         self.horizontal_direction = 0
@@ -991,11 +989,7 @@ class Pinky(Character):
                     self.set_rand_movement()
                 
 
-                
-
-    # def on_update(self, delta_time):
-    #     nothing = ""
-
+# Inky only uses random movement (due to lacking custom set_movement) for difficulty balancing purposes
 class Inky(Character):
     """
     Inky subclass
@@ -1042,58 +1036,7 @@ class Inky(Character):
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
 
-
-    # def set_movement(self):
-    #     super().set_movement()
-    #     print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
-    #     print(f"TARGET: {self.target}")
-    #     print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
-    #     print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
-    #     print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
-    #     print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
-    #     self.update_target_quadrant()
-    #     self.check_in_spawn()
-    #     if self.in_spawn:
-    #         if self.center_x < GHOST_CENTER_X:
-    #             self.horizontal_direction = 1
-    #             self.vertical_direction = 0
-    #         elif self.center_x > GHOST_CENTER_X:
-    #             self.horizontal_direction = -1
-    #             self.vertical_direction = 0
-    #         else:
-    #             self.horizontal_direction = 0
-    #             self.vertical_direction = 1
-
-    #     elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-    #         self.horizontal_direction = 0
-    #         self.vertical_direction = -1
-        
-    #     else:       
-
-    #         if self.quadrant != self.target_quadrant:
-    #             if not self.path or self.target_quadrant_change:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
-    #                 self.target_quadrant_change = False
-    #             else:
-    #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-    #                     self.path.pop(0)
-    #                     self.horizontal_direction = 0
-    #                     self.vertical_direction = 0
-    #                 if self.path:
-    #                     self.pathfind()
-    #         else:
-                    
-    #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.set_rand_movement()
-                
-
-    # def on_update(self, delta_time):
-    #     nothing = ""
-
+# Inky only uses random movement (due to lacking custom set_movement) for difficulty balancing purposes
 class Clyde(Character):
     """
     Clyde subclass
@@ -1142,52 +1085,6 @@ class Clyde(Character):
         else:
             self.texture = self.texture_close.get(self.state, self.texture)
 
-
-    # def set_movement(self):
-    #     super().set_movement()
-    #     self.update_target_quadrant()
-    #     self.check_in_spawn()
-
-    #     if self.in_spawn:
-    #         if self.center_x < GHOST_CENTER_X:
-    #             self.horizontal_direction = 1
-    #             self.vertical_direction = 0
-    #         elif self.center_x > GHOST_CENTER_X:
-    #             self.horizontal_direction = -1
-    #             self.vertical_direction = 0
-    #         else:
-    #             self.horizontal_direction = 0
-    #             self.vertical_direction = 1
-        
-    #     elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-    #         self.horizontal_direction = 0
-    #         self.vertical_direction = -1
-        
-    #     else:       
-
-    #         if self.quadrant != self.target_quadrant:
-    #             if not self.path or self.target_quadrant_change:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
-    #                 self.target_quadrant_change = False
-    #             else:
-    #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-    #                     self.path.pop(0)
-    #                     self.horizontal_direction = 0
-    #                     self.vertical_direction = 0
-    #                 if self.path:
-    #                     self.pathfind()
-    #         else:
-                    
-    #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.set_rand_movement()
-                
-
-    # def on_update(self, delta_time):
-    #     nothing = ""
 
 
 class Walls(arcade.Sprite):
