@@ -4,15 +4,6 @@ helper functions
 
 import time
 
-def float_range(start, stop, step):
-    """
-    range helper function for pellets
-    """
-    while start < stop:
-        yield start
-        start += step
-
-
 class Countdown:
     def __init__(self, duration):
         self.duration = duration
