@@ -91,7 +91,6 @@ class Character(arcade.Sprite):
         point1 = self.closest_piv_point(point1)
         point2 = self.closest_piv_point(point2)
         path.append(point1)
-        print(f"STARTING PIV POINT: {point1}")
         while True:
             # Test to see if final points are added
             if point1 == point2:
