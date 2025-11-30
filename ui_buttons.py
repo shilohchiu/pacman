@@ -21,37 +21,33 @@ class ExitButton(arcade.gui.widgets.buttons.UIFlatButton):
         arcade.exit()
 
 class SaveScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
-    def __init__(self, window, **kwargs):
+    def __init__(self, window, save_callback, **kwargs):
         super().__init__(**kwargs)
         self.window = window
+        self.save_callback = save_callback
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import EnterInitialsView
-        view = EnterInitialsView(view_score = False)
-        self.window.show_view(view)
+        self.save_callback()
 
 class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
-    def __init__(self, window, **kwargs):
+    def __init__(self, window, start_callback, **kwargs):
         super().__init__(**kwargs)
         self.window = window
+        self.start_callback = start_callback
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import GameView
-        view = GameView()
-        self.window.show_view(view)
+        self.start_callback()
 
 class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
-    def __init__(self, window, **kwargs):
+    def __init__(self, window, next_level_callback, **kwargs):
         super().__init__(**kwargs)
         self.window = window
+        self.next_level_callback = next_level_callback
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import GameView
-        view = GameView()
-        self.window.show_view(view)
+        self.next_level_callback()
 
 class ViewScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
-    def __init__(self, window, **kwargs):
+    def __init__(self, window, view_score_callback, **kwargs):
         super().__init__(**kwargs)
         self.window = window
+        self.view_score_callback = view_score_callback
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        from classes import EnterInitialsView
-        view = EnterInitialsView(view_score = True)
-        self.window.show_view(view)
+        self.view_score_callback()

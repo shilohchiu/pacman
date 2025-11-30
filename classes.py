@@ -63,8 +63,10 @@ class MenuView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=H_BOX_SPACE_BETWEEN,
                                                            vertical=False)
 
-        start_game_button = StartGameButton(self.window, text = START_GAME_BUTTON_TEXT,
-                                            width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        start_game_button = StartGameButton(self.window,
+                                        start_callback=lambda: self.window.show_view(GameView()),
+                                        text = START_GAME_BUTTON_TEXT,
+                                        width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         ui_anchor_layout = arcade.gui.widgets.layout.UIAnchorLayout()
@@ -110,12 +112,16 @@ class LevelUpView(arcade.View):
                                                            vertical=False)
 
         #create buttons
-        view_score_button = ViewScoreButton(self.window, text = VIEW_SCORES_BUTTON_TEXT,
-                                            width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        view_score_button = ViewScoreButton(self.window,
+            view_score_callback=lambda: self.window.show_view(EnterInitialsView(view_score=True)),
+            text = VIEW_SCORES_BUTTON_TEXT,
+            width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(view_score_button)
 
-        next_level_button = NextLevelButton(self.window, text = NEXT_LEVEL_BUTTON_TEXT,
-                                            width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        next_level_button = NextLevelButton(self.window,
+                                    next_level_callback=lambda: self.window.show_view(GameView()),
+                                    text = NEXT_LEVEL_BUTTON_TEXT,
+                                    width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(next_level_button)
 
         exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
@@ -175,12 +181,16 @@ class GameOverView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
 
         #create buttons
-        view_score_button = ViewScoreButton(self.window, text = VIEW_SCORES_BUTTON_TEXT,
-                                            width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        view_score_button = ViewScoreButton(self.window,
+            view_score_callback=lambda: self.window.show_view(EnterInitialsView(view_score=True)),
+            text = VIEW_SCORES_BUTTON_TEXT,
+            width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(view_score_button)
 
-        start_game_button =StartGameButton(self.window, text = START_GAME_BUTTON_TEXT,
-                                           width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        start_game_button = StartGameButton(self.window,
+                                        start_callback=lambda: self.window.show_view(GameView()),
+                                        text = START_GAME_BUTTON_TEXT,
+                                        width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
@@ -241,8 +251,11 @@ class ViewScoresView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "BACK TO GAME",
-                                           width=BUTTON_WIDTH, style=BUTTON_STYLE)
+        start_game_button = StartGameButton(self.window,
+                                        start_callback=lambda: self.window.show_view(GameView()),
+                                        text = "BACK TO GAME",
+                                        width=BUTTON_WIDTH, style=BUTTON_STYLE)
+
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = EXIT_BUTTON_TEXT, width=BUTTON_WIDTH, style=BUTTON_STYLE)
@@ -303,8 +316,10 @@ class SaveScoreView(arcade.View):
 
         #create buttons
 
-        start_game_button =StartGameButton(self.window, text = "Back to Game",
-                                           width=BUTTON_WIDTH, style = BUTTON_STYLE)
+        start_game_button = StartGameButton(self.window,
+                                        start_callback=lambda: self.window.show_view(GameView()),
+                                        text = "BACK TO GAME",
+                                        width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
         exit_button = ExitButton(text = "Exit", width=BUTTON_WIDTH, style = BUTTON_STYLE)
@@ -366,8 +381,9 @@ class HighScoreView(arcade.View):
         self.h_box = arcade.gui.widgets.layout.UIBoxLayout(space_between=30, vertical=False)
 
         #create buttons
-        save_score_button = SaveScoreButton(self.window, text = SAVE_SCORE_BUTTON_TEXT,
-                                            width=BUTTON_WIDTH, style = BUTTON_STYLE)
+        save_score_button = SaveScoreButton(self.window,
+                save_callback=lambda: self.window.show_view(EnterInitialsView(view_score=False)),
+                text = SAVE_SCORE_BUTTON_TEXT, width=BUTTON_WIDTH, style = BUTTON_STYLE)
         self.h_box.add(save_score_button)
 
         exit_button = ExitButton(text = EXIT_BUTTON_TEXT,
@@ -377,14 +393,16 @@ class HighScoreView(arcade.View):
         # game over or level up text?
         if level_up:
             start_game_or_next_level_button = NextLevelButton(self.window,
-                                                text = NEXT_LEVEL_BUTTON_TEXT,
-                                                width=BUTTON_WIDTH, style = BUTTON_STYLE)
+                                    next_level_callback=lambda: self.window.show_view(GameView()),
+                                    text = NEXT_LEVEL_BUTTON_TEXT,
+                                    width=BUTTON_WIDTH, style=BUTTON_STYLE)
             self.display_text = "LEVEL UP!"
             self.message = "proceed to next level"
         else:
             start_game_or_next_level_button = StartGameButton(self.window,
-                                                text = START_GAME_BUTTON_TEXT,
-                                                width=BUTTON_WIDTH, style = BUTTON_STYLE)
+                                        start_callback=lambda: self.window.show_view(GameView()),
+                                        text = START_GAME_BUTTON_TEXT,
+                                        width=BUTTON_WIDTH, style=BUTTON_STYLE)
             self.display_text = "GAME OVER!"
             self.message = "start a new game"
 
