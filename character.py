@@ -770,9 +770,6 @@ class Pacman(Character):
                     self.is_dying = False
                     self.death_finished = True
                     self.speed = PACMAN_SPEED
-                    # Optionally hide Pac-Man until reset:
-                    # self.visible = False
-                    # return
 
             # While dying, do not run normal open/close animation
             # return
