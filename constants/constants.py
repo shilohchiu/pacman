@@ -173,6 +173,7 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (595, ("N", "W"))],
                 }
 
+PACMAN_SPEED = 2
 PACMAN_NUM_LIVES = 3
 PACMAN_LIVES_SCALE = .4
 PACMAN_LIVES_Y_POSITION = 40

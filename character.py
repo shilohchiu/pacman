@@ -409,7 +409,6 @@ class Character(arcade.Sprite):
         # DEAD overrides everything
         if self.state == GHOST_EATEN:
             pass
-            # return
         self.state = new_state
         if self.frame_open:
             self.texture = self.texture_open.get(self.state, self.texture)
@@ -486,10 +485,10 @@ class Character(arcade.Sprite):
         self.death_time = 0.0
         self.speed = 0
         # Stop movement immediately
-        self.change_x = 0
-        self.change_y = 0
-        self.vertical_direction = 0
-        self.horizontal_direction = 0
+        # self.change_x = 0
+        # self.change_y = 0
+        # self.vertical_direction = 0
+        # self.horizontal_direction = 0
         # flag to let GameView know animation finished
         self.death_finished = False
 
@@ -529,7 +528,7 @@ class Pacman(Character):
         super().__init__(walls, "images/pac-man.png",
                          scale = 0.25, 
                          start_pos=start_pos)
-        self.speed = 2
+        self.speed = PACMAN_SPEED
 
         self.state = PACMAN_NORMAL
 
@@ -768,12 +767,13 @@ class Pacman(Character):
                 if self.death_frame >= len(self.death_textures):
                     self.is_dying = False
                     self.death_finished = True
+                    self.speed = PACMAN_SPEED
                     # Optionally hide Pac-Man until reset:
                     # self.visible = False
-                    return
+                    # return
 
             # While dying, do not run normal open/close animation
-            return
+            # return
 
         # Not dying: run normal frame toggle from parent
         return super().update_animation(delta_time)
