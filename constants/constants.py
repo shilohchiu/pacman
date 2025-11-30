@@ -66,8 +66,7 @@ FRUIT_DATA ={
 
 H_DISTANCE_BETWEEN_EDGE_AND_MAZE = int((WINDOW_WIDTH - MAZE_WIDTH) / 2)
 
-PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
-PIVOT_ROW = [645, 575, 515, 385, 270, 210, 150, 90]
+
 
 BLACK_BOX_WIDTH = 50
 # BLACK_BOX_RATIO = 0.75 # ratio describes collision box / actual box size
@@ -97,12 +96,15 @@ GHOST_EATEN = "eaten"
 GHOST_BLINK = "blink"
 
 #TODO do we need both of the PIVOT_COL lists
-PIVOT_COL = [115, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
+PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
+
+
 # TOP HALF COL: 115, 225, 325, 385, 485, 595
 # TOP HALF SPEC: 285, 425
 # BOT HALF COL: 165, 545
 # BOT HALF SPEC: 165, 545, 285, 425
 PIVOT_ROW = [650, 580, 520, 460, 385, 330, 270, 210, 150, 90]
+
 PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (225, ("S", "E", "W")),
                         (325, ("S", "W")),
