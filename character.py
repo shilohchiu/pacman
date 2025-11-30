@@ -16,7 +16,6 @@ class Character(arcade.Sprite):
 
         #this refers to the sprite class and allows arcade commands to be used
         super().__init__(image,scale)
-        self.grid_size = 5
         self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
         self.speed = 0.5
@@ -32,7 +31,6 @@ class Character(arcade.Sprite):
         self.current_texture_index = 0.0
         self.horizontal_queue = 0
         self.vertical_queue = 0
-        self.last_pos = start_pos
         self.valid_directions = []
         self.last_adjustment = ()
         self.texture_open = {}
@@ -66,7 +64,7 @@ class Character(arcade.Sprite):
         # position of sprite
         return (self.center_x * 1, self.center_y * 1)
 
-    def set_movement(self, wtf):
+    def set_movement(self):
 
         self.update_target_quadrant()
         self.check_in_spawn()
@@ -90,7 +88,7 @@ class Character(arcade.Sprite):
             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                    self.set_rand_movement(self)
+                    self.set_rand_movement()
         
         #print("PATH FOUND (lol)")
 
@@ -102,19 +100,20 @@ class Character(arcade.Sprite):
 
     # NOTE: sometimes gets "stuck" and circles between two points
         # added escape method that creates "unable to find route" condition
-    def generate_path(self, idk, point1, point2):
+    def generate_path(self, point1, point2):
         path = []
-        point1 = self.closest_piv_point(self, point1)
-        point2 = self.closest_piv_point(self, point2)
+        point1 = self.closest_piv_point(point1)
+        point2 = self.closest_piv_point(point2)
         path.append(point1)
         print(f"STARTING PIV POINT: {point1}")
+        while_loop_length = 0
         while True:
             if point1 == point2:
                 return path
             elif len(path) > (len(PIVOT_COL) * len(PIVOT_ROW)):
                 return []
             else:
-                point1 = self.rec_generate_path(self, point1, point2)
+                point1 = self.rec_generate_path(point1, point2)
                 if point1 in path:
                     return []
                 else:
@@ -125,7 +124,7 @@ class Character(arcade.Sprite):
                     print("-----------------")
         
     
-    def rec_generate_path(self, idk, point1, point2):
+    def rec_generate_path(self, point1, point2):
         for col in PIVOT_GRAPH[point1[1]]:
             if col[0] == point1[0]:
                 piv_directions = col[1]
@@ -153,72 +152,72 @@ class Character(arcade.Sprite):
         if priority == "VERTICAL":
             if vertical == "MOVE LEFT TO TARGET":
                 if "W" in piv_directions:
-                    new_point = self.closest_piv_point(self, point1, "W")
+                    new_point = self.closest_piv_point(point1, "W")
                 elif horizontal == "MOVE DOWN TO TARGET":
                     if "S" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "S")
+                        new_point = self.closest_piv_point(point1, "S")
                     elif "N" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "N")
+                        new_point = self.closest_piv_point(point1, "N")
                 elif horizontal == "MOVE UP TO TARGET":
                     if "N" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "N")
+                        new_point = self.closest_piv_point(point1, "N")
                     elif "S" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "S")
+                        new_point = self.closest_piv_point(point1, "S")
                 else:
-                    new_point = self.closest_piv_point(self, point1, "E")
+                    new_point = self.closest_piv_point(point1, "E")
 
             if vertical == "MOVE RIGHT TO TARGET":
                 if "E" in piv_directions:
-                    new_point = self.closest_piv_point(self, point1, "E")
+                    new_point = self.closest_piv_point(point1, "E")
                 elif horizontal == "MOVE DOWN TO TARGET":
                     if "S" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "S")
+                        new_point = self.closest_piv_point(point1, "S")
                     elif "N" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "N")
+                        new_point = self.closest_piv_point(point1, "N")
                 elif horizontal == "MOVE UP TO TARGET":
                     if "N" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "N")
+                        new_point = self.closest_piv_point(point1, "N")
                     elif "S" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "S")
+                        new_point = self.closest_piv_point(point1, "S")
                 else:
-                    new_point = self.closest_piv_point(self, point1, "W")
+                    new_point = self.closest_piv_point(point1, "W")
                     
         else:
             if horizontal == "MOVE UP TO TARGET":
                 if "N" in piv_directions:
-                    new_point = self.closest_piv_point(self, point1, "N")
+                    new_point = self.closest_piv_point(point1, "N")
                 elif vertical == "MOVE LEFT TO TARGET":
                     if "W" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "W")
+                        new_point = self.closest_piv_point(point1, "W")
                     elif "E" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "E")
+                        new_point = self.closest_piv_point(point1, "E")
                 elif vertical == "MOVE RIGHT TO TARGET":
                     if "E" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "E")
+                        new_point = self.closest_piv_point(point1, "E")
                     elif "W" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "W")
+                        new_point = self.closest_piv_point(point1, "W")
                 else:
-                    new_point = self.closest_piv_point(self, point1, "S")
+                    new_point = self.closest_piv_point(point1, "S")
 
             elif horizontal == "MOVE DOWN TO TARGET":
                 if "S" in piv_directions:
-                    new_point = self.closest_piv_point(self, point1, "S")
+                    new_point = self.closest_piv_point(point1, "S")
                 elif vertical == "MOVE LEFT TO TARGET":
                     if "W" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "W")
+                        new_point = self.closest_piv_point(point1, "W")
                     elif "E" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "E")
+                        new_point = self.closest_piv_point(point1, "E")
                 elif vertical == "MOVE RIGHT TO TARGET":
                     if "E" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "E")
+                        new_point = self.closest_piv_point(point1, "E")
                     elif "W" in piv_directions:
-                        new_point = self.closest_piv_point(self, point1, "W")
+                        new_point = self.closest_piv_point(point1, "W")
                 else:
-                    new_point = self.closest_piv_point(self, point1, "N")
+                    new_point = self.closest_piv_point(point1, "N")
 
         return new_point
     
-    def closest_piv_point(self, idk, point, direction = None):
+    def closest_piv_point(self, point, direction = None):
         self_pos = point
         curr_closest_x = 10000
         curr_closest_y = 10000
@@ -318,7 +317,7 @@ class Character(arcade.Sprite):
             self.target_quadrant_change = True
         self.target_quadrant = horizontal + vertical
     
-    def set_rand_movement(self,idk):
+    def set_rand_movement(self):
         try:
             if not (self.horizontal_direction or self.vertical_direction):
                 for col in PIVOT_GRAPH[self.recent_piv_row]:
@@ -376,7 +375,7 @@ class Character(arcade.Sprite):
             elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
                 direction = "E"
 
-    def pathfind(self, idk):
+    def pathfind(self):
         point = self.path[0]
         if not (self.horizontal_direction or self.vertical_direction):
             if self.center_x < point[0]:
@@ -400,15 +399,19 @@ class Character(arcade.Sprite):
                 self.vertical_direction = -1
                 self.last_direction = "S"
             else:
+                self.center_x = self.recent_piv_col
+                self.center_y = self.recent_piv_row
+
                 self.horizontal_direction = 0
                 self.vertical_direction = 0
 
 
 
-    def change_state(self, new_state):
-        # DEAD overrides everything
-        if self.state == GHOST_EATEN:
-            pass
+    def change_state(self, new_state, force: bool = False):
+    # If already eaten (eyes) we normally block other changes,
+    # but allow explicit forced transitions (e.g. when respawning).
+        if self.state == GHOST_EATEN and not force:
+            return
         self.state = new_state
         if self.frame_open:
             self.texture = self.texture_open.get(self.state, self.texture)
@@ -445,13 +448,12 @@ class Character(arcade.Sprite):
                 self.recent_piv_col = num
 
         #print("SET TARGET")
-        self.set_movement(self)
+        self.set_movement()
         self.change_x = self.horizontal_direction * self.speed
         self.change_y = self.vertical_direction * self.speed
 
         self.physics_engine.update()
-
-        self.last_pos = (self.center_x, self.center_y)
+        
 
     def update_animation(self, delta_time: float = 1/60):
         self.animation_timer += delta_time
@@ -570,7 +572,7 @@ class Pacman(Character):
 
         self.overwrite = [None, None]
 
-    def set_movement(self, wtf):
+    def set_movement(self):
         self.valid_directions = []
         #self.in_piv_col = can move up or down (dependent on x cord)
         #self.in_piv_row = can move left or right (dependent on y cord)
@@ -669,7 +671,7 @@ class Pacman(Character):
                 self.overwrite = ["LEFT", "UP"]
 
             self.directions = (0,1)
-            self.set_movement(self)
+            self.set_movement()
 
             self.up_pressed = True
 
@@ -748,7 +750,7 @@ class Pacman(Character):
 
                 self.overwrite = [None, None]
 
-        self.set_movement(self)
+        self.set_movement()
 
     def update_animation(self, delta_time: float = 1 / 60):
         # Death animation overrides everything
@@ -782,7 +784,7 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(115, 650), point = 200):
+    def __init__(self, walls, start_pos=(GHOST_CENTER_X - GHOST_WIDTH, GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
                          "images/blinky up 0.png",
                          scale = GHOST_SCALE,
@@ -838,8 +840,9 @@ class Blinky(Character):
 
     # working coord at (485, 270) ?
     # other testing coord (115, 650)
-    def set_movement(self, wtf):
-        super().set_movement(self)
+    def set_movement(self):
+        super().set_movement()
+            
         print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
         print(f"TARGET: {self.target}")
         print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
@@ -868,7 +871,7 @@ class Blinky(Character):
                 if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.path = self.generate_path((self.center_x, self.center_y), self.target)
                     self.target_quadrant_change = False
                 else:
                     if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
@@ -876,13 +879,13 @@ class Blinky(Character):
                         self.horizontal_direction = 0
                         self.vertical_direction = 0
                     if self.path:
-                        self.pathfind(self)
+                        self.pathfind()
             else:
                     
                 if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                    self.set_rand_movement(self)
+                    self.set_rand_movement()
                 
 
                 
@@ -940,8 +943,8 @@ class Pinky(Character):
             self.texture = self.texture_close.get(self.state, self.texture)
 
     
-    def set_movement(self, wtf):
-        super().set_movement(self)
+    def set_movement(self):
+        super().set_movement()
         print(f"IS: {self.in_spawn}")
         print(f"PINKY POS: {(self.center_x, self.center_y)}")
         self.update_target_quadrant()
@@ -967,7 +970,7 @@ class Pinky(Character):
                 if not self.path or self.target_quadrant_change:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.path = self.generate_path((self.center_x, self.center_y), self.target)
                     self.target_quadrant_change = False
                 else:
                     if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
@@ -975,13 +978,13 @@ class Pinky(Character):
                         self.horizontal_direction = 0
                         self.vertical_direction = 0
                     if self.path:
-                        self.pathfind(self)
+                        self.pathfind()
             else:
                     
                 if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
-                    self.set_rand_movement(self)
+                    self.set_rand_movement()
                 
 
                 
@@ -1036,8 +1039,8 @@ class Inky(Character):
             self.texture = self.texture_close.get(self.state, self.texture)
 
 
-    # def set_movement(self, wtf):
-    #     super().set_movement(self)
+    # def set_movement(self):
+    #     super().set_movement()
     #     print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
     #     print(f"TARGET: {self.target}")
     #     print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
@@ -1067,7 +1070,7 @@ class Inky(Character):
     #             if not self.path or self.target_quadrant_change:
     #                 self.horizontal_direction = 0
     #                 self.vertical_direction = 0
-    #                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+    #                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
     #                 self.target_quadrant_change = False
     #             else:
     #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
@@ -1075,13 +1078,13 @@ class Inky(Character):
     #                     self.horizontal_direction = 0
     #                     self.vertical_direction = 0
     #                 if self.path:
-    #                     self.pathfind(self)
+    #                     self.pathfind()
     #         else:
                     
     #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
     #                 self.horizontal_direction = 0
     #                 self.vertical_direction = 0
-    #                 self.set_rand_movement(self)
+    #                 self.set_rand_movement()
                 
 
     # def on_update(self, delta_time):
@@ -1136,8 +1139,8 @@ class Clyde(Character):
             self.texture = self.texture_close.get(self.state, self.texture)
 
 
-    # def set_movement(self, wtf):
-    #     super().set_movement(self)
+    # def set_movement(self):
+    #     super().set_movement()
     #     self.update_target_quadrant()
     #     self.check_in_spawn()
 
@@ -1162,7 +1165,7 @@ class Clyde(Character):
     #             if not self.path or self.target_quadrant_change:
     #                 self.horizontal_direction = 0
     #                 self.vertical_direction = 0
-    #                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+    #                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
     #                 self.target_quadrant_change = False
     #             else:
     #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
@@ -1170,13 +1173,13 @@ class Clyde(Character):
     #                     self.horizontal_direction = 0
     #                     self.vertical_direction = 0
     #                 if self.path:
-    #                     self.pathfind(self)
+    #                     self.pathfind()
     #         else:
                     
     #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
     #                 self.horizontal_direction = 0
     #                 self.vertical_direction = 0
-    #                 self.set_rand_movement(self)
+    #                 self.set_rand_movement()
                 
 
     # def on_update(self, delta_time):
