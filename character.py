@@ -5,7 +5,7 @@ enemies and pacman; things that move)
 
 Character is imported by classes
 """
-import arcade
+import arcade, random
 from constants.constants import *
 
 class Character(arcade.Sprite):
@@ -19,7 +19,7 @@ class Character(arcade.Sprite):
         self.grid_size = 5
         self.physics_engine = arcade.PhysicsEngineSimple(self, walls)
         self.position = start_pos
-        self.speed = 1
+        self.speed = 0.5
         self.horizontal_direction = 0
         self.vertical_direction = 0
         self.in_piv_col = False
@@ -39,6 +39,11 @@ class Character(arcade.Sprite):
         self.texture_close = {}
         self.state = None
         self.frame_open = True
+        self.quadrant = ""
+        self.target_quadrant = ""
+        self.target_quadrant_change = False
+        self.last_direction = ""
+        self.in_spawn = False
         self.waka_player = None
         # sounds
         self.sounds = {
@@ -62,8 +67,30 @@ class Character(arcade.Sprite):
         return (self.center_x * 1, self.center_y * 1)
 
     def set_movement(self, wtf):
-        print("placeholder")
-        #print("PATH GENERATED")
+
+        self.update_target_quadrant()
+        self.check_in_spawn()
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        
+        else: 
+
+            if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
         
         #print("PATH FOUND (lol)")
 
@@ -262,18 +289,120 @@ class Character(arcade.Sprite):
     
         return (curr_closest_x, curr_closest_y)
 
-    # TODO: use self.path to influence movement
-        # during chase condition, new path is generated whenever pacman leaves quadrant currently moving towards
-        # flee targets farthest corner in diagonal quadrant
-            # random movement once quadrant is reached
-            # if exits quadrant, track back towards corner
-                # possibly code each ghost "home" to unique quadrant?
-        # when path is empty, randomize movement
-            # custom function, check for in piv row/col, pick random valid direction
-        # include some sort of math to use level/difficulty in rate of random movement
-    def pathfind(self, idk):
-        print("PATH: ")
+    
+    
+    def update_quadrant(self):
+        if self.center_y > 385:
+            horizontal = "T"
+        else:
+            horizontal = "B"
+
+        if self.center_x < 355:
+            vertical = "L"
+        else:
+            vertical = "R"
         
+        self.quadrant = horizontal + vertical
+    
+    def update_target_quadrant(self):
+        if self.target[1] > 385:
+            horizontal = "T"
+        else:
+            horizontal = "B"
+
+        if self.target[0] < 355:
+            vertical = "L"
+        else:
+            vertical = "R"
+        if self.target_quadrant and self.target_quadrant != horizontal + vertical:
+            self.target_quadrant_change = True
+        self.target_quadrant = horizontal + vertical
+    
+    def set_rand_movement(self,idk):
+        try:
+            if not (self.horizontal_direction or self.vertical_direction):
+                for col in PIVOT_GRAPH[self.recent_piv_row]:
+                    if col[0] == self.recent_piv_col:
+                        valid_directions = col[1]
+                direction = ""
+                retread = True
+                while retread:
+                    direction = random.choice(valid_directions)
+                    if direction == "N" and self.last_direction != "S":
+                        retread = False
+                    elif direction == "E" and self.last_direction != "W":
+                        retread = False
+                    elif direction == "W" and self.last_direction != "E":
+                        retread = False
+                    elif direction == "S" and self.last_direction != "N":
+                        retread = False
+                    
+                    # prevents ghosts from randomly pathing into wrapping row
+                    if self.recent_piv_row == 385 and self.recent_piv_col == 225 and direction == "E":
+                        retread = False
+                    elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
+                        retread = False
+                if direction == "N":
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 1
+                elif direction == "S":
+                    self.horizontal_direction = 0
+                    self.vertical_direction = -1
+                elif direction == "E":
+                    self.horizontal_direction = 1
+                    self.vertical_direction = 0
+                elif direction == "W":
+                    self.horizontal_direction = -1
+                    self.vertical_direction = 0
+                self.last_direction = direction
+        except UnboundLocalError:
+            direction = self.last_direction
+            if direction == "N":
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+            elif direction == "S":
+                self.horizontal_direction = 0
+                self.vertical_direction = -1
+            elif direction == "E":
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif direction == "W":
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            
+            # prevents ghosts from randomly pathing into wrapping row
+            if self.recent_piv_row == 385 and self.recent_piv_col == 225 and direction == "E":
+                direction = "W"
+            elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
+                direction = "E"
+
+    def pathfind(self, idk):
+        point = self.path[0]
+        if not (self.horizontal_direction or self.vertical_direction):
+            if self.center_x < point[0]:
+                self.center_y = self.recent_piv_row
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+                self.last_direction = "E"
+            elif self.center_x > point[0]:
+                self.center_y = self.recent_piv_row
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+                self.last_direction = "W"
+            elif self.center_y < point[1]:
+                self.center_x = self.recent_piv_col
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+                self.last_direction = "N"
+            elif self.center_y > point[1]:
+                self.center_x = self.recent_piv_col
+                self.horizontal_direction = 0
+                self.vertical_direction = -1
+                self.last_direction = "S"
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
+
 
 
     def change_state(self, new_state):
@@ -299,6 +428,7 @@ class Character(arcade.Sprite):
 
         self.in_piv_col = False
         self.in_piv_row = False
+        self.update_quadrant()
 
         for num in range(int(plinus_y[0]), int(plinus_y[1])):
             if num in PIVOT_ROW:
@@ -316,8 +446,8 @@ class Character(arcade.Sprite):
 
         #print("SET TARGET")
         self.set_movement(self)
-        self.change_x = self.horizontal_direction * PLAYER_MOVEMENT_SPEED
-        self.change_y = self.vertical_direction * PLAYER_MOVEMENT_SPEED
+        self.change_x = self.horizontal_direction * self.speed
+        self.change_y = self.vertical_direction * self.speed
 
         self.physics_engine.update()
 
@@ -368,11 +498,25 @@ class Character(arcade.Sprite):
         self.vertical_direction = 0
         self.horizontal_direction = 0
         self.speed = 0
+
     def reset_pos(self):
         x, y = PACMAN_SPAWN_COORD
         self.center_x = x
         self.center_y = y
 
+    def check_in_spawn(self):
+        ghost_minus_x = GHOST_CENTER_X - GHOST_WIDTH
+        ghost_plus_x = GHOST_CENTER_X + GHOST_WIDTH
+        if (self.center_y >= GHOST_CENTER_Y and self.center_y < 460) and (self.center_x >= ghost_minus_x and self.center_x <= ghost_plus_x):
+            self.in_spawn = True
+        else:
+            if self.in_spawn:
+                self.horizontal_direction = 0
+                self.vertical_direction = 0
+                self.center_x = self.recent_piv_col
+                self.center_y = self.recent_piv_row
+            self.in_spawn = False
+            
 
 
 class Pacman(Character):
@@ -635,15 +779,13 @@ class Blinky(Character):
     """
     Blinky subclass
     """
-    def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
+    def __init__(self, walls, start_pos=(115, 650), point = 200):
         super().__init__(walls,
-                         "images/blinky.png",
+                         "images/blinky up 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         
-        self.speed = 3
         self.point = point
-        self.target = (Pacman.center_x, Pacman.center_y)
         self.state = GHOST_CHASE
 
         self.texture_open = {
@@ -666,12 +808,12 @@ class Blinky(Character):
            Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
             # right
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky right 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky right 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky right 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky right 0.png")
         elif self.horizontal_direction < 0:
             # left
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky left 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky left 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.png")
         elif self.vertical_direction > 0:
             # up
             self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky up 1.gif")
@@ -695,9 +837,52 @@ class Blinky(Character):
     # other testing coord (115, 650)
     def set_movement(self, wtf):
         super().set_movement(self)
-        if not self.path:
-            self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
-    
+        print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
+        print(f"TARGET: {self.target}")
+        print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
+        print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
+        print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
+        print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
+        self.update_target_quadrant()
+        if self.in_spawn and self.state != GHOST_EATEN:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
+                
+
+                
     # def on_update(self, delta_time):
     #     nothing = ""
     
@@ -708,10 +893,10 @@ class Pinky(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/pinky.png",
+                         "images/pinky right 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
+
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
@@ -730,7 +915,8 @@ class Pinky(Character):
         self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
             self.texture_open = arcade.load_texture("images/pinky right 0.png")
             self.texture_close = arcade.load_texture("images/pinky right 1.png") # right
@@ -744,8 +930,61 @@ class Pinky(Character):
             self.texture_open = arcade.load_texture("images/pinky down 0.png")
             self.texture_close = arcade.load_texture("images/pinky down 1.png") # down
 
-    def on_update(self, delta_time):
-        nothing = ""
+        # Ensure the currently displayed texture matches the frame
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
+    
+    def set_movement(self, wtf):
+        super().set_movement(self)
+        print(f"IS: {self.in_spawn}")
+        print(f"PINKY POS: {(self.center_x, self.center_y)}")
+        self.update_target_quadrant()
+        self.check_in_spawn()
+        if self.in_spawn:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
+        
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        
+        else:       
+
+            if self.quadrant != self.target_quadrant:
+                if not self.path or self.target_quadrant_change:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+                    self.target_quadrant_change = False
+                else:
+                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                        self.path.pop(0)
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                    if self.path:
+                        self.pathfind(self)
+            else:
+                    
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement(self)
+                
+
+                
+
+    # def on_update(self, delta_time):
+    #     nothing = ""
 
 class Inky(Character):
     """
@@ -753,10 +992,9 @@ class Inky(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X-GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/inky.png",
+                         "images/inky left 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
@@ -774,7 +1012,8 @@ class Inky(Character):
 
         self.texture = self.texture_open[self.state]
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
             self.texture_open = arcade.load_texture("images/inky right 0.png")
             self.texture_close = arcade.load_texture("images/inky right 1.png") # right
@@ -788,8 +1027,62 @@ class Inky(Character):
             self.texture_open = arcade.load_texture("images/inky down 0.png")
             self.texture_close = arcade.load_texture("images/inky down 1.png") # down
 
-    def on_update(self, delta_time):
-        nothing = ""
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
+
+    # def set_movement(self, wtf):
+    #     super().set_movement(self)
+    #     print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
+    #     print(f"TARGET: {self.target}")
+    #     print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
+    #     print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
+    #     print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
+    #     print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
+    #     self.update_target_quadrant()
+    #     self.check_in_spawn()
+    #     if self.in_spawn:
+    #         if self.center_x < GHOST_CENTER_X:
+    #             self.horizontal_direction = 1
+    #             self.vertical_direction = 0
+    #         elif self.center_x > GHOST_CENTER_X:
+    #             self.horizontal_direction = -1
+    #             self.vertical_direction = 0
+    #         else:
+    #             self.horizontal_direction = 0
+    #             self.vertical_direction = 1
+
+    #     elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+    #         self.horizontal_direction = 0
+    #         self.vertical_direction = -1
+        
+    #     else:       
+
+    #         if self.quadrant != self.target_quadrant:
+    #             if not self.path or self.target_quadrant_change:
+    #                 self.horizontal_direction = 0
+    #                 self.vertical_direction = 0
+    #                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+    #                 self.target_quadrant_change = False
+    #             else:
+    #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+    #                     self.path.pop(0)
+    #                     self.horizontal_direction = 0
+    #                     self.vertical_direction = 0
+    #                 if self.path:
+    #                     self.pathfind(self)
+    #         else:
+                    
+    #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+    #                 self.horizontal_direction = 0
+    #                 self.vertical_direction = 0
+    #                 self.set_rand_movement(self)
+                
+
+    # def on_update(self, delta_time):
+    #     nothing = ""
 
 class Clyde(Character):
     """
@@ -797,10 +1090,10 @@ class Clyde(Character):
     """
     def __init__(self, walls, start_pos=(GHOST_CENTER_X+GHOST_WIDTH,GHOST_CENTER_Y), point = 200):
         super().__init__(walls,
-                         "images/clyde.png",
+                         "images/clyde down 0.gif",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
-        self.speed = 3
+
         self.point = point
         self.state = GHOST_CHASE
         self.texture_open = {
@@ -819,7 +1112,8 @@ class Clyde(Character):
         self.texture = self.texture_open[self.state]
 
     def update_eyes(self):
-        """Rotate Ghost eyes to face his current movement direction."""
+        """Set the ghost textures for eyes based on movement direction.
+        Keep texture_open/texture_close as dicts (do not overwrite them)."""
         if self.horizontal_direction > 0:
             self.texture_open = arcade.load_texture("images/clyde right 0.png")
             self.texture_close = arcade.load_texture("images/clyde right 1.png") # right
@@ -833,8 +1127,57 @@ class Clyde(Character):
             self.texture_open = arcade.load_texture("images/clyde down 0.png")
             self.texture_close = arcade.load_texture("images/clyde down 1.png") # down
 
-    def on_update(self, delta_time):
-        nothing = ""
+        if getattr(self, "frame_open", True):
+            self.texture = self.texture_open.get(self.state, self.texture)
+        else:
+            self.texture = self.texture_close.get(self.state, self.texture)
+
+
+    # def set_movement(self, wtf):
+    #     super().set_movement(self)
+    #     self.update_target_quadrant()
+    #     self.check_in_spawn()
+
+    #     if self.in_spawn:
+    #         if self.center_x < GHOST_CENTER_X:
+    #             self.horizontal_direction = 1
+    #             self.vertical_direction = 0
+    #         elif self.center_x > GHOST_CENTER_X:
+    #             self.horizontal_direction = -1
+    #             self.vertical_direction = 0
+    #         else:
+    #             self.horizontal_direction = 0
+    #             self.vertical_direction = 1
+        
+    #     elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+    #         self.horizontal_direction = 0
+    #         self.vertical_direction = -1
+        
+    #     else:       
+
+    #         if self.quadrant != self.target_quadrant:
+    #             if not self.path or self.target_quadrant_change:
+    #                 self.horizontal_direction = 0
+    #                 self.vertical_direction = 0
+    #                 self.path = self.generate_path(self, (self.center_x, self.center_y), self.target)
+    #                 self.target_quadrant_change = False
+    #             else:
+    #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+    #                     self.path.pop(0)
+    #                     self.horizontal_direction = 0
+    #                     self.vertical_direction = 0
+    #                 if self.path:
+    #                     self.pathfind(self)
+    #         else:
+                    
+    #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+    #                 self.horizontal_direction = 0
+    #                 self.vertical_direction = 0
+    #                 self.set_rand_movement(self)
+                
+
+    # def on_update(self, delta_time):
+    #     nothing = ""
 
 
 class Walls(arcade.Sprite):
