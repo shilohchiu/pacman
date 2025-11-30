@@ -6,6 +6,7 @@ query_fs is imported by classes
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
+from google.cloud.firestore import Query
 from score import Score
 
 def open_firestore_db():
@@ -50,20 +51,20 @@ def view_scores(user_ref, initial):
     return user_scores
 
 def rt_high_score(user_ref):
-    top_doc = user_ref.order_by("high_score", direction=firestore.Query.DESCENDING).limit(1).get()
+    top_doc = user_ref.order_by("high_score", direction=Query.DESCENDING).limit(1).get()
     top_score = top_doc[0].to_dict()["high_score"]
     return top_score
 
 def is_high_score(user_ref):
     top_ten_doc = user_ref.order_by("high_score",
-                                    direction=firestore.Query.DESCENDING).limit(10).get()
+                                    direction=Query.DESCENDING).limit(10).get()
     lowest_high_score = top_ten_doc[9].to_dict()["high_score"]
     return lowest_high_score
 
 def top_ten_scores(user_ref):
     top_ten = {}
     top_ten_doc = user_ref.order_by("high_score",
-                                    direction=firestore.Query.DESCENDING).limit(10).get()
+                                    direction=Query.DESCENDING).limit(10).get()
     for doc in top_ten_doc:
         doc_id = doc.id
         score = doc.to_dict()

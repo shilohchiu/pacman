@@ -6,7 +6,9 @@ score is imported by query_fs and classes
 """
 class Score:
     #constructor
-    def __init__(self, initial = "adm", high_score = 0, scores = [], curr_score = 0):
+    def __init__(self, initial = "adm", high_score = 0, scores = None, curr_score = 0):
+        if scores is None:
+            scores = []
         self.initial = initial
         self.high_score = high_score
         self.scores = scores
