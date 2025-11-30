@@ -868,6 +868,7 @@ class GameView(arcade.View):
                     self.pacman.freeze()
                     for g in self.ghosts:
                         g.freeze()
+                        g.reset_pos()
 
                     # remove one life icon (last in list)
                     if len(self.pacman_score_list) > 0:
