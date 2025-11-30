@@ -25,7 +25,7 @@ class Score:
 
     def to_dict(self):
         return {
-            #"initial" : self.initial,
+            "initial" : self.initial,
             "high_score": self.high_score,
             "scores": self.scores,
             "curr_score":self.curr_score
