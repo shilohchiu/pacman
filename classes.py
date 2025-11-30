@@ -102,8 +102,6 @@ class LevelUpView(arcade.View):
 
         super().__init__()
 
-        # print("level up view activated")
-
         #UIManager
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -810,15 +808,6 @@ class GameView(arcade.View):
             self.clyde.speed = 1
             self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
 
-        print(f"PAC SIZE: {self.pacman.size}")
-        print(f"BLINKY PATH: {self.blinky.path}")
-        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
-        print(f"horizontal factor: {self.pacman.horizontal_direction}")
-        print(f"vertical factor: {self.pacman.vertical_direction}")
-        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
-        print(f"directions: {self.pacman.directions}")
-        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
-
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
                 sprite.on_update(delta_time)
@@ -879,6 +868,7 @@ class GameView(arcade.View):
                     self.pacman.freeze()
                     for g in self.ghosts:
                         g.freeze()
+                        g.reset_pos()
 
                     # remove one life icon (last in list)
                     if len(self.pacman_score_list) > 0:

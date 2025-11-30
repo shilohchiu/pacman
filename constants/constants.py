@@ -95,7 +95,6 @@ GHOST_FLEE = "flee"
 GHOST_EATEN = "eaten"
 GHOST_BLINK = "blink"
 
-#TODO do we need both of the PIVOT_COL lists
 PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
 
 
@@ -105,6 +104,9 @@ PIVOT_COL = [115, 160, 165, 225, 285, 325, 355, 385, 425, 485, 545, 595]
 # BOT HALF SPEC: 165, 545, 285, 425
 PIVOT_ROW = [650, 580, 520, 460, 385, 330, 270, 210, 150, 90]
 
+# Organizes pivot rows and associated pivot columns
+    # Each key is a pivot row, first value of its value's list is the pivot column
+    # Each pivot column has its associated valid directions as second item in tuple
 PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (225, ("S", "E", "W")),
                         (325, ("S", "W")),
