@@ -613,6 +613,7 @@ class GameView(arcade.View):
         """
         Pac-Man's lives
         """
+        #DEBUGGGINHH
         for x in range(PACMAN_FIRST_LIFE_X_POSITION,
                        PACMAN_FOURTH_LIFE_X_POSITION,
                        PACMAN_LIFE_X_POSITION_STRIDE):
