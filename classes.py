@@ -253,7 +253,7 @@ class ViewScoresView(arcade.View):
 
         start_game_button = StartGameButton(self.window,
                                         start_callback=lambda: self.window.show_view(GameView()),
-                                        text = "BACK TO GAME",
+                                        text = "PLAY GAME",
                                         width=BUTTON_WIDTH, style=BUTTON_STYLE)
 
         self.h_box.add(start_game_button)
