@@ -4,6 +4,8 @@
 
 Python Arcade recreation of Pacman for UVM's Software Engineering.
 
+![game](images/background.png)
+
 # Installation/Set-Up
 In terminal: 
 -  `cd` into desired directory and run the following: 
