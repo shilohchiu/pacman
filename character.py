@@ -772,7 +772,7 @@ class Pacman(Character):
                     self.speed = PACMAN_SPEED
 
             # While dying, do not run normal open/close animation
-            # return
+            return
 
         # Not dying: run normal frame toggle from parent
         return super().update_animation(delta_time)
