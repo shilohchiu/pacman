@@ -408,7 +408,8 @@ class Character(arcade.Sprite):
     def change_state(self, new_state):
         # DEAD overrides everything
         if self.state == GHOST_EATEN:
-            return
+            pass
+            # return
         self.state = new_state
         if self.frame_open:
             self.texture = self.texture_open.get(self.state, self.texture)
