@@ -832,10 +832,10 @@ class GameView(arcade.View):
         self.clyde.update_animation()
         self.inky.update_animation()
         self.pinky.update_animation()
-        self.blinky.update_eyes()
-        self.clyde.update_eyes()
-        self.inky.update_eyes()
-        self.pinky.update_eyes()
+        # self.blinky.update_eyes()
+        # self.clyde.update_eyes()
+        # self.inky.update_eyes()
+        # self.pinky.update_eyes()
 
         #pellet collsions
         points = Pellet.pellet_collision(self.pacman, self.pellet_list, game_view=self)
