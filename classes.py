@@ -947,10 +947,9 @@ class GameView(arcade.View):
                 pass
             self._ghost_blink_calls.pop(ghost, None)
 
-
     def one_up(self, score_list):
         """add an extra life"""
-        if len(score_list) <=  3:
+        if (len(score_list) <= PACMAN_NUM_LIVES):
             pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
 
             pac_score.center_y = PACMAN_LIVES_Y_POSITION
