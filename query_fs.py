@@ -24,24 +24,24 @@ def open_db_collection(db):
 
 def add_score(user_ref, initial, score):
     #query database
-    query = user_ref.where(filter=FieldFilter("initial", "==", initial))
-    doc_exist = query.get()
+    doc_ref = user_ref.document(initial)
+    doc_exist = doc_ref.get()
     #if a document exists just add score to scores and check if updated high score
-    if doc_exist:
-        doc_snap = doc_exist[0]
-        doc_data = doc_snap.to_dict()
+    if doc_exist.exists:
+
+        doc_data = doc_exist.to_dict()
         update_data = {"scores": ArrayUnion([score])}
 
         #check if score is new overall high score
         if doc_data.get("high_score",0) < score:
             update_data["high_score"] = score
 
-        user_ref.document(initial).update(update_data)
+        doc_ref.update(update_data)
 
     #otherwise create a score and add to_dict to database
     else:
         new_data = Score(initial, high_score = score, scores = [score], curr_score = score)
-        user_ref.document(initial).set(new_data.to_dict())
+        doc_ref.set(new_data.to_dict())
 
 def view_scores(user_ref, initial):
     user_doc = user_ref.document(initial).get()
