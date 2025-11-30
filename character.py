@@ -781,7 +781,7 @@ class Blinky(Character):
     """
     def __init__(self, walls, start_pos=(115, 650), point = 200):
         super().__init__(walls,
-                         "images/blinky up 0.gif",
+                         "images/blinky up 0.png",
                          scale = GHOST_SCALE,
                          start_pos=start_pos)
         
@@ -789,13 +789,13 @@ class Blinky(Character):
         self.state = GHOST_CHASE
 
         self.texture_open = {
-            GHOST_CHASE: arcade.load_texture("images/blinky right 1.gif"),
+            GHOST_CHASE: arcade.load_texture("images/blinky right 1.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 0.gif"),
             GHOST_BLINK: arcade.load_texture("images/blue 0.gif"),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
         }
         self.texture_close = {
-            GHOST_CHASE: arcade.load_texture("images/blinky right 0.gif"),
+            GHOST_CHASE: arcade.load_texture("images/blinky right 0.png"),
             GHOST_FLEE: arcade.load_texture("images/blue 1.gif"),
             GHOST_BLINK: arcade.load_texture("images/white.png",),
             GHOST_EATEN: arcade.load_texture("images/eyes.png")
@@ -816,12 +816,12 @@ class Blinky(Character):
             self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky left 0.png")
         elif self.vertical_direction > 0:
             # up
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky up 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky up 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky up 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky up 0.png")
         elif self.vertical_direction < 0:
             # down
-            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky down 1.gif")
-            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky down 0.gif")
+            self.texture_open[GHOST_CHASE] = arcade.load_texture("images/blinky down 1.png")
+            self.texture_close[GHOST_CHASE] = arcade.load_texture("images/blinky down 0.png")
 
         # Ensure the currently displayed texture matches the frame
         if getattr(self, "frame_open", True):
