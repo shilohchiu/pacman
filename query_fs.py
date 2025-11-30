@@ -6,7 +6,7 @@ query_fs is imported by classes
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
-from google.cloud.firestore import Query
+from google.cloud.firestore import Query, ArrayUnion
 from score import Score
 
 def open_firestore_db():
@@ -28,13 +28,15 @@ def add_score(user_ref, initial, score):
     doc_exist = query.get()
     #if a document exists just add score to scores and check if updated high score
     if doc_exist:
+        doc_snap = doc_exist[0]
+        doc_data = doc_snap.to_dict()
+        update_data = {"scores": ArrayUnion([score])}
+
         #check if score is new overall high score
-        document = doc_exist.from_dict()
+        if doc_data.get("high_score",0) < score:
+            update_data["high_score"] = score
 
-        if document["high_score"] < score:
-            user_ref.document(initial).update({"high_score":score},{"scores":score})
-
-        user_ref.document(initial).update({"scores":score})
+        user_ref.document(initial).update(update_data)
 
     #otherwise create a score and add to_dict to database
     else:
