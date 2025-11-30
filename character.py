@@ -405,9 +405,10 @@ class Character(arcade.Sprite):
 
 
 
-    def change_state(self, new_state):
-        # DEAD overrides everything
-        if self.state == GHOST_EATEN:
+    def change_state(self, new_state, force: bool = False):
+    # If already eaten (eyes) we normally block other changes,
+    # but allow explicit forced transitions (e.g. when respawning).
+        if self.state == GHOST_EATEN and not force:
             return
         self.state = new_state
         if self.frame_open:

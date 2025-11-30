@@ -781,11 +781,11 @@ class GameView(arcade.View):
         self.pacman.update_animation(delta_time)
         self.pacman.update_rotation()
         # TODO: fix crash
-        # self.blinky.update_animation()
-        # self.clyde.update_animation()
-        # self.inky.update_animation()
+        self.blinky.update_animation()
+        self.clyde.update_animation()
+        self.inky.update_animation()
         # TODO: fix crash
-        # self.pinky.update_animation()
+        self.pinky.update_animation()
         self.blinky.update_eyes()
         self.clyde.update_eyes()
         self.inky.update_eyes()
@@ -853,6 +853,7 @@ class GameView(arcade.View):
                     base_ghost_point = getattr(ghost, "point", 0)
                     global_score.adj_curr_score(base_ghost_point*(2**ghost_num))
                     ghost.change_state(GHOST_EATEN)
+                    arcade.schedule_once(lambda dt, g=ghost: g.change_state(GHOST_CHASE,True), 6)
                     ghost_num += 1
                 if ghost_num == 5:
                     ghost_num = 0
