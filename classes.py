@@ -318,7 +318,7 @@ class SaveScoreView(arcade.View):
 
         start_game_button = StartGameButton(self.window,
                                         start_callback=lambda: self.window.show_view(GameView()),
-                                        text = "BACK TO GAME",
+                                        text = "PLAY GAME",
                                         width=BUTTON_WIDTH, style=BUTTON_STYLE)
         self.h_box.add(start_game_button)
 
@@ -632,18 +632,6 @@ class GameView(arcade.View):
 
         self.sprites.append(self.pacman)
 
-        self.sprites.append(self.blinky)
-        self.ghosts.append(self.blinky)
-
-        self.sprites.append(self.pinky)
-        self.ghosts.append(self.pinky)
-
-        self.sprites.append(self.inky)
-        self.ghosts.append(self.inky)
-
-        self.sprites.append(self.clyde)
-        self.ghosts.append(self.clyde)
-
         # create pellets
 
         temp_list = arcade.SpriteList()
@@ -694,6 +682,18 @@ class GameView(arcade.View):
         for i in (big_pellet_0, big_pellet_1, big_pellet_2, big_pellet_3):
             self.sprites.append(i)
             self.pellet_list.append(i)
+
+        self.sprites.append(self.blinky)
+        self.ghosts.append(self.blinky)
+
+        self.sprites.append(self.pinky)
+        self.ghosts.append(self.pinky)
+
+        self.sprites.append(self.inky)
+        self.ghosts.append(self.inky)
+
+        self.sprites.append(self.clyde)
+        self.ghosts.append(self.clyde)
 
     def on_show_view(self):
         arcade.draw_lrbt_rectangle_filled(40,WINDOW_WIDTH-40, 40, WINDOW_HEIGHT-40,(0,0,0,220))
@@ -781,7 +781,7 @@ class GameView(arcade.View):
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
-        
+
         if self.blinky.state == GHOST_EATEN:
             self.blinky.center_x = GHOST_CENTER_X
             self.blinky.center_y = GHOST_CENTER_Y
@@ -810,9 +810,6 @@ class GameView(arcade.View):
             self.clyde.speed = 1
             self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
 
-        
-        
-        
         print(f"PAC SIZE: {self.pacman.size}")
         print(f"BLINKY PATH: {self.blinky.path}")
         print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
@@ -822,7 +819,6 @@ class GameView(arcade.View):
         print(f"directions: {self.pacman.directions}")
         print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
 
-
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
                 sprite.on_update(delta_time)
@@ -830,12 +826,12 @@ class GameView(arcade.View):
         self.sprites.update()
         self.pacman.update_animation(delta_time)
         self.pacman.update_rotation()
-        # TODO: fix crash
+
         self.blinky.update_animation()
         self.clyde.update_animation()
         self.inky.update_animation()
-        # TODO: fix crash
         self.pinky.update_animation()
+
         self.blinky.update_eyes()
         self.clyde.update_eyes()
         self.inky.update_eyes()
@@ -1011,7 +1007,7 @@ class GameView(arcade.View):
 
     def one_up(self, score_list):
         """add an extra life"""
-        if (len(score_list) <= PACMAN_NUM_LIVES):
+        if len(score_list) <= PACMAN_NUM_LIVES:
             pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
 
             pac_score.center_y = PACMAN_LIVES_Y_POSITION
