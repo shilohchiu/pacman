@@ -1107,6 +1107,20 @@ class Inky(Character):
     #                 self.set_rand_movement()
                 
 
+    def reset_pos(self):
+        x = GHOST_CENTER_X
+        y = GHOST_CENTER_Y
+        self.center_x = x
+        self.center_y = y
+
+        # Reset direction, movement, etc.
+        self.change_x = 0
+        self.change_y = 0
+        self.horizontal_direction = 0
+        self.vertical_direction = 0
+
+        # Restore state to chase or scatter
+        self.state = GHOST_CHASE
     # def on_update(self, delta_time):
     #     nothing = ""
 
