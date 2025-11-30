@@ -1,5 +1,7 @@
 """Contains constant definitions used for walls"""
-from constants.constants import WINDOW_HEIGHT, WINDOW_WIDTH, MAZE_WIDTH, MAZE_HEIGHT, H_DISTANCE_BETWEEN_EDGE_AND_MAZE
+from constants.constants import (
+    WINDOW_HEIGHT, WINDOW_WIDTH, MAZE_WIDTH, MAZE_HEIGHT, H_DISTANCE_BETWEEN_EDGE_AND_MAZE
+)
 
 TILE_WIDTH = 10
 HALF_TILE_WIDTH = int(TILE_WIDTH / 2)

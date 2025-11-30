@@ -1,9 +1,21 @@
 """
-contains functions for 
-spawning in maze
+walls contains functions for spawning in maze.
+
+maze is imported by classes
 """
 import arcade
-from constants.wall_constants import *
+from constants.wall_constants import (
+    BOTTOM_BIT_Y_POS, CENTER_PIECE_X_POS, HALF_TILE_WIDTH, HIGHEST_H_MINI_COMPONENT_Y_POS,
+    H_MINI_COMPONENT_Y_POS_3RD_FROM_TOP, H_DISTANCE_BETWEEN_EDGE_AND_MAZE, LEFT_BOTTOM_BIT_X_POS,
+    LEFT_MINIER_BOX_X_POSITION, LEFT_UPSIDE_DOWN_X_POS, LEFT_UPSIDE_DOWN_Y_POS, LEFT_VERTICAL_X_POS,
+    LOWER_MIDDLE_T_Y_POS, LOWEST_H_MINI_COMPONENT_Y_POS, MAZE_HEIGHT, MAZE_WIDTH, MIDDLE_T_H_WIDTH,
+    MIDDLE_T_X_POS, MINI_HEIGHT, MINI_WIDTH, MINIER_WIDTH, OUTER_HORIZONTAL_MINI,
+    OUTER_VERTICAL_HEIGHT, OUTER_VERTICAL_MINI, PATH_WIDTH, RIGHT_BOTTOM_BIT_X_POS,
+    RIGHT_UPSIDE_DOWN_X_POS, RIGHT_VERTICAL_X_POS, SINGLE_UNIT_WIDTH, SKINNY_BOX_Y_POSITION,
+    SPAWN_BOX_HEIGHT, SPAWN_BOX_MINI_WIDTH, SPAWN_BOX_Y_POS, TILE_WIDTH, UPSIDE_DOWN_H_WIDTH,
+    WINDOW_HEIGHT, WINDOW_WIDTH
+)
+
 
 def create_walls(walls):
     """function that is 
@@ -41,24 +53,25 @@ def create_upright_t_shape(walls,
                horizontal_piece_pos[1] - vertical_box_height + 2 * TILE_WIDTH,
                vertical_box_width,
                vertical_box_height)
-    
+
     create_horizontal_cover(walls,
                 horizontal_piece_pos[0],
                 horizontal_piece_pos[1],
                 horizontal_box_width_height[0])
-    
+
     create_vertical_cover(walls,
                 CENTER_PIECE_X_POS,
                 horizontal_piece_pos[1] - vertical_box_height + 2 * TILE_WIDTH,
                 vertical_box_height)
-    
+
 def create_vertical_cover(walls,
                     constant_x_pos,
                     start_y_pos,
                     height
                     ):
     """draws walls from bottom to top"""
-    for y_position in range(start_y_pos + TILE_WIDTH, start_y_pos + height - TILE_WIDTH, TILE_WIDTH):
+    for y_position in range(start_y_pos + TILE_WIDTH,
+                            start_y_pos + height - TILE_WIDTH, TILE_WIDTH):
         wall = arcade.Sprite("images/tile_black.png", scale=1)
         wall.center_x = constant_x_pos + (TILE_WIDTH / 2) + TILE_WIDTH
         wall.center_y = y_position + (TILE_WIDTH / 2)
@@ -150,7 +163,7 @@ def create_outer_pieces(walls):
 
     create_horizontal(walls, # create horizontal mini component, lower part of alley)
                     H_DISTANCE_BETWEEN_EDGE_AND_MAZE - HALF_TILE_WIDTH,
-                    OUTER_VERTICAL_MINI + LOWEST_H_MINI_COMPONENT_Y_POS - TILE_WIDTH - HALF_TILE_WIDTH,
+                    OUTER_VERTICAL_MINI +LOWEST_H_MINI_COMPONENT_Y_POS -TILE_WIDTH -HALF_TILE_WIDTH,
                     OUTER_HORIZONTAL_MINI + TILE_WIDTH)
 
     create_horizontal(walls, # create horizontal mini component (3rd from bottom)
@@ -272,13 +285,13 @@ def create_top_inner_pieces(walls):
                 HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
                 MINI_WIDTH - TILE_WIDTH,
                 SINGLE_UNIT_WIDTH)
-    
+
     # covers for the left sideways t shape
     create_horizontal_cover(walls,
                 LEFT_MINIER_BOX_X_POSITION,
                 HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
                 MINI_WIDTH - TILE_WIDTH)
-    
+
     create_vertical_cover(walls,
             LEFT_MINIER_BOX_X_POSITION,
                 PATH_WIDTH + OUTER_VERTICAL_MINI + OUTER_VERTICAL_HEIGHT \
@@ -300,13 +313,13 @@ def create_top_inner_pieces(walls):
                     HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
                     MINI_WIDTH - TILE_WIDTH,
                     SINGLE_UNIT_WIDTH)
-    
+
     # covers for the right sideways t shape
     create_horizontal_cover(walls,
                 H_DISTANCE_BETWEEN_EDGE_AND_MAZE + int (MAZE_WIDTH / 2) + PATH_WIDTH,
                     HIGHEST_H_MINI_COMPONENT_Y_POS - int(2 * TILE_WIDTH),
                 MINI_WIDTH - TILE_WIDTH)
-    
+
     create_vertical_cover(walls,
             RIGHT_VERTICAL_X_POS,
                PATH_WIDTH + OUTER_VERTICAL_MINI + \
@@ -368,13 +381,13 @@ def create_bottom_inner_pieces(walls):
                UPSIDE_DOWN_H_WIDTH,
                SINGLE_UNIT_WIDTH
                )
-    
+
     # covers for the left upside down t shape
     create_horizontal_cover(walls,
                 LEFT_UPSIDE_DOWN_X_POS,
                LEFT_UPSIDE_DOWN_Y_POS,
                UPSIDE_DOWN_H_WIDTH)
-    
+
     create_vertical_cover(walls,
             LEFT_VERTICAL_X_POS,
             LEFT_UPSIDE_DOWN_Y_POS,
@@ -394,13 +407,13 @@ def create_bottom_inner_pieces(walls):
                UPSIDE_DOWN_H_WIDTH,
                SINGLE_UNIT_WIDTH
                )
-    
+
     # covers for the right upside down t shape
     create_horizontal_cover(walls,
                 RIGHT_UPSIDE_DOWN_X_POS,
                 LEFT_UPSIDE_DOWN_Y_POS,
                 UPSIDE_DOWN_H_WIDTH)
-    
+
     create_vertical_cover(walls,
             RIGHT_VERTICAL_X_POS,
             LEFT_UPSIDE_DOWN_Y_POS,
@@ -435,13 +448,13 @@ def create_bottom_inner_pieces(walls):
                LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - OUTER_VERTICAL_MINI + TILE_WIDTH,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
-    
+
     # covers for the left L-shape
     create_horizontal_cover(walls,
                 90 + PATH_WIDTH,
                LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
                 MINI_WIDTH)
-    
+
     create_vertical_cover(walls,
                 90 + MINI_WIDTH + TILE_WIDTH,
                LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - OUTER_VERTICAL_MINI + TILE_WIDTH,
@@ -461,14 +474,14 @@ def create_bottom_inner_pieces(walls):
                OUTER_VERTICAL_MINI + TILE_WIDTH,
                SINGLE_UNIT_WIDTH,
                OUTER_VERTICAL_MINI)
-    
+
     # covers for the right L-shape
     create_horizontal_cover(walls,
                 WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE \
                 - HALF_TILE_WIDTH - PATH_WIDTH - MINI_WIDTH,
                 LOWEST_H_MINI_COMPONENT_Y_POS - PATH_WIDTH - 2 * TILE_WIDTH,
                MINI_WIDTH)
-    
+
     create_vertical_cover(walls,
             WINDOW_WIDTH - H_DISTANCE_BETWEEN_EDGE_AND_MAZE \
             - HALF_TILE_WIDTH - PATH_WIDTH - MINI_WIDTH,

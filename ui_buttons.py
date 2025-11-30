@@ -1,9 +1,13 @@
 """
-Button Classes
+ui_buttons contains classes for navigation buttons
+
+ui_buttons is imported by classes
+
+*note "R0901: Too many ancestors (10/7) (too-many-ancestors)" pylint
+error should be disabled
 """
 import arcade
 import arcade.gui.widgets.buttons
-from constants.view_constants import LEVEL_DEFAULT_VALUE
 
 class EnterButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
@@ -17,7 +21,6 @@ class ExitButton(arcade.gui.widgets.buttons.UIFlatButton):
         arcade.exit()
 
 class SaveScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
-
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
         self.window = window
@@ -25,7 +28,6 @@ class SaveScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
         from classes import EnterInitialsView
         view = EnterInitialsView(view_score = False)
         self.window.show_view(view)
-        self.uimanager.disable()
 
 class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
@@ -33,10 +35,8 @@ class StartGameButton(arcade.gui.widgets.buttons.UIFlatButton):
         self.window = window
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         from classes import GameView
-        #TODO: this is where incremented levels need to go
         view = GameView()
         self.window.show_view(view)
-        # self.uimanager.disable()
 
 class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
@@ -46,8 +46,7 @@ class NextLevelButton(arcade.gui.widgets.buttons.UIFlatButton):
         from classes import GameView
         view = GameView()
         self.window.show_view(view)
-        self.uimanager.disable()
-        
+
 class ViewScoreButton(arcade.gui.widgets.buttons.UIFlatButton):
     def __init__(self, window, **kwargs):
         super().__init__(**kwargs)
