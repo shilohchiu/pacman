@@ -780,8 +780,47 @@ class GameView(arcade.View):
             self.window.show_view(view)
             self.game_over, self.high_score = (False, False)
             return
+        
+        if self.blinky.state == GHOST_EATEN:
+            self.blinky.speed = 3
+            self.blinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.blinky.speed = 1
+            self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
 
-        self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
+        if self.pinky.state == GHOST_EATEN:
+            self.pinky.speed = 3
+            self.pinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.pinky.speed = 1
+            self.pinky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.inky.state == GHOST_EATEN:
+            self.inky.speed = 3
+            self.inky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.inky.speed = 1
+            self.inky.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        if self.clyde.state == GHOST_EATEN:
+            self.clyde.speed = 3
+            self.clyde.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+        else:
+            self.clyde.speed = 1
+            self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))
+
+        
+        
+        
+        print(f"PAC SIZE: {self.pacman.size}")
+        print(f"BLINKY PATH: {self.blinky.path}")
+        print(f"position: {self.pacman.center_x}, {self.pacman.center_y}")
+        print(f"horizontal factor: {self.pacman.horizontal_direction}")
+        print(f"vertical factor: {self.pacman.vertical_direction}")
+        print(f"in piv col: {self.pacman.in_piv_col} \t in piv row: {self.pacman.in_piv_row}")
+        print(f"directions: {self.pacman.directions}")
+        print(f"queue: ({self.pacman.horizontal_queue}, {self.pacman.vertical_queue})")
+
 
         for sprite in self.sprites:
             if not isinstance(sprite, Pellet):
@@ -965,10 +1004,9 @@ class GameView(arcade.View):
                 pass
             self._ghost_blink_calls.pop(ghost, None)
 
-
     def one_up(self, score_list):
         """add an extra life"""
-        if len(score_list) <=  3:
+        if (len(score_list) <= PACMAN_NUM_LIVES):
             pac_score=arcade.Sprite("images/pac-man.png", scale=PACMAN_LIVES_SCALE)
 
             pac_score.center_y = PACMAN_LIVES_Y_POSITION

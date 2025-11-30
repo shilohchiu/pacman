@@ -12,7 +12,7 @@ PACMAN_SPAWN_COORD = (355, 210)
 
 GHOST_CENTER_X, GHOST_CENTER_Y = (355, 385)
 GHOST_WIDTH = 30
-GHOST_SCALE = 1.75
+GHOST_SCALE = 1
 
 FRUIT_POSITION = (WINDOW_WIDTH/2, 330)
 
@@ -128,6 +128,7 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (595, ("N", "W"))],
                     460: [(285, ("S", "E")),
                         (325, ("N", "E", "W")),
+                        (355, ("E", "W")),
                         (385, ("N", "E", "W")),
                         (425, ("S", "W"))],
                     385: [(225, ("N", "S", "E", "W")),
@@ -172,6 +173,7 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (595, ("N", "W"))],
                 }
 
+PACMAN_NUM_LIVES = 3
 PACMAN_LIVES_SCALE = .4
 PACMAN_LIVES_Y_POSITION = 40
 PACMAN_FIRST_LIFE_X_POSITION = 110
@@ -184,4 +186,6 @@ PELLET_COL = [115,140,165,185,205,225,245,265,285,298,311,325,345,
 PELLET_ROW = [87,107,127,147,167,187,207,227,247,267,290,312,335,358,
               381,403,426,449,471,494,517,537,557,577,595,612,630,647]
 
-PELLET_SCALE = 0.75
+PELLET_SCALE = 0.70
+
+BIG_PELLET_SCALE = 1.75
