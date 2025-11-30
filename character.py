@@ -56,8 +56,6 @@ class Character(arcade.Sprite):
         self.physics_engine = arcade.PhysicsEngineSimple(self,walls)
         self.path = None
         self.target = (0,0)
-        #print("TARGET AT INIT: ")
-        #print(self.target)
         self.walls = walls
 
     # Default character movement implementation results in only random turns
@@ -506,12 +504,6 @@ class Character(arcade.Sprite):
         self.death_frame = 0
         self.death_time = 0.0
         self.speed = 0
-        # Stop movement immediately
-        # self.change_x = 0
-        # self.change_y = 0
-        # self.vertical_direction = 0
-        # self.horizontal_direction = 0
-        # flag to let GameView know animation finished
         self.death_finished = False
 
     def freeze(self):
