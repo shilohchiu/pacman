@@ -733,29 +733,29 @@ class GameView(arcade.View):
             return
         
         if self.blinky.state == GHOST_EATEN:
-            self.blinky.speed = 3
-            self.blinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+            self.blinky.center_x = GHOST_CENTER_X
+            self.blinky.center_y = GHOST_CENTER_Y
         else:
             self.blinky.speed = 1
             self.blinky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.pinky.state == GHOST_EATEN:
-            self.pinky.speed = 3
-            self.pinky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+            self.pinky.center_x = GHOST_CENTER_X
+            self.pinky.center_y = GHOST_CENTER_Y
         else:
             self.pinky.speed = 1
             self.pinky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.inky.state == GHOST_EATEN:
-            self.inky.speed = 3
-            self.inky.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+            self.inky.center_x = GHOST_CENTER_X
+            self.inky.center_y = GHOST_CENTER_Y
         else:
             self.inky.speed = 1
             self.inky.set_target((self.pacman.center_x, self.pacman.center_y))
 
         if self.clyde.state == GHOST_EATEN:
-            self.clyde.speed = 3
-            self.clyde.set_target((GHOST_CENTER_X, GHOST_CENTER_Y))
+            self.clyde.center_x = GHOST_CENTER_X
+            self.clyde.center_y = GHOST_CENTER_Y
         else:
             self.clyde.speed = 1
             self.clyde.set_target((self.pacman.center_x, self.pacman.center_y))

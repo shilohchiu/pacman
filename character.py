@@ -106,6 +106,7 @@ class Character(arcade.Sprite):
         point2 = self.closest_piv_point(point2)
         path.append(point1)
         print(f"STARTING PIV POINT: {point1}")
+        while_loop_length = 0
         while True:
             if point1 == point2:
                 return path

@@ -12,7 +12,7 @@ PACMAN_SPAWN_COORD = (355, 210)
 
 GHOST_CENTER_X, GHOST_CENTER_Y = (355, 385)
 GHOST_WIDTH = 30
-GHOST_SCALE = 1
+GHOST_SCALE = 1.5
 
 FRUIT_POSITION = (WINDOW_WIDTH/2, 330)
 
@@ -129,9 +129,9 @@ PIVOT_GRAPH = {650: [(115,("S", "E")),
                         (485, ("N", "S", "E")),
                         (595, ("N", "W"))],
                     460: [(285, ("S", "E")),
-                        (325, ("N", "E", "W")),
+                        (325, ("N", "E")),
                         (355, ("E", "W")),
-                        (385, ("N", "E", "W")),
+                        (385, ("N", "W")),
                         (425, ("S", "W"))],
                     385: [(225, ("N", "S", "E", "W")),
                         (285, ("N", "S", "W")),
