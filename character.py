@@ -525,7 +525,9 @@ class Pacman(Character):
     """
 
     def __init__(self, walls, start_pos=PACMAN_SPAWN_COORD):
-        super().__init__(walls, "images/pac-man.png",scale = 0.25, start_pos=start_pos)
+        super().__init__(walls, "images/pac-man.png",
+                         scale = 0.25, 
+                         start_pos=start_pos)
         self.speed = 2
 
         self.state = PACMAN_NORMAL
