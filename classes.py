@@ -958,7 +958,10 @@ class GameView(arcade.View):
             # Create a callable that will set the ghost to BLINK in 5s.
             blink_call = lambda dt, g=ghost: g.change_state(GHOST_BLINK)
             self._ghost_blink_calls[ghost] = blink_call
-            arcade.schedule_once(blink_call, 5.0)
+            timer = 6.0 - level
+            if timer <= 1:
+                timer = 1
+            arcade.schedule_once(blink_call, timer)
 
         # Cancel previous end-power schedule and schedule a new one 7s from now.
         if self._power_end_call:
