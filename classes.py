@@ -881,7 +881,7 @@ class GameView(arcade.View):
                             self.game_over = True
 
             #collision handling for pacman -> ghost
-            elif collision and self.pacman.get_state() == PACMAN_ATTACK:
+            elif collision and self.pacman.get_state() == PACMAN_ATTACK and ghost.state != GHOST_CHASE:
                 ghost_num = 1
                 for ghost in collision:
                     if ghost.state == GHOST_FLEE or ghost.state == GHOST_BLINK:
@@ -942,7 +942,8 @@ class GameView(arcade.View):
         # Set pacman state and make ghosts flee now
         self.pacman.change_state(PACMAN_ATTACK)
         for ghost in self.ghosts:
-            ghost.change_state(GHOST_FLEE)
+            if ghost.state != GHOST_EATEN:
+                ghost.change_state(GHOST_FLEE)
 
         # Cancel any previous per-ghost blink schedule and reschedule fresh one.
         for ghost in self.ghosts:

@@ -864,6 +864,10 @@ class Blinky(Character):
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
+                elif self.recent_piv_col == self.center_x and not self.vertical_direction:
+                    self.vertical_direction = random.choice((-1, 1))
+                elif self.recent_piv_row == self.center_y and not self.horizontal_direction:
+                    self.horizontal_direction = random.choice((-1, 1))
                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
             else:
                 if self.quadrant != self.target_quadrant:
@@ -986,6 +990,10 @@ class Pinky(Character):
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
+                elif self.recent_piv_col == self.center_x and not self.vertical_direction:
+                    self.vertical_direction = random.choice((-1, 1))
+                elif self.recent_piv_row == self.center_y and not self.horizontal_direction:
+                    self.horizontal_direction = random.choice((-1, 1))
                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
             else:
                 if self.quadrant != self.target_quadrant:
