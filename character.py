@@ -43,6 +43,7 @@ class Character(arcade.Sprite):
         self.last_direction = ""
         self.in_spawn = False
         self.waka_player = None
+        self.retread = False
         # sounds
         self.sounds = {
         "waka": arcade.load_sound("assets/pacman_chomp.wav"),
@@ -113,6 +114,7 @@ class Character(arcade.Sprite):
             else:
                 point1 = self.rec_generate_path(point1, point2)
                 if point1 in path:
+                    
                     return []
                 else:
                     path.append(point1)
@@ -129,6 +131,7 @@ class Character(arcade.Sprite):
         new_point = 0
         print(PIVOT_GRAPH[point1[1]])
         print(piv_directions)
+        print("stuck?")
         v_factor = abs(point1[0] - point2[0])
         h_factor = abs(point1[1] - point2[1])
 
@@ -283,7 +286,6 @@ class Character(arcade.Sprite):
                         if abs(col - self_pos[0]) < abs(curr_closest_x - self_pos[0]) and col < self_pos[0] and col_accessible:
                             curr_closest_y = row
                             curr_closest_x = col
-    
         return (curr_closest_x, curr_closest_y)
 
     
@@ -322,23 +324,23 @@ class Character(arcade.Sprite):
                     if col[0] == self.recent_piv_col:
                         valid_directions = col[1]
                 direction = ""
-                retread = True
-                while retread:
+                self.retread = True
+                while self.retread:
                     direction = random.choice(valid_directions)
                     if direction == "N" and self.last_direction != "S":
-                        retread = False
+                        self.retread = False
                     elif direction == "E" and self.last_direction != "W":
-                        retread = False
+                        self.retread = False
                     elif direction == "W" and self.last_direction != "E":
-                        retread = False
+                        self.retread = False
                     elif direction == "S" and self.last_direction != "N":
-                        retread = False
+                        self.retread = False
                     
                     # prevents ghosts from randomly pathing into wrapping row
                     if self.recent_piv_row == 385 and self.recent_piv_col == 225 and direction == "E":
-                        retread = False
+                        self.retread = False
                     elif self.recent_piv_row == 385 and self.recent_piv_col == 485 and direction == "W":
-                        retread = False
+                        self.retread = False
                 if direction == "N":
                     self.horizontal_direction = 0
                     self.vertical_direction = 1
@@ -509,6 +511,8 @@ class Character(arcade.Sprite):
                 self.vertical_direction = 0
                 self.center_x = self.recent_piv_col
                 self.center_y = self.recent_piv_row
+                
+            
             self.in_spawn = False
             
 
@@ -855,26 +859,32 @@ class Blinky(Character):
             self.vertical_direction = -1
         
         else:       
-
-            if self.quadrant != self.target_quadrant:
-                if not self.path or self.target_quadrant_change:
-                    self.horizontal_direction = 0
-                    self.vertical_direction = 0
-                    self.path = self.generate_path((self.center_x, self.center_y), self.target)
-                    self.target_quadrant_change = False
-                else:
-                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                        self.path.pop(0)
-                        self.horizontal_direction = 0
-                        self.vertical_direction = 0
-                    if self.path:
-                        self.pathfind()
-            else:
-                    
+            if not self.path:
                 if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
+                self.path = self.generate_path((self.center_x, self.center_y), self.target)
+            else:
+                if self.quadrant != self.target_quadrant:
+                    if self.target_quadrant_change:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.path = self.generate_path((self.center_x, self.center_y), self.target)
+                        self.target_quadrant_change = False
+                    else:
+                        if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                            self.path.pop(0)
+                            self.horizontal_direction = 0
+                            self.vertical_direction = 0
+                        if self.path:
+                            self.pathfind()
+                else:
+                        
+                    if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.set_rand_movement()
                 
     def reset_pos(self):
         x = GHOST_CENTER_X
@@ -955,8 +965,7 @@ class Pinky(Character):
         print(f"IS: {self.in_spawn}")
         print(f"PINKY POS: {(self.center_x, self.center_y)}")
         self.update_target_quadrant()
-        self.check_in_spawn()
-        if self.in_spawn:
+        if self.in_spawn and self.state != GHOST_EATEN:
             if self.center_x < GHOST_CENTER_X:
                 self.horizontal_direction = 1
                 self.vertical_direction = 0
@@ -972,26 +981,32 @@ class Pinky(Character):
             self.vertical_direction = -1
         
         else:       
-
-            if self.quadrant != self.target_quadrant:
-                if not self.path or self.target_quadrant_change:
-                    self.horizontal_direction = 0
-                    self.vertical_direction = 0
-                    self.path = self.generate_path((self.center_x, self.center_y), self.target)
-                    self.target_quadrant_change = False
-                else:
-                    if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-                        self.path.pop(0)
-                        self.horizontal_direction = 0
-                        self.vertical_direction = 0
-                    if self.path:
-                        self.pathfind()
-            else:
-                    
+            if not self.path:
                 if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
                     self.horizontal_direction = 0
                     self.vertical_direction = 0
                     self.set_rand_movement()
+                self.path = self.generate_path((self.center_x, self.center_y), self.target)
+            else:
+                if self.quadrant != self.target_quadrant:
+                    if self.target_quadrant_change:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.path = self.generate_path((self.center_x, self.center_y), self.target)
+                        self.target_quadrant_change = False
+                    else:
+                        if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                            self.path.pop(0)
+                            self.horizontal_direction = 0
+                            self.vertical_direction = 0
+                        if self.path:
+                            self.pathfind()
+                else:
+                        
+                    if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.set_rand_movement()
                 
 
     def reset_pos(self):
