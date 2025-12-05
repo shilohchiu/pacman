@@ -1082,52 +1082,55 @@ class Inky(Character):
             self.texture = self.texture_close.get(self.state, self.texture)
 
 
-    # def set_movement(self):
-    #     super().set_movement()
-    #     print(f"BLINKY POS: ({self.center_x}, {self.center_y})")
-    #     print(f"TARGET: {self.target}")
-    #     print(f"TARGET CHANGED QUAD: {self.target_quadrant_change}")
-    #     print(f"REC COL: {self.recent_piv_col} \t REC ROW: {self.recent_piv_row}")
-    #     print(f"SELF_QUAD: {self.quadrant} \t TARGET QUAD: {self.target_quadrant}")
-    #     print(f"BLINKY HF: {self.horizontal_direction} \t VF: {self.vertical_direction}")
-    #     self.update_target_quadrant()
-    #     self.check_in_spawn()
-    #     if self.in_spawn:
-    #         if self.center_x < GHOST_CENTER_X:
-    #             self.horizontal_direction = 1
-    #             self.vertical_direction = 0
-    #         elif self.center_x > GHOST_CENTER_X:
-    #             self.horizontal_direction = -1
-    #             self.vertical_direction = 0
-    #         else:
-    #             self.horizontal_direction = 0
-    #             self.vertical_direction = 1
-
-    #     elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
-    #         self.horizontal_direction = 0
-    #         self.vertical_direction = -1
+    def set_movement(self):
+        super().set_movement()
+        self.update_target_quadrant()
+        if self.in_spawn and self.state != GHOST_EATEN:
+            if self.center_x < GHOST_CENTER_X:
+                self.horizontal_direction = 1
+                self.vertical_direction = 0
+            elif self.center_x > GHOST_CENTER_X:
+                self.horizontal_direction = -1
+                self.vertical_direction = 0
+            else:
+                self.horizontal_direction = 0
+                self.vertical_direction = 1
         
-    #     else:       
-
-    #         if self.quadrant != self.target_quadrant:
-    #             if not self.path or self.target_quadrant_change:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.path = self.generate_path((self.center_x, self.center_y), self.target)
-    #                 self.target_quadrant_change = False
-    #             else:
-    #                 if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
-    #                     self.path.pop(0)
-    #                     self.horizontal_direction = 0
-    #                     self.vertical_direction = 0
-    #                 if self.path:
-    #                     self.pathfind()
-    #         else:
-                    
-    #             if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
-    #                 self.horizontal_direction = 0
-    #                 self.vertical_direction = 0
-    #                 self.set_rand_movement()
+        elif self.center_x == GHOST_CENTER_X and self.center_y == 460 and self.state == GHOST_EATEN:
+            self.horizontal_direction = 0
+            self.vertical_direction = -1
+        
+        else:       
+            if not self.path:
+                if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                    self.horizontal_direction = 0
+                    self.vertical_direction = 0
+                    self.set_rand_movement()
+                elif self.recent_piv_col == self.center_x and not self.vertical_direction:
+                    self.vertical_direction = random.choice((-1, 1))
+                elif self.recent_piv_row == self.center_y and not self.horizontal_direction:
+                    self.horizontal_direction = random.choice((-1, 1))
+                self.path = self.generate_path((self.center_x, self.center_y), self.target)
+            else:
+                if self.quadrant != self.target_quadrant:
+                    if self.target_quadrant_change:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.path = self.generate_path((self.center_x, self.center_y), self.target)
+                        self.target_quadrant_change = False
+                    else:
+                        if self.center_x == self.path[0][0] and self.center_y == self.path[0][1]:
+                            self.path.pop(0)
+                            self.horizontal_direction = 0
+                            self.vertical_direction = 0
+                        if self.path:
+                            self.pathfind()
+                else:
+                        
+                    if self.recent_piv_col == self.center_x and self.recent_piv_row == self.center_y:
+                        self.horizontal_direction = 0
+                        self.vertical_direction = 0
+                        self.set_rand_movement()
                 
 
     def reset_pos(self):
