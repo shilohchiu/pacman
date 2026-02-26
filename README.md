@@ -34,3 +34,4 @@ In terminal:
 # Gameplay
 - Click `start` button to start game
 - PacMan can be moved using arrow keys.
+- NOTE: Game cannot be run without access to Firestore Database
